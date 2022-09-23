@@ -1,0 +1,5 @@
+experiment_name,simple_mulran_eval
+input_directory,/$BAG_LOCATION/TBV_Eval
+dataset,Mulran
+method,"TBV SLAM-1"
+sequence,DCC01,Riverside01,KAIST01

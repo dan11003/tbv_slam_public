@@ -1,0 +1,79 @@
+range res, 0.0595238
+z min, 60
+min distance, 2.5
+max distance, 200
+k strongest, 40
+topic_filtered, /Navtech/Filtered
+radar_frameid, sensor_est
+dataset, Mulran
+filter type, kstrong
+nb guard cells, 40
+window size, 1
+false alarm rate, 1
+input_points_topic, /Navtech/Filtered
+scan_registered_latest_topic, radar_registered
+scan_registered_keyframe_topic, radar_registered_keyframe
+odom_latest_topic, radar_odom
+odom_keyframe_topic, radar_odom_keyframe
+use raw pointcloud, false
+submap keyframes, 4
+resolution r,3
+resample factor f, 1
+min. sensor distance [m], 1.5
+min. sensor rot. [deg], 5
+use keyframe, true
+use initial guess, true
+radar reversed, true
+disable registration, false
+soft velocity constraint, false
+compensate, true
+cost type, P2P
+loss type, Huber
+loss limit, 0.100000
+covar scale, 1.000000
+regularization, 1.000000
+weight intensity, true
+publish_tf, true
+store graph, true
+Weight, 4
+odom_est_topic, 
+gt_topic, 
+est_output_dir, /media/mattias/2TB/radardata/TBV_Eval/Mulran/Riverside01/est/
+gt_output_dir, /media/mattias/2TB/radardata/TBV_Eval/Mulran/Riverside01/gt/
+sequence, Riverside01
+job nr, 1
+save pcd, 0
+method, cfear-3
+
+nr_frames, 2181
+publish_etc avg, 0.641154
+publish_etc dev [σ], 0.015798
+publish_etc count, 2214
+register avg, 24.069476
+register dev [σ], 72.554538
+register count, 2214
+build_normals avg, 3.872688
+build_normals dev [σ], 0.863308
+build_normals count, 2214
+Registration avg, 99045177275.314896
+Registration dev [σ], 6690393031.357965
+Registration count, 2215
+compensate avg, 0.536859
+compensate dev [σ], 0.027084
+compensate count, 2214
+itrs avg, 4.696025
+itrs dev [σ], 0.945088
+itrs count, 2214
+Surface points avg, 348.938600
+Surface points dev [σ], 5339.607065
+Surface points count, 2215
+velocity avg, 11.643396
+velocity dev [σ], 19.656045
+velocity count, 2214
+Filtered points avg, 9320.592777
+Filtered points dev [σ], 2238737.547036
+Filtered points count, 2215
+Filtering avg, 6.688398
+Filtering dev [σ], 7.663962
+Filtering count, 2215
+

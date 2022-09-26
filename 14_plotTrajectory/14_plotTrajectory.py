@@ -83,7 +83,10 @@ def main():
     dataset = args.dataset
 
     if(args.dir == ""):
-        base_dir = str(pathlib.Path(__file__).parent.resolve()) + "/data/"
+        if(dataset == "Mulran"):
+            base_dir = str(pathlib.Path(__file__).parent.resolve()) + "/../data/full_mulran_eval_2022-09-23_18-16/"
+        else:
+            base_dir = str(pathlib.Path(__file__).parent.resolve()) + "/../data/full_oxford_eval_2022-09-24_11-17/"
     if(args.output == ""):
         out_dir = base_dir + "/output/plotTrajectory/"
 

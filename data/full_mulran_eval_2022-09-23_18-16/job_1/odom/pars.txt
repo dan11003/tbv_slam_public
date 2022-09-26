@@ -1,0 +1,79 @@
+range res, 0.0595238
+z min, 60
+min distance, 2.5
+max distance, 200
+k strongest, 40
+topic_filtered, /Navtech/Filtered
+radar_frameid, sensor_est
+dataset, Mulran
+filter type, kstrong
+nb guard cells, 40
+window size, 1
+false alarm rate, 1
+input_points_topic, /Navtech/Filtered
+scan_registered_latest_topic, radar_registered
+scan_registered_keyframe_topic, radar_registered_keyframe
+odom_latest_topic, radar_odom
+odom_keyframe_topic, radar_odom_keyframe
+use raw pointcloud, false
+submap keyframes, 4
+resolution r,3
+resample factor f, 1
+min. sensor distance [m], 1.5
+min. sensor rot. [deg], 5
+use keyframe, true
+use initial guess, true
+radar reversed, true
+disable registration, false
+soft velocity constraint, false
+compensate, true
+cost type, P2P
+loss type, Huber
+loss limit, 0.100000
+covar scale, 1.000000
+regularization, 1.000000
+weight intensity, true
+publish_tf, true
+store graph, true
+Weight, 4
+odom_est_topic, 
+gt_topic, 
+est_output_dir, /media/mattias/2TB/radardata/TBV_Eval/Mulran/KAIST02/est/
+gt_output_dir, /media/mattias/2TB/radardata/TBV_Eval/Mulran/KAIST02/gt/
+sequence, KAIST02
+job nr, 1
+save pcd, 0
+method, cfear-3
+
+nr_frames, 3556
+publish_etc avg, 0.876353
+publish_etc dev [σ], 0.050718
+publish_etc count, 3586
+register avg, 35.502162
+register dev [σ], 144.499930
+register count, 3586
+build_normals avg, 5.467914
+build_normals dev [σ], 1.411059
+build_normals count, 3586
+Registration avg, 97410609488.210556
+Registration dev [σ], 12048816805.690325
+Registration count, 3587
+compensate avg, 0.751397
+compensate dev [σ], 0.040735
+compensate count, 3586
+itrs avg, 4.818182
+itrs dev [σ], 1.182224
+itrs count, 3586
+Surface points avg, 427.609702
+Surface points dev [σ], 6161.302922
+Surface points count, 3587
+velocity avg, 6.700775
+velocity dev [σ], 4.434504
+velocity count, 3586
+Filtered points avg, 12231.960970
+Filtered points dev [σ], 1182342.363684
+Filtered points count, 3587
+Filtering avg, 8.820655
+Filtering dev [σ], 7.141498
+Filtering count, 3587
+

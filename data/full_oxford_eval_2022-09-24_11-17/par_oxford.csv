@@ -1,0 +1,6 @@
+experiment_name,full_oxford_eval
+input_directory,/$BAG_LOCATION/TBV_Eval
+dataset,Oxford
+visualize,false
+method,"TBV SLAM-1"
+sequence,2019-01-10-12-32-52-radar-oxford-10k,2019-01-16-13-09-37-radar-oxford-10k,2019-01-17-13-26-39-radar-oxford-10k,2019-01-18-14-14-42-radar-oxford-10k,2019-01-16-11-53-11-radar-oxford-10k,2019-01-10-11-46-21-radar-oxford-10k,2019-01-18-14-46-59-radar-oxford-10k

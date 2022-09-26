@@ -1,0 +1,79 @@
+range res, 0.0595238
+z min, 60
+min distance, 2.5
+max distance, 200
+k strongest, 40
+topic_filtered, /Navtech/Filtered
+radar_frameid, sensor_est
+dataset, Mulran
+filter type, kstrong
+nb guard cells, 40
+window size, 1
+false alarm rate, 1
+input_points_topic, /Navtech/Filtered
+scan_registered_latest_topic, radar_registered
+scan_registered_keyframe_topic, radar_registered_keyframe
+odom_latest_topic, radar_odom
+odom_keyframe_topic, radar_odom_keyframe
+use raw pointcloud, false
+submap keyframes, 4
+resolution r,3
+resample factor f, 1
+min. sensor distance [m], 1.5
+min. sensor rot. [deg], 5
+use keyframe, true
+use initial guess, true
+radar reversed, true
+disable registration, false
+soft velocity constraint, false
+compensate, true
+cost type, P2P
+loss type, Huber
+loss limit, 0.100000
+covar scale, 1.000000
+regularization, 1.000000
+weight intensity, true
+publish_tf, true
+store graph, true
+Weight, 4
+odom_est_topic, 
+gt_topic, 
+est_output_dir, /media/mattias/2TB/radardata/TBV_Eval/Mulran/KAIST03/est/
+gt_output_dir, /media/mattias/2TB/radardata/TBV_Eval/Mulran/KAIST03/gt/
+sequence, KAIST03
+job nr, 1
+save pcd, 0
+method, cfear-3
+
+nr_frames, 3435
+publish_etc avg, 0.891110
+publish_etc dev [σ], 0.056966
+publish_etc count, 3460
+register avg, 35.847313
+register dev [σ], 157.942918
+register count, 3460
+build_normals avg, 5.401791
+build_normals dev [σ], 1.350588
+build_normals count, 3460
+Registration avg, 96536923073.893829
+Registration dev [σ], 9233281054.537155
+Registration count, 3461
+compensate avg, 0.742164
+compensate dev [σ], 0.040149
+compensate count, 3460
+itrs avg, 4.820231
+itrs dev [σ], 1.198897
+itrs count, 3460
+Surface points avg, 442.159203
+Surface points dev [σ], 7181.114499
+Surface points count, 3461
+velocity avg, 7.264194
+velocity dev [σ], 3.297245
+velocity count, 3460
+Filtered points avg, 12172.014158
+Filtered points dev [σ], 1104178.147445
+Filtered points count, 3461
+Filtering avg, 8.760047
+Filtering dev [σ], 7.317138
+Filtering count, 3461
+

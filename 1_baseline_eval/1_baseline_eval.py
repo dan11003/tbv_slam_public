@@ -127,7 +127,7 @@ def FormatDataframe(df, dataset):
         df=df[df["dataset"]==dataset]
         df['sequence'] = df.apply (lambda row: str(row["sequence"])[8:-20], axis=1)
         cat_size_order = CategoricalDtype(
-            ["10-12-32", "16-13-09", "17-13-26", "18-14-14", "18-15-20", "10-11-46", "16-11-53","18-14-46"],
+            ["10-12-32", "16-13-09", "17-13-26", "18-14-14", "18-15-20", "10-11-46", "16-11-53", "18-14-46"],
             ordered=True
         )
         df['sequence'] = df["sequence"].astype(cat_size_order)
@@ -145,7 +145,10 @@ def main():
     out_dir = args.output
     dataset = args.dataset
     if(args.dir == ""):
-        base_dir = str(pathlib.Path(__file__).parent.resolve()) + "/data/"
+        if(dataset == "Mulran"):
+            base_dir = str(pathlib.Path(__file__).parent.resolve()) + "/../data/full_mulran_eval_2022-09-23_18-16/"
+        else:
+            base_dir = str(pathlib.Path(__file__).parent.resolve()) + "/../data/full_oxford_eval_2022-09-24_11-17/"
     if(args.output == ""):
         out_dir = base_dir + "/output/baseline/"
 

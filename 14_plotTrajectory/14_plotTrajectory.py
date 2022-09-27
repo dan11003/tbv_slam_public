@@ -10,12 +10,10 @@ import pathlib
 import os
 import pandas as pd
 
-
 def LoadData(est1, est2, gt, align):
     paths=[est1,est2,gt]
     concatinated=[]
     for path in paths:
-        print("load: "+path)
         est3 = np.loadtxt(path)
         est_np=np.array(est3)
         R = np.transpose([ [est_np[0,0],est_np[0,1]],[est_np[0,4],est_np[0,5]]])
@@ -25,8 +23,30 @@ def LoadData(est1, est2, gt, align):
         p=np.array([x,y])
         p=R@(p-t)
         concatinated.append(np.transpose(p))
+    if(align):
+        r, c, t = kabsch_umeyama(concatinated[2], concatinated[0])
+        concatinated[0] = np.array([t + c * r @ b for b in concatinated[0]])
     return concatinated[0], concatinated[1], concatinated[2]
 
+# (https://zpl.fi/aligning-point-patterns-with-kabsch-umeyama-algorithm/)
+def kabsch_umeyama(A, B):
+    assert A.shape == B.shape
+    n, m = A.shape
+
+    EA = np.mean(A, axis=0)
+    EB = np.mean(B, axis=0)
+    VarA = np.mean(np.linalg.norm(A - EA, axis=1) ** 2)
+
+    H = ((A - EA).T @ (B - EB)) / n
+    U, D, VT = np.linalg.svd(H)
+    d = np.sign(np.linalg.det(U) * np.linalg.det(VT))
+    S = np.diag([1] * (m - 1) + [d])
+
+    R = U @ S @ VT
+    c = VarA / np.trace(np.diag(D) @ S)
+    t = EA - c * R @ EB
+
+    return R, c, t
 
 def PlotTrajectory(poses_result, poses_result2, poses_gt, title, dataset, output):
     fontsize_ = 20
@@ -76,6 +96,8 @@ def main():
                         help="Datset")
     parser.add_argument('--output', type=str, required=False,default="",
                         help="Output dir for saved images")
+    parser.add_argument('--align', type=bool, required=False,default=True,
+                    help="Align, true/false")
     args = parser.parse_args()
 
     base_dir = os.environ["BAG_LOCATION"] + "/TBV_Eval/" + args.dir
@@ -95,7 +117,7 @@ def main():
         exit()
 
     pathlib.Path(out_dir).mkdir(parents=True, exist_ok=True)
-    print("created output dir at", out_dir)
+    print("Output dir:", out_dir)
 
     # LOAD DATA AND SAVE PLOTS #
     jobs = glob.glob(base_dir + "/job_?")
@@ -108,7 +130,9 @@ def main():
         est_slam_path = glob.glob(est_slam_base)
         est_odom_path = glob.glob(est_odom_base)
         gt_path = glob.glob(gt_base)
-        est_slam, est_odom, gt = LoadData(est_slam_path[0], est_odom_path[0], gt_path[0], dataset=="Mulran")
+        print("Load data:", job)
+        est_slam, est_odom, gt = LoadData(est_slam_path[0], est_odom_path[0], gt_path[0], args.align)
+        print("Save plots in:", out_dir)
         PlotTrajectory(est_slam, est_odom, gt, sequence, dataset, out_dir)
 
 if __name__ == '__main__':

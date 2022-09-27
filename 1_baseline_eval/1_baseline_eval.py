@@ -26,8 +26,8 @@ def LoadData(base_dir):
     return pd.concat(dfs, axis=0, ignore_index=True)
 
 def SavePlots(df, out_dir):
-    plot_parameters = ["Trans.err.(%)", "Rot.err.(deg/100m)", "RPE(m)", "RMSE (m)"]
-    plot_names = ["Trans_err", "Rot_err", "RPE", "RMSE"]
+    plot_parameters = ["Trans.err.(%)", "Rot.err.(deg/100m)", "ATE(m)", "RMSE (m)"]
+    plot_names = ["Trans_err", "Rot_err", "ATE", "RPE-RMSE"]
     sns.set_theme(style="ticks", color_codes=True)
     sns.set(style="ticks")
 
@@ -74,8 +74,7 @@ def SaveTable(df, out_dir):
             df_table.at[met,seq] = df_temp['for_copy_ATE'].values[0]
         df_temp = df[df["method"] == met]
         ate_mean = "{:2.2f}".format(df_temp["ATE(m)"].mean())
-        rpe_mean = "{:2.2f}".format(df_temp["RPE(m)"].mean())
-        df_table.at[met,"mean"] = ate_mean + "/" + rpe_mean
+        df_table.at[met,"mean"] = ate_mean
     df_tables.append(df_table.copy(deep=True))
 
     for met in methods:
@@ -90,7 +89,7 @@ def SaveTable(df, out_dir):
     print("Odometry error transl[m/m]/rot[deg/100m]", file=f)
     print(tabulate(df_tables[0], headers='keys', tablefmt='fancy_grid'), file=f)
     print(file=f)
-    print("RPE Mean [cm]/ATE-RMSE [m]: ", file=f)
+    print("ATE-RMSE [m]: ", file=f)
     print(tabulate(df_tables[1], headers='keys', tablefmt='fancy_grid'), file=f)
     print(file=f)
     print("RPE-RMSE [cm]: ", file=f)
@@ -108,7 +107,7 @@ def SaveTable(df, out_dir):
 def FormatDataframe(df, dataset):
     df = df.rename(columns={'resolution r': 'resolution r [m]'})
     df['for_copy'] = df.apply (lambda row: "{:2.2f}".format(row["Trans.err.(%)"])+"/"+"{:2.2f}".format(row["Rot.err.(deg/100m)"]) , axis=1)
-    df['for_copy_ATE'] = df.apply (lambda row: "{:2.2f}".format(100*row["RPE(m)"])+"/"+"{:2.2f}".format(row["ATE(m)"]) , axis=1)
+    df['for_copy_ATE'] = df.apply (lambda row: "{:2.2f}".format(row["ATE(m)"]) , axis=1)
     df['for_copy_RMSE'] = df.apply (lambda row: "{:2.2f}".format(100*row["RMSE (m)"]) , axis=1)
     rpe_rmse_mean = "{:2.2f}".format(100*df["RMSE (m)"].mean())
 

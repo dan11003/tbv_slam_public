@@ -14,17 +14,17 @@ def LoadData(est1, est2, gt, align):
     paths=[est1,est2,gt]
     concatinated=[]
     for path in paths:
-        est3 = np.loadtxt(path)
-        est_np=np.array(est3)
+        est = np.loadtxt(path)
+        est_np=np.array(est)
         R = np.transpose([ [est_np[0,0],est_np[0,1]],[est_np[0,4],est_np[0,5]]])
         t =[ [est_np[0,3]],[ est_np[0,7] ] ]
-        x=np.array(est3[:,3])
-        y=np.array(est3[:,7])
+        x=np.array(est[:,3])
+        y=np.array(est[:,7])
         p=np.array([x,y])
         p=R@(p-t)
         concatinated.append(np.transpose(p))
     if(align):
-        r, c, t = kabsch_umeyama(concatinated[2], concatinated[0])
+        r, c, t = kabsch_umeyama(concatinated[-1], concatinated[0])
         concatinated[0] = np.array([t + c * r @ b for b in concatinated[0]])
     return concatinated[0], concatinated[1], concatinated[2]
 
@@ -65,14 +65,14 @@ def PlotTrajectory(poses_result, poses_result2, poses_gt, title, dataset, output
         fig = plt.figure()
         ax = plt.gca()
         ax.set_aspect('equal')
-        plt.plot(poses_gt[:, 0], pose_flip*poses_gt[:, 1],"--", color="orange", label="Ground truth")
-        plt.plot(poses_gt[-1,0], poses_gt[-1,1], "s",color="orange",markersize=15,markeredgewidth=3,fillstyle='none')
+        plt.plot(poses_gt[:, 0], pose_flip*poses_gt[:, 1],"-", color="red", label="Ground truth")
+        plt.plot(poses_gt[-1,0], poses_gt[-1,1], "s",color="red",markersize=15,markeredgewidth=3,fillstyle='none')
         plt.plot(poses_gt[0,0], poses_gt[0,1], "x",color="black",markersize=15,markeredgewidth=3,fillstyle='none')
 
-        plt.plot(poses_result[:, 0], pose_flip*poses_result[:, 1],"b", label="TBV SLAM-1")
+        plt.plot(poses_result[:, 0], pose_flip*poses_result[:, 1],"--", color="blue", label="TBV SLAM-1")
         plt.plot(poses_result[-1,0], pose_flip*poses_result[-1,1], "bs", markersize=15,markeredgewidth=3,fillstyle='none')
 
-        plt.plot(poses_result2[:, 0],  pose_flip*poses_result2[:, 1],"g", label="CFEAR-3")
+        plt.plot(poses_result2[:, 0],  pose_flip*poses_result2[:, 1],"--", color="green", label="CFEAR-3")
         plt.plot(poses_result2[-1,0],  pose_flip*poses_result2[-1,1], "gs", markersize=15,markeredgewidth=3,fillstyle='none')
         plt.title(title, loc='left')
 

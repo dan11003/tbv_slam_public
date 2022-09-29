@@ -1,5 +1,3 @@
-from genericpath import exists
-from tkinter.tix import Tree
 from matplotlib import pyplot as plt
 import numpy as np
 import os
@@ -10,8 +8,7 @@ import pathlib
 import os
 import pandas as pd
 
-def LoadData(est1, est2, gt, align):
-    paths=[est1,est2,gt]
+def LoadData(paths, align):
     concatinated=[]
     for path in paths:
         est = np.loadtxt(path)
@@ -26,7 +23,7 @@ def LoadData(est1, est2, gt, align):
     if(align):
         r, c, t = kabsch_umeyama(concatinated[-1], concatinated[0])
         concatinated[0] = np.array([t + c * r @ b for b in concatinated[0]])
-    return concatinated[0], concatinated[1], concatinated[2]
+    return concatinated
 
 # (https://zpl.fi/aligning-point-patterns-with-kabsch-umeyama-algorithm/)
 def kabsch_umeyama(A, B):
@@ -48,44 +45,45 @@ def kabsch_umeyama(A, B):
 
     return R, c, t
 
-def PlotTrajectory(poses_result, poses_result2, poses_gt, title, dataset, output):
+def PlotTrajectory(trajectories, title, dataset, output, gt, names, flip=False):
     fontsize_ = 20
+    colors = ["b","g","r","c","m","y"]
+
     pose_flip = 1
     if dataset=="oxford":
         pose_flip = -1
 
-    for i in range(2):
-        flip_text = ""
-        if i == 1:
-            poses_gt=np.transpose([[0,-1],[1,0]]@np.transpose(poses_gt))
-            poses_result=np.transpose([[0,-1],[1,0]]@np.transpose(poses_result))
-            poses_result2=np.transpose([[0,-1],[1,0]]@np.transpose(poses_result2))
-            flip_text = "_flip"
-    
-        fig = plt.figure()
-        ax = plt.gca()
-        ax.set_aspect('equal')
-        plt.plot(poses_gt[:, 0], pose_flip*poses_gt[:, 1],"-", color="red", label="Ground truth")
+    if flip:
+        title += "_flip"
+        for index in range(len(trajectories)):
+            trajectories[index] = np.transpose([[0,-1],[1,0]]@np.transpose(trajectories[index]))
+    fig = plt.figure()
+    ax = plt.gca()
+    ax.set_aspect('equal')
+    if(gt):
+        poses_gt = trajectories.pop(-1)
+        plt.plot(poses_gt[:, 0], pose_flip*poses_gt[:, 1],"--", color="red", label="Ground truth")
         plt.plot(poses_gt[-1,0], poses_gt[-1,1], "s",color="red",markersize=15,markeredgewidth=3,fillstyle='none')
         plt.plot(poses_gt[0,0], poses_gt[0,1], "x",color="black",markersize=15,markeredgewidth=3,fillstyle='none')
+    else:
+        plt.plot(trajectories[-1][0,0], trajectories[-1][0,1], "x",color="black",markersize=15,markeredgewidth=3,fillstyle='none')
 
-        plt.plot(poses_result[:, 0], pose_flip*poses_result[:, 1],"--", color="blue", label="TBV SLAM-1")
-        plt.plot(poses_result[-1,0], pose_flip*poses_result[-1,1], "bs", markersize=15,markeredgewidth=3,fillstyle='none')
+    colors = colors[0:len(trajectories)]
+    for traj, name,color in zip(trajectories,names,colors):
+        plt.plot(traj[:, 0], pose_flip*traj[:, 1], "--", color=color, label=name)
+        plt.plot(traj[-1,0], pose_flip*traj[-1,1], "s", color=color, markersize=15,markeredgewidth=3,fillstyle='none')
 
-        plt.plot(poses_result2[:, 0],  pose_flip*poses_result2[:, 1],"--", color="green", label="CFEAR-3")
-        plt.plot(poses_result2[-1,0],  pose_flip*poses_result2[-1,1], "gs", markersize=15,markeredgewidth=3,fillstyle='none')
-        plt.title(title, loc='left')
+    plt.title(title, loc='left')
+    plt.legend( loc='lower left', prop={'size': fontsize_}) #
+    plt.xticks(fontsize=fontsize_)
+    plt.xticks(rotation=45)
+    plt.yticks(fontsize=fontsize_)
+    plt.xlabel('x (m)', fontsize=fontsize_)
+    plt.ylabel('y (m)', fontsize=fontsize_)
+    fig.set_size_inches(10, 10)
 
-        plt.legend( loc='lower left', prop={'size': fontsize_}) #
-        plt.xticks(fontsize=fontsize_)
-        plt.xticks(rotation=45)
-        plt.yticks(fontsize=fontsize_)
-        plt.xlabel('x (m)', fontsize=fontsize_)
-        plt.ylabel('y (m)', fontsize=fontsize_)
-        fig.set_size_inches(10, 10)
-
-        fig_pdf =  output + "/" + title + flip_text +".pdf"
-        plt.savefig(fig_pdf, bbox_inches='tight', pad_inches=0)
+    fig_pdf =  output + "/" + title + ".pdf"
+    plt.savefig(fig_pdf, bbox_inches='tight', pad_inches=0)
 
 def main():
     # PARAMETR PARSER #
@@ -96,13 +94,31 @@ def main():
                         help="Datset")
     parser.add_argument('--output', type=str, required=False,default="",
                         help="Output dir for saved images")
-    parser.add_argument('--align', type=bool, required=False,default=True,
-                    help="Align, true/false")
+    parser.add_argument('--align', type=str ,default="True", choices=["True", "False"],
+                    help="Align, True/False")
+    parser.add_argument('--gt', type=str, default="True", choices=["True", "False"],
+                    help="Ground Truth, True/False")
+    parser.add_argument('--flip', type=str, default="False", choices=["True", "False"],
+                help="Flip plots, True/False")
     args = parser.parse_args()
 
     base_dir = os.environ["BAG_LOCATION"] + "/TBV_Eval/" + args.dir
     out_dir = args.output
     dataset = args.dataset
+    if(args.gt=="True"):
+        gt = True
+    elif(args.gt=="False"):
+        gt = False
+
+    if(args.align=="True"):
+        align = True
+    elif(args.align=="False"):
+        align = False
+
+    if(args.flip=="True"):
+        flip = True
+    elif(args.flip=="False"):
+        flip = False
 
     if(args.dir == ""):
         if(dataset == "Mulran"):
@@ -125,15 +141,19 @@ def main():
         df = pd.read_csv(job+"/pars.txt", index_col=0, header=0, skipinitialspace=True).T
         sequence = df["sequence"].values[0]
         est_slam_base = job + "/est/??.txt"
-        est_odom_base = job + "/odom/??.txt"
-        gt_base = job + "/gt/??.txt"
         est_slam_path = glob.glob(est_slam_base)
+        est_odom_base = job + "/odom/??.txt"
         est_odom_path = glob.glob(est_odom_base)
-        gt_path = glob.glob(gt_base)
-        print("Load data:", job)
-        est_slam, est_odom, gt = LoadData(est_slam_path[0], est_odom_path[0], gt_path[0], args.align)
+        paths = [est_slam_path[0], est_odom_path[0]]
+
+        if(gt):
+            gt_base = job + "/gt/??.txt"
+            gt_path = glob.glob(gt_base)
+            paths.append(gt_path[0])
+        trajectories = LoadData(paths, align)
+
         print("Save plots in:", out_dir)
-        PlotTrajectory(est_slam, est_odom, gt, sequence, dataset, out_dir)
+        PlotTrajectory(trajectories=trajectories, title=sequence, dataset=dataset, output=out_dir, gt=gt, names=["TBV SLAM-1", "CFEAR-3"], flip=flip)
 
 if __name__ == '__main__':
     main()

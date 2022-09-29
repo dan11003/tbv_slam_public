@@ -82,7 +82,7 @@ def SaveTable(df, out_dir):
             df_temp = df[(df["sequence"] == seq) & (df["method"] == met)]
             df_table.at[met,seq] = df_temp['for_copy_RMSE'].values[0]
         df_temp = df[df["method"] == met]
-        rpe_rmse_mean = "{:2.2f}".format(df_temp["RMSE (m)"].mean())
+        rpe_rmse_mean = "{:2.2f}".format(100*df_temp["RMSE (m)"].mean())
         df_table.at[met,"mean"] = rpe_rmse_mean
     df_tables.append(df_table.copy(deep=True))
 
@@ -109,7 +109,6 @@ def FormatDataframe(df, dataset):
     df['for_copy'] = df.apply (lambda row: "{:2.2f}".format(row["Trans.err.(%)"])+"/"+"{:2.2f}".format(row["Rot.err.(deg/100m)"]) , axis=1)
     df['for_copy_ATE'] = df.apply (lambda row: "{:2.2f}".format(row["ATE(m)"]) , axis=1)
     df['for_copy_RMSE'] = df.apply (lambda row: "{:2.2f}".format(100*row["RMSE (m)"]) , axis=1)
-    rpe_rmse_mean = "{:2.2f}".format(100*df["RMSE (m)"].mean())
 
     # PREPARE SEQUENCES DEPENDING ON DATASET #
     if(dataset == "Mulran"):

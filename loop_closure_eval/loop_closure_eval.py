@@ -4,20 +4,20 @@ import os
 import math
 import argparse
 import numpy as np
-import glob
 from itertools import product
 import seaborn as sns
 import pathlib
 from LoopClassifier import *
+from re import match
 
 def LoadData(base_dir):
     dfs = []
     print("opening the following files:")
-    jobs = glob.glob(base_dir + "/job_?")
-    for job in jobs:
-        print("Loading data: ", job)
-        df = pd.read_csv(job+"/loop/loop.csv", index_col=0, header=0, skipinitialspace=True)
-        dfs.append(df)
+    for job in os.listdir(base_dir):
+        if match(r"^job_[0-9]+", job):
+            print("Loading data: ", job)
+            df = pd.read_csv(base_dir+'/'+job+"/loop/loop.csv", index_col=0, header=0, skipinitialspace=True)
+            dfs.append(df)
     return pd.concat(dfs, axis=0, ignore_index=True)
 
 def GetNameFromSettings(feature_cols, guess0=True, radar_raw=1, augment=0, odometry_coupled=1):
@@ -117,14 +117,10 @@ if __name__ == '__main__':
             # Update df_filtered using best probabilites
             if not guess0:
                 nr_guess = df['guess_nr'].to_numpy().max() + 1
-                for id_from in df["id_from"].unique():
-                    if (df["id_from"]==id_from).sum() != nr_guess:
-                        df.drop(df[df["id_from"]==id_from].index, inplace=True)
                 X_test_all = df[feature_cols].to_numpy()
                 y_test_prob_all = Predict_proba(logreg, X_test_all) #Predict on all datapoints
                 df["y_test_prob"] = y_test_prob_all
                 M_pred = y_test_prob_all.reshape(-1, nr_guess) #reshape into matrix
-                print(M_pred)
                 argmax = np.argmax(M_pred, axis=1, keepdims=False) #highest probability
                 max_idx = np.array(range(0, df.shape[0], nr_guess)) + argmax #index for df for highest probability
                 df_filtered=df.loc[max_idx.tolist()] #create new df for highest probability candidates
@@ -155,7 +151,7 @@ if __name__ == '__main__':
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
     plt.title("ROC")
-    plt.plot([0, 1], [0, 1],'r--')
+    plt.plot([0, 1], [0, 1],'r--', zorder=-1)
     handles, labels = plt.gca().get_legend_handles_labels()
     labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
     plt.legend(handles, labels, loc = 'lower right', fontsize="x-small")

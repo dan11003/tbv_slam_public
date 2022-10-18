@@ -1,4 +1,5 @@
 from matplotlib.pyplot import title
+from sklearn.metrics import precision_recall_curve
 import pandas as pd
 import os
 import math
@@ -78,6 +79,8 @@ if __name__ == '__main__':
     stats_header = ['Name', 'Settings', 'Training accuracy[%]', 'Training precision [%]', 'Training recall [%]', 'Testing accurac [%]', 'Testing precision [%]', 'Testing recall [%]', 'nr correct candidates', 'nr loops', 'correct_loop_ratio [%]', 'Coef', 'Intercept', 'Threshold', 'max_distance', 'max_registration_distance', 'max_registration_rotation']
     df_stats = pd.DataFrame(columns=stats_header)
 
+    dataset = pd.read_csv(base_dir+"/job_0/pars.txt", index_col=0, header=0, skipinitialspace=True).T["dataset"].values[0]
+
     datapoints = len(df_full.index)
     print("Loaded: " + str(datapoints))
 
@@ -144,18 +147,39 @@ if __name__ == '__main__':
             fpr, tpr, _ = metrics.roc_curve(y, y_prob)
             tpr[-1] = tpr[-2]
             roc_auc = metrics.auc(fpr, tpr)
+            plt.figure(0)
             plt.plot(fpr, tpr, label = name + ' (AUC: = %0.2f)' % roc_auc, linewidth=3)
 
+            precision, recall, _ = precision_recall_curve(y, y_prob)
+            # pr_auc = metrics.auc(fpr, tpr)
+            recall[0] = recall[1]
+            precision[0] = precision[1]
+            plt.figure(1)
+            plt.plot(recall, precision, label = name, linewidth=3)
+
+    plt.figure(0)
     plt.xlim([-0.01, 1])
     plt.ylim([0, 1])
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
-    plt.title("ROC")
+    plt.title(dataset)
     plt.plot([0, 1], [0, 1],'r--', zorder=-1)
     handles, labels = plt.gca().get_legend_handles_labels()
     labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
     plt.legend(handles, labels, loc = 'lower right', fontsize="x-small")
     plt.savefig(out_dir + "/ROC.pdf", bbox_inches='tight', format='pdf')
+
+    plt.figure(1)
+    plt.xlim([0, 1])
+    plt.ylim([0, 1])
+    plt.ylabel('Precision')
+    plt.xlabel('Recall')
+    plt.title(dataset)
+    handles, labels = plt.gca().get_legend_handles_labels()
+    labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
+    plt.legend(handles, labels, loc = 'lower left', fontsize="x-small")
+    plt.savefig(out_dir + "/PR.pdf", bbox_inches='tight', format='pdf')
+
 
     result_path = os.path.join(out_dir, "result.csv")
     df_stats.sort_values(by=['Name'], inplace=True)

@@ -1,6 +1,0 @@
-experiment_name,full_mulran_eval
-input_directory,/$BAG_LOCATION/TBV_Eval
-dataset,Mulran
-visualize,false
-method,"TBV SLAM-1"
-sequence,KAIST01,KAIST02,KAIST03,DCC01,DCC02,DCC03,Riverside01,Riverside02,Riverside03

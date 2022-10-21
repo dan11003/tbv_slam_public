@@ -55,21 +55,19 @@ if __name__ == '__main__':
     parser.add_argument('--max_distance', type=float, default=6, help='max distance for loop')
     parser.add_argument('--max_registration_distance', type=float, default=4, help='max registration distance for loop')
     parser.add_argument('--max_registration_rotation', type=float, default=2.5, help='max registration rotation for loop')
-    parser.add_argument('--use_guess0', action='store_true', help='Use only guess 0, otherwise use best probability guess')
+    parser.add_argument('--full_path', type=str, default="False", choices=["True", "False"],help="If dir is full path, or in TBV_Eval")
     args = parser.parse_args()
 
-    base_dir = os.environ["BAG_LOCATION"] + "/TBV_Eval/" + args.dir
-    out_dir = args.output
-
-    if(args.output == ""):
-        out_dir = base_dir + "/output/loop_closure_eval/"
-
-    if(not pathlib.Path(base_dir)):
-        print(base_dir, "doesnt exist!")
-        exit()
+    base_dir = args.dir if args.full_path == 'True' else os.environ["BAG_LOCATION"] + "/TBV_Eval/" + args.dir
+    out_dir = args.output + "/output/baseline/" if args.output != '' else base_dir + "/output/baseline/"
+    dataset = pd.read_csv(base_dir+"/job_0/pars.txt", index_col=0, header=0, skipinitialspace=True).T["dataset"].values[0]
 
     pathlib.Path(out_dir).mkdir(parents=True, exist_ok=True)
-    print("created output dir at", out_dir)  
+    print("Output dir:", out_dir)
+
+    if (not pathlib.Path(base_dir)) or (not pathlib.Path(out_dir)):
+        print(base_dir, "or", out_dir, "doesnt exist!")
+        exit()
 
     pthreshold = args.p_threshold
 
@@ -92,6 +90,7 @@ if __name__ == '__main__':
     df_full['prediction pos ok'] = df_full.apply (lambda row: int(not row["is loop"] or row["candidate close"]), axis=1) #Please verify this logic. only false if is loop while candidate is far away
     df_full = df_full[(df_full['guess_nr'] >= 0 )]
 
+    # Combinaiton parameters
     guess_nr = [True, False]
     odometry_coupled = df_full["SC - odometry_coupled_closure"].unique()
     raw_scan_context = df_full["Scan Context - raw_scan_context"].unique()
@@ -101,8 +100,10 @@ if __name__ == '__main__':
     all_setings = [guess_nr, raw_scan_context, odometry_coupled, augmentations, feature_cols_all]
     settings_combinations = product(*all_setings)
 
+    # Loop over alla selected combinations
     for settings in settings_combinations:
         guess0, radar_raw, odometry_coupled, augmentations, feature_cols = settings
+        # See if current parameter combination is of interest
         name = GetNameFromSettings(feature_cols, guess0=guess0, radar_raw=radar_raw, odometry_coupled=odometry_coupled, augment=augmentations)
         if name != '':
             df = df_full[(df_full["SC - odometry_coupled_closure"] == odometry_coupled) & (df_full["Scan Context - raw_scan_context"] == radar_raw) & (df_full["SC - augment_sc"] == augmentations)]
@@ -148,7 +149,7 @@ if __name__ == '__main__':
             tpr[-1] = tpr[-2]
             roc_auc = metrics.auc(fpr, tpr)
             plt.figure(0)
-            plt.plot(fpr, tpr, label = name + ' (AUC: = %0.2f)' % roc_auc, linewidth=3)
+            plt.plot(fpr, tpr, label = name, linewidth=3)
 
             precision, recall, _ = precision_recall_curve(y, y_prob)
             # pr_auc = metrics.auc(fpr, tpr)
@@ -157,6 +158,7 @@ if __name__ == '__main__':
             plt.figure(1)
             plt.plot(recall, precision, label = name, linewidth=3)
 
+    # ROC CURVE
     plt.figure(0)
     plt.xlim([-0.01, 1])
     plt.ylim([0, 1])
@@ -169,6 +171,7 @@ if __name__ == '__main__':
     plt.legend(handles, labels, loc = 'lower right', fontsize="x-small")
     plt.savefig(out_dir + "/ROC.pdf", bbox_inches='tight', format='pdf')
 
+    # PR CURVE
     plt.figure(1)
     plt.xlim([0, 1])
     plt.ylim([0, 1])
@@ -180,12 +183,13 @@ if __name__ == '__main__':
     plt.legend(handles, labels, loc = 'lower left', fontsize="x-small")
     plt.savefig(out_dir + "/PR.pdf", bbox_inches='tight', format='pdf')
 
-
+    # RESULT .csv FILE
     result_path = os.path.join(out_dir, "result.csv")
     df_stats.sort_values(by=['Name'], inplace=True)
     df_stats.reset_index(drop=True, inplace=True)
     df_stats.to_csv(result_path, index=False)
 
+    # BAR GRAPHS
     plot_parameters = stats_header[2:11]
     sns.set_theme(style="ticks", color_codes=True)
     sns.set(style="ticks")

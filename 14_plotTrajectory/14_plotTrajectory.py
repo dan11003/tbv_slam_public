@@ -88,52 +88,29 @@ def PlotTrajectory(trajectories, title, dataset, output, gt, names, flip=False):
 def main():
     # PARAMETR PARSER #
     parser = argparse.ArgumentParser(description='Baseline eval')
-    parser.add_argument('--dir', type=str, required=False,default="",
-                        help="Result directory")
-    parser.add_argument('--dataset', type=str, required=False,default="Mulran", choices=["Mulran", "oxford"],
-                        help="Datset")
-    parser.add_argument('--output', type=str, required=False,default="",
-                        help="Output dir for saved images")
-    parser.add_argument('--align', type=str ,default="True", choices=["True", "False"],
-                    help="Align, True/False")
-    parser.add_argument('--gt', type=str, default="True", choices=["True", "False"],
-                    help="Ground Truth, True/False")
-    parser.add_argument('--flip', type=str, default="False", choices=["True", "False"],
-                help="Flip plots, True/False")
+    parser.add_argument('--dir', type=str, required=True,help="Result directory")
+    parser.add_argument('--output', type=str, required=False,default="",help="Output dir for saved images")
+    parser.add_argument('--align', type=str ,default="True", choices=["True", "False"],help="Align, True/False")
+    parser.add_argument('--gt', type=str, default="True", choices=["True", "False"],help="Ground Truth, True/False")
+    parser.add_argument('--flip', type=str, default="False", choices=["True", "False"],help="Flip plots, True/False")
+    parser.add_argument('--full_path', type=str, default="False", choices=["True", "False"],help="If dir is full path, or in TBV_Eval")
     args = parser.parse_args()
 
-    base_dir = os.environ["BAG_LOCATION"] + "/TBV_Eval/" + args.dir
-    out_dir = args.output
-    dataset = args.dataset
-    if(args.gt=="True"):
-        gt = True
-    elif(args.gt=="False"):
-        gt = False
+    base_dir = args.dir if args.full_path == 'True' else os.environ["BAG_LOCATION"] + "/TBV_Eval/" + args.dir
+    out_dir = args.output + "/output/plotTrajectory/" if args.output != '' else base_dir + "/output/plotTrajectory/"
+    dataset = pd.read_csv(base_dir+"/job_0/pars.txt", index_col=0, header=0, skipinitialspace=True).T["dataset"].values[0]
 
-    if(args.align=="True"):
-        align = True
-    elif(args.align=="False"):
-        align = False
-
-    if(args.flip=="True"):
-        flip = True
-    elif(args.flip=="False"):
-        flip = False
-
-    if(args.dir == ""):
-        if(dataset == "Mulran"):
-            base_dir = str(pathlib.Path(__file__).parent.resolve()) + "/../data/full_mulran_eval_2022-09-23_18-16/"
-        else:
-            base_dir = str(pathlib.Path(__file__).parent.resolve()) + "/../data/full_oxford_eval_2022-09-24_11-17/"
-    if(args.output == ""):
-        out_dir = base_dir + "/output/plotTrajectory/"
-
-    if(not pathlib.Path(base_dir)):
-        print(base_dir, "doesnt exist!")
-        exit()
+    gt = args.gt == "True"
+    align = args.align == "True"
+    flip = args.flip == "True"
 
     pathlib.Path(out_dir).mkdir(parents=True, exist_ok=True)
     print("Output dir:", out_dir)
+
+    if (not pathlib.Path(base_dir)) or (not pathlib.Path(out_dir)):
+        print(base_dir, "or", out_dir, "doesnt exist!")
+        exit()
+
 
     # LOAD DATA AND SAVE PLOTS #
     jobs = glob.glob(base_dir + "/job_?")

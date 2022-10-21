@@ -134,28 +134,21 @@ def FormatDataframe(df, dataset):
 
 def main():
     parser = argparse.ArgumentParser(description='Baseline eval')
-    parser.add_argument('--dir', type=str, required=False,default="", help="Result directory")
-    parser.add_argument('--dataset', type=str, required=False,default="Mulran", choices=["Mulran", "oxford"], help="Datset")
+    parser.add_argument('--dir', type=str, required=True, help="Result directory")
     parser.add_argument('--output', type=str, required=False, default="", help="Output dir for saved images")
+    parser.add_argument('--full_path', type=str, default="False", choices=["True", "False"],help="If dir is full path, or in TBV_Eval")
     args = parser.parse_args()
 
-    base_dir = os.environ["BAG_LOCATION"] + "/TBV_Eval/" + args.dir
-    out_dir = args.output
-    dataset = args.dataset
-    if(args.dir == ""):
-        if(dataset == "Mulran"):
-            base_dir = str(pathlib.Path(__file__).parent.resolve()) + "/../data/full_mulran_eval_2022-09-23_18-16/"
-        else:
-            base_dir = str(pathlib.Path(__file__).parent.resolve()) + "/../data/full_oxford_eval_2022-09-24_11-17/"
-    if(args.output == ""):
-        out_dir = base_dir + "/output/baseline/"
-
-    if(not pathlib.Path(base_dir)):
-        print(base_dir, "doesnt exist!")
-        exit()
+    base_dir = args.dir if args.full_path == 'True' else os.environ["BAG_LOCATION"] + "/TBV_Eval/" + args.dir
+    out_dir = args.output + "/output/baseline/" if args.output != '' else base_dir + "/output/baseline/"
+    dataset = pd.read_csv(base_dir+"/job_0/pars.txt", index_col=0, header=0, skipinitialspace=True).T["dataset"].values[0]
 
     pathlib.Path(out_dir).mkdir(parents=True, exist_ok=True)
-    print("created output dir at", out_dir)
+    print("Output dir:", out_dir)
+
+    if (not pathlib.Path(base_dir)) or (not pathlib.Path(out_dir)):
+        print(base_dir, "or", out_dir, "doesnt exist!")
+        exit()
 
     print("Loading data from", base_dir)
     df = LoadData(base_dir)

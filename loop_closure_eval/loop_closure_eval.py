@@ -23,25 +23,25 @@ def LoadData(base_dir):
 
 def GetNameFromSettings(feature_cols, guess0=True, radar_raw=1, augment=0, odometry_coupled=1):
     if feature_cols == ['sc-sim'] and guess0 and odometry_coupled == 0 and radar_raw == 1 and augment == 0:
-        return "1) SC raw radar"
+        return "1) Radar Scan Context"
 
     elif feature_cols == ['sc-sim'] and guess0 and odometry_coupled == 0 and radar_raw == 0 and augment == 0:
-        return "2) SC local map"
+        return "2) Aggregated point cloud map"
 
     elif feature_cols == ['sc-sim'] and guess0 and odometry_coupled == 0 and radar_raw == 0 and augment == 1:
-        return "3) SC local map, augment"
+        return "3) Origin augmentation"
 
     elif feature_cols == ['sc-sim', 'alignment_quality'] and guess0 and odometry_coupled == 0 and radar_raw == 0 and augment == 1:
-        return "4) SC local map, augment, CorAl"        
+        return "4) Alignment loop verification"
 
     elif feature_cols == ['odom-bounds', 'sc-sim', 'alignment_quality'] and guess0 and odometry_coupled == 0 and radar_raw == 0 and augment == 1:
-        return "5) SC local map, augment, CorAl, odometry decoupled"
+        return "5) Odometry decoupled"
 
     elif feature_cols == ['odom-bounds', 'sc-sim', 'alignment_quality'] and guess0 and odometry_coupled == 1 and radar_raw == 0 and augment == 1:
-        return "6) SC local map, augment, CorAl, odometry coupled"
+        return "6) Odometry coupled"
 
     elif feature_cols == ['odom-bounds', 'sc-sim', 'alignment_quality'] and not guess0 and odometry_coupled == 1 and radar_raw == 0 and augment == 1:
-        return "7) SC local map, augment, CorAl, odometry coupled, guess(0..N)"
+        return "7) Multiple candidate selection"
 
     else:
         return ''
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     base_dir = args.dir if args.full_path == 'True' else os.environ["BAG_LOCATION"] + "/TBV_Eval/" + args.dir
-    out_dir = args.output + "/output/baseline/" if args.output != '' else base_dir + "/output/baseline/"
+    out_dir = args.output + "/output/loop_closure_eval/" if args.output != '' else base_dir + "/output/loop_closure_eval/"
     dataset = pd.read_csv(base_dir+"/job_0/pars.txt", index_col=0, header=0, skipinitialspace=True).T["dataset"].values[0]
 
     pathlib.Path(out_dir).mkdir(parents=True, exist_ok=True)
@@ -180,7 +180,7 @@ if __name__ == '__main__':
     plt.title(dataset)
     handles, labels = plt.gca().get_legend_handles_labels()
     labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-    plt.legend(handles, labels, loc = 'lower left', fontsize="x-small")
+    plt.legend(handles, labels, loc = 'lower left')
     plt.savefig(out_dir + "/PR.pdf", bbox_inches='tight', format='pdf')
 
     # RESULT .csv FILE

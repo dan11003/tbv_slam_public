@@ -53,8 +53,9 @@ def PlotTrajectory(trajectories, title, dataset, output, gt, names, flip=False):
     if dataset=="oxford":
         pose_flip = -1
 
+    _flip = ''
     if flip:
-        title += "_flip"
+        _flip += "_flip"
         for index in range(len(trajectories)):
             trajectories[index] = np.transpose([[0,-1],[1,0]]@np.transpose(trajectories[index]))
     fig = plt.figure()
@@ -82,7 +83,7 @@ def PlotTrajectory(trajectories, title, dataset, output, gt, names, flip=False):
     plt.ylabel('y (m)', fontsize=fontsize_)
     fig.set_size_inches(10, 10)
 
-    fig_pdf =  output + "/" + title + ".pdf"
+    fig_pdf =  output + "/" + title + _flip + ".pdf"
     plt.savefig(fig_pdf, bbox_inches='tight', pad_inches=0)
 
 def main():
@@ -117,6 +118,7 @@ def main():
     for job in jobs:
         df = pd.read_csv(job+"/pars.txt", index_col=0, header=0, skipinitialspace=True).T
         sequence = df["sequence"].values[0]
+        method = df["method"].values[0]
         est_slam_base = job + "/est/??.txt"
         est_slam_path = glob.glob(est_slam_base)
         est_odom_base = job + "/odom/??.txt"
@@ -130,7 +132,7 @@ def main():
         trajectories = LoadData(paths, align)
 
         print("Save plots in:", out_dir)
-        PlotTrajectory(trajectories=trajectories, title=sequence, dataset=dataset, output=out_dir, gt=gt, names=["TBV SLAM-1", "CFEAR-3"], flip=flip)
+        PlotTrajectory(trajectories=trajectories, title=sequence, dataset=dataset, output=out_dir, gt=gt, names=[method, "CFEAR-3"], flip=flip)
 
 if __name__ == '__main__':
     main()

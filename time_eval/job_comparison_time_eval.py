@@ -30,7 +30,7 @@ def LoadData(base_dir):
 def SavePlots(df, out_dir, plot_parameters):
     sns.set_theme(style="ticks", color_codes=True)
     sns.set(style="ticks")
-    par_list = ["job"]
+    par_list = ["sequence"]
     for x in par_list:
         folder_idx = 0
         for y in plot_parameters:
@@ -75,4 +75,5 @@ if __name__ == '__main__':
     datapoints = len(df_full.index)
     print("Loaded: " + str(datapoints))
 
+    df_full['sequence'] = df_full.apply (lambda row: str(row["sequence"])[8:-20], axis=1)
     SavePlots(df_full, out_dir, df_full.columns[0:stats_len])

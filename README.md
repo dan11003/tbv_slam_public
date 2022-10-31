@@ -10,7 +10,7 @@ This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM
 
 
 ### Citation
-#### Cite TBV-RADAR-SLAM
+#### TBV-RADAR-SLAM
 ```
 @INPROCEEDINGS{9636253,  author={Adolfsson, Daniel and Magnusson, Martin and Alhashimi, Anas and Lilienthal, Achim J. and Andreasson, Henrik},
 booktitle={2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
@@ -19,7 +19,7 @@ year={2021},  volume={},  number={},  pages={5462-5469},
 doi={10.1109/IROS51168.2021.9636253}}
 ```
 
-#### Cite CFEAR Radarodometry (Odometry)
+#### CFEAR Radarodometry (Odometry)
 ```
 @INPROCEEDINGS{9636253,  author={Adolfsson, Daniel and Magnusson, Martin and Alhashimi, Anas and Lilienthal, Achim J. and Andreasson, Henrik},
 booktitle={2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
@@ -28,7 +28,7 @@ year={2021},  volume={},  number={},  pages={5462-5469},
 doi={10.1109/IROS51168.2021.9636253}}
 ````
 
-#### Cite CorAl Introspection (Fault awareness module)
+#### CorAl Introspection (Fault awareness module)
 ```
 @article{ADOLFSSON2022104136,
 title = {CorAl: Introspection for robust radar and lidar perception in diverse environments using differential entropy},

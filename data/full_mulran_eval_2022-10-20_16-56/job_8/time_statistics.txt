@@ -1,0 +1,36 @@
+Pose grapgh optimization avg, 928.306300
+Pose grapgh optimization dev [σ], 0.000000
+Pose grapgh optimization count, 1
+Verify loop candidate avg, 19.618463
+Verify loop candidate dev [σ], 65.425006
+Verify loop candidate count, 7452
+VerificationModel avg, 0.002171
+VerificationModel dev [σ], 0.000001
+VerificationModel count, 7452
+VerifyByOdometry avg, 1.651497
+VerifyByOdometry dev [σ], 1.347025
+VerifyByOdometry count, 7452
+Register avg, 9.901452
+Register dev [σ], 13.389802
+Register count, 7452
+itrs avg, 4.407273
+itrs dev [σ], 0.241402
+itrs count, 7452
+Apply contraints avg, 0.009328
+Apply contraints dev [σ], 0.000176
+Apply contraints count, 2492
+Loop-full avg, 120.822676
+Loop-full dev [σ], 542.935199
+Loop-full count, 2492
+Detect loop avg, 26.477346
+Detect loop dev [σ], 28.486160
+Detect loop count, 2492
+gather statistics avg, 1.487782
+gather statistics dev [σ], 1.900922
+gather statistics count, 7452
+VerifyByAlignment avg, 17.960339
+VerifyByAlignment dev [σ], 62.414767
+VerifyByAlignment count, 7452
+Descriptor avg, 1.376620
+Descriptor dev [σ], 0.466712
+Descriptor count, 2492

@@ -30,7 +30,7 @@ def SaveTable(df, out_dir):
 def SavePlots(df, out_dir):
     sns.set_theme(style="ticks", color_codes=True)
     sns.set(style="ticks")
-    plots = ["avg", "std"]
+    plots = ["avg", "std", "tot"]
     for plot in plots:
         g = sns.catplot(x="task", y=plot,
                             data=df, saturation=.5,
@@ -66,11 +66,11 @@ if __name__ == '__main__':
 
     task = df_full[df_full.columns[0::3]].columns.values.tolist()
     task = [x[:-4] for x in task]
-    avg_time = df_full[df_full.columns[0::3]].mean(axis=0).values.tolist()
-    std_time = df_full[df_full.columns[1::3]].mean(axis=0).values.tolist()
-    count = df_full[df_full.columns[2::3]].mean(axis=0).values.tolist()
-
-    df_mean = pd.DataFrame({"task" : task, "avg" : avg_time, "std" : std_time, "count" : count})
+    avg_time = df_full[df_full.columns[0::3]].mean(axis=0).values
+    std_time = df_full[df_full.columns[1::3]].mean(axis=0).values
+    count = df_full[df_full.columns[2::3]].mean(axis=0).values
+    tot_time = avg_time * count
+    df_mean = pd.DataFrame({"task" : task, "avg" : avg_time, "std" : std_time, "count" : count, "tot" : tot_time})
 
     SavePlots(df_mean, out_dir)
 

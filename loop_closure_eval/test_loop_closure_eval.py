@@ -6,7 +6,6 @@ import math
 import argparse
 import numpy as np
 from itertools import product
-import seaborn as sns
 import pathlib
 from LoopClassifier import *
 from re import match
@@ -21,7 +20,7 @@ def LoadData(base_dir):
             dfs.append(df)
     return pd.concat(dfs, axis=0, ignore_index=True)
 
-def GetNameFromSettings(feature_cols, guess0=True, radar_raw=1, augment=0, odometry_coupled=1):
+def GetNameFromSettings(feature_cols, guess0=True, radar_raw=1, augment=0, odometry_coupled=1, desc_function="sum", no_point=0, sequence="", desc_divider=1):
     if feature_cols == ['sc-sim'] and guess0 and odometry_coupled == 0 and radar_raw == 1 and augment == 0:
         return "1) Radar Scan Context"
 
@@ -56,11 +55,13 @@ if __name__ == '__main__':
     parser.add_argument('--max_registration_distance', type=float, default=4, help='max registration distance for loop')
     parser.add_argument('--max_registration_rotation', type=float, default=2.5, help='max registration rotation for loop')
     parser.add_argument('--full_path', type=str, default="False", choices=["True", "False"],help="If dir is full path, or in TBV_Eval")
+    parser.add_argument('--sequences', type=str, default="False", choices=["True", "False"],help="If dir is full path, or in TBV_Eval")
     args = parser.parse_args()
 
     base_dir = args.dir if args.full_path == 'True' else os.environ["BAG_LOCATION"] + "/TBV_Eval/" + args.dir
     out_dir = args.output + "/output/loop_closure_eval/" if args.output != '' else base_dir + "/output/loop_closure_eval/"
     dataset = pd.read_csv(base_dir+"/job_0/pars.txt", index_col=0, header=0, skipinitialspace=True).T["dataset"].values[0]
+    plot_sequences = True if args.sequences == 'True' else False
 
     pathlib.Path(out_dir).mkdir(parents=True, exist_ok=True)
     print("Output dir:", out_dir)
@@ -90,25 +91,41 @@ if __name__ == '__main__':
     df_full['prediction pos ok'] = df_full.apply (lambda row: int(not row["is loop"] or row["candidate close"]), axis=1) #Please verify this logic. only false if is loop while candidate is far away
     df_full = df_full[(df_full['guess_nr'] >= 0 )]
 
+    if dataset == "oxford":
+        sequences = ["2019-01-10-12-32-52-radar-oxford-10k","2019-01-16-13-09-37-radar-oxford-10k","2019-01-17-13-26-39-radar-oxford-10k","2019-01-18-14-14-42-radar-oxford-10k","2019-01-18-15-20-12-radar-oxford-10k","2019-01-16-11-53-11-radar-oxford-10k","2019-01-10-11-46-21-radar-oxford-10k","2019-01-18-14-46-59-radar-oxford-10k"]
+    else: 
+        sequences = ["DCC01","DCC02","DCC03","KAIST01","KAIST02","KAIST03","Riverside01","Riverside02","Riverside03"]
+
     # Combinaiton parameters
-    guess_nr = [True, False]
+    guess_nr = [True,False]
     odometry_coupled = df_full["SC - odometry_coupled_closure"].unique()
     raw_scan_context = df_full["Scan Context - raw_scan_context"].unique()
     augmentations = df_full["SC - augment_sc"].unique()
-    N_aggregate = df_full["Scan Context - N_aggregate"].unique()
+    no_point = df_full["SC - no_point"].unique()
+    desc_function = df_full["SC - desc_function"].unique()
+    desc_divider = df_full["SC - desc_divider"].unique()
     feature_cols_all = [['sc-sim'], ['odom-bounds', 'sc-sim'], ['sc-sim', 'alignment_quality'], ['odom-bounds', 'sc-sim', 'alignment_quality']]
 
-    all_setings = [guess_nr, raw_scan_context, odometry_coupled, augmentations, feature_cols_all, N_aggregate]
+    all_setings = [guess_nr, raw_scan_context, odometry_coupled, augmentations, feature_cols_all, no_point, desc_function, desc_divider]
+    if plot_sequences:
+        all_setings.append(sequences)
+        
     settings_combinations = product(*all_setings)
 
     # Loop over alla selected combinations
     for settings in settings_combinations:
-        guess0, radar_raw, odometry_coupled, augmentations, feature_cols, N_aggregate = settings
+        if plot_sequences:
+            guess0, radar_raw, odometry_coupled, augmentations, feature_cols, no_point, desc_function, desc_divider, sequence = settings
+        else:
+            guess0, radar_raw, odometry_coupled, augmentations, feature_cols, no_point, desc_function, desc_divider = settings
         # See if current parameter combination is of interest
-        name = GetNameFromSettings(feature_cols, guess0=guess0, radar_raw=radar_raw, odometry_coupled=odometry_coupled, augment=augmentations, n_aggregate=N_aggregate)
+        name = GetNameFromSettings(feature_cols, guess0=guess0, radar_raw=radar_raw, odometry_coupled=odometry_coupled, augment=augmentations, no_point=no_point, desc_function=desc_function, desc_divider=desc_divider)
         if name != '':
-            print(name)
-            df = df_full[(df_full["SC - odometry_coupled_closure"] == odometry_coupled) & (df_full["Scan Context - raw_scan_context"] == radar_raw) & (df_full["SC - augment_sc"] == augmentations) & (df_full["Scan Context - N_aggregate"] == N_aggregate)]
+            if plot_sequences:
+                data_dir = "//media/daniel/m2_ssd/BAG_LOCATION/TBV_Eval/" + dataset + "/" + sequence + "/radar"
+                df = df_full[(df_full["SC - odometry_coupled_closure"] == odometry_coupled) & (df_full["Scan Context - raw_scan_context"] == radar_raw) & (df_full["SC - augment_sc"] == augmentations) & (df_full["SC - no_point"] == no_point) & (df_full["SC - desc_function"] == desc_function) & (df_full["SC - desc_divider"] == desc_divider) & (df_full["data_dir"] == data_dir)]
+            else:
+                df = df_full[(df_full["SC - odometry_coupled_closure"] == odometry_coupled) & (df_full["Scan Context - raw_scan_context"] == radar_raw) & (df_full["SC - augment_sc"] == augmentations) & (df_full["SC - no_point"] == no_point) & (df_full["SC - desc_function"] == desc_function) & (df_full["SC - desc_divider"] == desc_divider)]
             df = df.reset_index()
             df_filtered=df[ (df['guess_nr'] == 0 ) ]
 
@@ -150,57 +167,38 @@ if __name__ == '__main__':
             fpr, tpr, _ = metrics.roc_curve(y, y_prob)
             tpr[-1] = tpr[-2]
             roc_auc = metrics.auc(fpr, tpr)
-            plt.figure(0)
-            plt.plot(fpr, tpr, label = name, linewidth=2)
 
-            precision, recall, _ = precision_recall_curve(y, y_prob)
-            # pr_auc = metrics.auc(fpr, tpr)
-            recall[0] = recall[1]
-            precision[0] = precision[1]
-            plt.figure(1)
-            plt.plot(recall, precision, label = name, linewidth=2)
+            if plot_sequences:
+                plt.figure(sequence)
+                plt.plot(fpr, tpr, label = name, linewidth=1)
+            else:
+                plt.figure(0)
+                plt.plot(fpr, tpr, label = name, linewidth=0.5)
 
-    # ROC CURVE
-    plt.figure(0)
-    plt.xlim([-0.01, 1])
-    plt.ylim([0, 1])
-    plt.ylabel('True Positive Rate')
-    plt.xlabel('False Positive Rate')
-    plt.title(dataset)
-    plt.plot([0, 1], [0, 1],'r--', zorder=-1)
-    handles, labels = plt.gca().get_legend_handles_labels()
-    labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-    plt.legend(handles, labels, loc = 'lower right', fontsize="x-small")
-    plt.savefig(out_dir + "/ROC.pdf", bbox_inches='tight', format='pdf')
-    plt.savefig(out_dir + "/ROC.png")
-
-    # PR CURVE
-    plt.figure(1)
-    plt.xlim([0, 1])
-    plt.ylim([0, 1])
-    plt.ylabel('Precision')
-    plt.xlabel('Recall')
-    plt.title(dataset)
-    handles, labels = plt.gca().get_legend_handles_labels()
-    labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-    plt.legend(handles, labels, loc = 'lower left')
-    plt.savefig(out_dir + "/PR.pdf", bbox_inches='tight', format='pdf')
-    plt.savefig(out_dir + "/PR.png")
-
-    # RESULT .csv FILE
-    result_path = os.path.join(out_dir, "result.csv")
-    df_stats.sort_values(by=['Name'], inplace=True)
-    df_stats.reset_index(drop=True, inplace=True)
-    df_stats.to_csv(result_path, index=False)
-
-    # BAR GRAPHS
-    plot_parameters = stats_header[2:11]
-    sns.set_theme(style="ticks", color_codes=True)
-    sns.set(style="ticks")
-    for plot_par in plot_parameters:
-        g = sns.catplot(x="Name", y=plot_par,
-                            data=df_stats, saturation=.5,
-                            kind="bar", ci=None, aspect=1)
-        g.set_xticklabels(rotation=90)
-        file_name = ''.join(e for e in plot_par if e.isalnum())
-        plt.savefig(out_dir + "/" + file_name + ".pdf", bbox_inches='tight', format='pdf')
+    if plot_sequences:
+        for sequence in sequences:
+            # ROC CURVE
+            plt.figure(sequence)
+            plt.xlim([-0.01, 1])
+            plt.ylim([0, 1])
+            plt.ylabel('True Positive Rate')
+            plt.xlabel('False Positive Rate')
+            plt.title(sequence)
+            plt.plot([0, 1], [0, 1],'r--', zorder=-1)
+            handles, labels = plt.gca().get_legend_handles_labels()
+            labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
+            plt.legend(handles, labels, loc = 'lower right', fontsize="x-small")
+            plt.savefig(out_dir + "/" + sequence + "_ROC.pdf", bbox_inches='tight', format='pdf')
+    else:
+        # ROC CURVE
+        plt.figure(0)
+        plt.xlim([-0.01, 1])
+        plt.ylim([0, 1])
+        plt.ylabel('True Positive Rate')
+        plt.xlabel('False Positive Rate')
+        plt.title(dataset)
+        plt.plot([0, 1], [0, 1],'r--', zorder=-1)
+        handles, labels = plt.gca().get_legend_handles_labels()
+        labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
+        plt.legend(handles, labels, loc = 'lower right', fontsize="x-small")
+        plt.savefig(out_dir + "/ROC.pdf", bbox_inches='tight', format='pdf')

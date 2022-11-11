@@ -21,27 +21,30 @@ def LoadData(base_dir):
             dfs.append(df)
     return pd.concat(dfs, axis=0, ignore_index=True)
 
-def GetNameFromSettings(feature_cols, guess0=True, radar_raw=1, augment=0, odometry_coupled=1):
-    if feature_cols == ['sc-sim'] and guess0 and odometry_coupled == 0 and radar_raw == 1 and augment == 0:
+def GetNameFromSettings(feature_cols, guess0=True, radar_raw=1, augment=0, odometry_coupled=1, cascaded=False):
+    if feature_cols == ['sc-sim'] and guess0 and odometry_coupled == 0 and radar_raw == 1 and augment == 0 and cascaded == False:
         return "1) Radar Scan Context"
 
-    elif feature_cols == ['sc-sim'] and guess0 and odometry_coupled == 0 and radar_raw == 0 and augment == 0:
+    elif feature_cols == ['sc-sim'] and guess0 and odometry_coupled == 0 and radar_raw == 0 and augment == 0 and cascaded == False:
         return "2) Aggregated point cloud map"
 
-    elif feature_cols == ['sc-sim'] and guess0 and odometry_coupled == 0 and radar_raw == 0 and augment == 1:
+    elif feature_cols == ['sc-sim'] and guess0 and odometry_coupled == 0 and radar_raw == 0 and augment == 1 and cascaded == False:
         return "3) Origin augmentation"
 
-    elif feature_cols == ['sc-sim', 'alignment_quality'] and guess0 and odometry_coupled == 0 and radar_raw == 0 and augment == 1:
+    elif feature_cols == ['sc-sim', 'alignment_quality'] and guess0 and odometry_coupled == 0 and radar_raw == 0 and augment == 1 and cascaded == False:
         return "4) Alignment loop verification"
 
-    elif feature_cols == ['odom-bounds', 'sc-sim', 'alignment_quality'] and guess0 and odometry_coupled == 0 and radar_raw == 0 and augment == 1:
+    elif feature_cols == ['odom-bounds', 'sc-sim', 'alignment_quality'] and guess0 and odometry_coupled == 0 and radar_raw == 0 and augment == 1 and cascaded == False:
         return "5) Odometry decoupled"
 
-    elif feature_cols == ['odom-bounds', 'sc-sim', 'alignment_quality'] and guess0 and odometry_coupled == 1 and radar_raw == 0 and augment == 1:
+    elif feature_cols == ['odom-bounds', 'sc-sim', 'alignment_quality'] and guess0 and odometry_coupled == 1 and radar_raw == 0 and augment == 1 and cascaded == False:
         return "6) Odometry coupled"
 
-    elif feature_cols == ['odom-bounds', 'sc-sim', 'alignment_quality'] and not guess0 and odometry_coupled == 1 and radar_raw == 0 and augment == 1:
-        return "7) Multiple candidate selection"
+    elif feature_cols == ['odom-bounds', 'sc-sim', 'alignment_quality'] and guess0 and odometry_coupled == 1 and radar_raw == 0 and augment == 1 and cascaded == True:
+        return "7) Cascaded classifier"
+
+    elif feature_cols == ['odom-bounds', 'sc-sim', 'alignment_quality'] and not guess0 and odometry_coupled == 1 and radar_raw == 0 and augment == 1 and cascaded == False:
+        return "8) Multiple candidate selection"
 
     else:
         return ''
@@ -74,9 +77,6 @@ if __name__ == '__main__':
     # Read experiment csv file
     df_full = LoadData(base_dir)
 
-    stats_header = ['Name', 'Settings', 'Training accuracy[%]', 'Training precision [%]', 'Training recall [%]', 'Testing accurac [%]', 'Testing precision [%]', 'Testing recall [%]', 'nr correct candidates', 'nr loops', 'correct_loop_ratio [%]', 'Coef', 'Intercept', 'Threshold', 'max_distance', 'max_registration_distance', 'max_registration_rotation']
-    df_stats = pd.DataFrame(columns=stats_header)
-
     dataset = pd.read_csv(base_dir+"/job_0/pars.txt", index_col=0, header=0, skipinitialspace=True).T["dataset"].values[0]
 
     datapoints = len(df_full.index)
@@ -95,30 +95,37 @@ if __name__ == '__main__':
     odometry_coupled = df_full["SC - odometry_coupled_closure"].unique()
     raw_scan_context = df_full["Scan Context - raw_scan_context"].unique()
     augmentations = df_full["SC - augment_sc"].unique()
-    N_aggregate = df_full["Scan Context - N_aggregate"].unique()
     feature_cols_all = [['sc-sim'], ['odom-bounds', 'sc-sim'], ['sc-sim', 'alignment_quality'], ['odom-bounds', 'sc-sim', 'alignment_quality']]
+    cascaded = [True, False]
 
-    all_setings = [guess_nr, raw_scan_context, odometry_coupled, augmentations, feature_cols_all, N_aggregate]
+    all_setings = [guess_nr, raw_scan_context, odometry_coupled, augmentations, feature_cols_all, cascaded]
     settings_combinations = product(*all_setings)
 
     # Loop over alla selected combinations
     for settings in settings_combinations:
-        guess0, radar_raw, odometry_coupled, augmentations, feature_cols, N_aggregate = settings
+        guess0, radar_raw, odometry_coupled, augmentations, feature_cols, cascaded = settings
         # See if current parameter combination is of interest
-        name = GetNameFromSettings(feature_cols, guess0=guess0, radar_raw=radar_raw, odometry_coupled=odometry_coupled, augment=augmentations, n_aggregate=N_aggregate)
+        name = GetNameFromSettings(feature_cols, guess0=guess0, radar_raw=radar_raw, odometry_coupled=odometry_coupled, augment=augmentations, cascaded=cascaded)
         if name != '':
             print(name)
-            df = df_full[(df_full["SC - odometry_coupled_closure"] == odometry_coupled) & (df_full["Scan Context - raw_scan_context"] == radar_raw) & (df_full["SC - augment_sc"] == augmentations) & (df_full["Scan Context - N_aggregate"] == N_aggregate)]
+            df = df_full[(df_full["SC - odometry_coupled_closure"] == odometry_coupled) & (df_full["Scan Context - raw_scan_context"] == radar_raw) & (df_full["SC - augment_sc"] == augmentations)]
             df = df.reset_index()
             df_filtered=df[ (df['guess_nr'] == 0 ) ]
 
             # Train classifier
             df_train = df_filtered[(df_filtered['prediction pos ok']==True) & (df_filtered['id_from']!=df_filtered['id_to']) ]
-            X_train = df_train[feature_cols].to_numpy()
             y_train = df_train['is loop'].to_numpy()
-            y_train_pos_ok = df_train['candidate close'].to_numpy()
-            logreg, y_train_pred = TrainClassifier(X_train,y_train) #Train classifier on subset of data to avoid position errors
-            train_acc, train_precision, train_recall, tn, fp, fn, tp, cnf_matrix_train, _ = ComputeClassifierStatistics(y_train, y_train_pred, y_train_pos_ok) #extract statistics
+
+            # If cascaded (two) classifiers or one combined classifier
+            if cascaded == False:
+                X_train = df_train[feature_cols].to_numpy()
+                logreg, _ = TrainClassifier(X_train,y_train) #Train classifier on subset of data to avoid position errors
+            else:
+                X_sc_train = df_train[['odom-bounds', 'sc-sim']].to_numpy()
+                sc_logreg, _ = TrainClassifier(X_sc_train,y_train) #Train classifier on subset of data to avoid position errors
+
+                X_align_train = df_train[['alignment_quality']].to_numpy()
+                align_logreg, _ = TrainClassifier(X_align_train,y_train) #Train classifier on subset of data to avoid position errors
 
             # Update df_filtered using best probabilites
             if not guess0:
@@ -132,21 +139,18 @@ if __name__ == '__main__':
                 df_filtered=df.loc[max_idx.tolist()] #create new df for highest probability candidates
             df_filtered.reset_index()
 
-            nr_correct_candidates = df_filtered['candidate close'].sum()
-            nr_loops = df_filtered['is loop'].sum()
-            correct_loop_ratio = nr_correct_candidates/nr_loops
-
-            X_test = df_filtered[feature_cols].to_numpy()
-            y_test = df_filtered['is loop'].to_numpy()
-            y_test_pos_ok = df_filtered['candidate close'].to_numpy()
-            y_test_pred = Predict(logreg, X_test, pthreshold) #Predict on all datapoints
-
-            acc_test, test_precision, test_recall, tn, fp_test, fn, tp, cnf_matrix_test, y_test = ComputeClassifierStatistics(y_test, y_test_pred, y_test_pos_ok) #extract statistics and fix "y_test"
-
-            df_stats.loc[len(df_stats)] = [name[0:2], name, train_acc*100, train_precision*100, train_recall*100, acc_test*100, test_precision*100, test_recall*100, nr_correct_candidates, nr_loops, correct_loop_ratio*100, logreg.coef_, logreg.intercept_, pthreshold, args.max_distance, args.max_registration_distance, args.max_registration_rotation]
-
             y = df_filtered['is loop'].to_numpy()
-            y_prob = logreg.predict_proba(X_test)[:,1] * df_filtered['prediction pos ok'].values
+
+            # If cascaded (two) classifiers or one combined classifier
+            if  cascaded == False:
+                X_test = df_filtered[feature_cols].to_numpy()
+                y_prob = logreg.predict_proba(X_test)[:,1] * df_filtered['prediction pos ok'].values
+            else:
+                sc_X_test = df_filtered[['odom-bounds', 'sc-sim']].to_numpy()
+                align_X_test = df_filtered[['alignment_quality']].to_numpy()
+                sc_y_pred = sc_logreg.predict(sc_X_test)
+                y_prob = sc_y_pred * align_logreg.predict_proba(align_X_test)[:,1] * df_filtered['prediction pos ok'].values
+
             fpr, tpr, _ = metrics.roc_curve(y, y_prob)
             tpr[-1] = tpr[-2]
             roc_auc = metrics.auc(fpr, tpr)
@@ -186,21 +190,3 @@ if __name__ == '__main__':
     plt.legend(handles, labels, loc = 'lower left')
     plt.savefig(out_dir + "/PR.pdf", bbox_inches='tight', format='pdf')
     plt.savefig(out_dir + "/PR.png")
-
-    # RESULT .csv FILE
-    result_path = os.path.join(out_dir, "result.csv")
-    df_stats.sort_values(by=['Name'], inplace=True)
-    df_stats.reset_index(drop=True, inplace=True)
-    df_stats.to_csv(result_path, index=False)
-
-    # BAR GRAPHS
-    plot_parameters = stats_header[2:11]
-    sns.set_theme(style="ticks", color_codes=True)
-    sns.set(style="ticks")
-    for plot_par in plot_parameters:
-        g = sns.catplot(x="Name", y=plot_par,
-                            data=df_stats, saturation=.5,
-                            kind="bar", ci=None, aspect=1)
-        g.set_xticklabels(rotation=90)
-        file_name = ''.join(e for e in plot_par if e.isalnum())
-        plt.savefig(out_dir + "/" + file_name + ".pdf", bbox_inches='tight', format='pdf')

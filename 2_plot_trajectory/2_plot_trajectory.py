@@ -98,7 +98,7 @@ def main():
     args = parser.parse_args()
 
     base_dir = args.dir if args.full_path == 'True' else os.environ["BAG_LOCATION"] + "/TBV_Eval/" + args.dir
-    out_dir = args.output + "/output/plotTrajectory/" if args.output != '' else base_dir + "/output/plotTrajectory/"
+    out_dir = args.output + "/output/plot_trajectory/" if args.output != '' else base_dir + "/output/plot_trajectory/"
     dataset = pd.read_csv(base_dir+"/job_0/pars.txt", index_col=0, header=0, skipinitialspace=True).T["dataset"].values[0]
 
     gt = args.gt == "True"

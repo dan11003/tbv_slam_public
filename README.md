@@ -8,23 +8,37 @@ This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM
 
 # Prerequisites
 
-Add prerequisites
+* Install the Google Ceres solver  http://ceres-solver.org/installation.html
+* ROS [Melodic](http://wiki.ros.org/melodic) or later, tested with ubuntu 16.04, 18.04 and 20.04
+* ...
 
-# Download data (Oxford Radar RobotCar)
+## How to build with catkin
+
+Clone the following reposistories:
+```
+git@github.com:dan11003/tbv_slam.git branch develop_TBV_slam
+git@github.com:dan11003/tbv_slam_public.git branch master
+git@github.com:dan11003/CFEAR_Radarodometry_code_public.git branch release
+git@github.com:dan11003/CorAl-ScanAlignmentClassification.git branch tbv_integration
+git@github.com:dan11003/radar_kitti_benchmark.git branch master
+git@github.com:mattiask98/Place-Recognition-Radar-.git branch tbv_integration
+```
+
+## Download radar data
 
 Download links
 
-# Generate odometry and training data
+# Preprocessing odometry and generate training data
+To improve speed, odometry is not being estimated on-the-fly, it is instead preprocessed separately and stored into constriant graphs (simple_graph.sgh). This can be done using:
 
-## Generate odometry and CFEAR/CorAl training data for a single oxford sequence (_2019-01-10-12-32-52-radar-oxford-10k_).
-
+## Odometry and CFEAR/CorAl training data for a single sequence (_2019-01-10-12-32-52-radar-oxford-10k_).
 ```
 roscd tbv_slam/script/oxford/training
 . odometry_training_oxford 
 ```
 
 Data generated in _$BAG_LOCAITON/TBV_Eval/dataset/sequence_.
-Data includes :
+Data includes:
 * __est/__ : odometry estimation
 * __gt/__ : ground truth
 * __radar/__ : raw radar images
@@ -45,26 +59,25 @@ roscd tbv_slam/script/oxford/training
 ```
 
 # Running TBV-SLAM
-## TBV-8 on a single oxford sequence (_2019-01-10-12-32-52-radar-oxford-10k_).
+## TBV-8 single sequence (_2019-01-10-12-32-52-radar-oxford-10k_).
 ```
 roscd tbv_slam/script/oxford/tbv_eval
 . run_eval_oxford_tbv8.sh
 ```
 Output: _$BAG_LOCATION/TBV_Eval/oxford_tbv_model_8_current_date_
 
-## TBV-8 on all oxford sequences.
+## TBV-8 all oxford sequences.
 ```
 roscd tbv_slam/script/oxford/tbv_eval
 . run_eval_oxford_all_tbv8.sh
 ```
-Output: _$BAG_LOCATION/TBV_Eval/oxford_all_tbv_model_8_current_date_
-
-## Loop closure abliation experiment oxford.
+Output: _$BAG_LOCATION/TBV_Eval/oxford_all_tbv_model_8_current_date
+## Loop closure abliation oxford.
 ```
 roscd tbv_slam/script/oxford/evaluate_loop_closure
 . run_loop_closure_oxford.sh
 ```
-Output: _$BAG_LOCATION/TBV_Eval/loop_closure_ablation_study_oxford_current_data_
+Output: _$BAG_LOCATION/TBV_Eval/loop_closure_ablation_study_oxford_current_date_
 
 ## Visualize
 Use __run.vis.sh__ to visualize the TBV SLAM process.
@@ -72,6 +85,8 @@ Use __run.vis.sh__ to visualize the TBV SLAM process.
 Parameters:
 * __-d__ dataset
 * __-s__ sequence
+
+Output: _$BAG_LOCATION/TBV_Eval/vis_dataset_sequence_current_date_
 
 Example command:
 ```

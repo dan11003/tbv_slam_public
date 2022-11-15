@@ -1,0 +1,12 @@
+Training accuracy[%], 98.521
+Training precision [%], 93.532
+Training recall [%], 98.301
+Testing accurac [%], 96.930
+Testing precision [%], 98.588
+Testing recall [%], 84.606
+nr correct candidates, 770
+nr loops, 833
+correct_loop_ratio [%], 92.437
+Coef, [[ -4.93335248 -11.35318349   0.27722829]]
+Intercept [4.5290905]
+Threshold, 0.9

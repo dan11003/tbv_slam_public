@@ -1,0 +1,79 @@
+range res, 0.0438
+z min, 60
+min distance, 2.5
+max distance, 200
+k strongest, 40
+topic_filtered, /Navtech/Filtered
+radar_frameid, sensor_est
+dataset, oxford
+filter type, kstrong
+nb guard cells, 40
+window size, 1
+false alarm rate, 1
+input_points_topic, /Navtech/Filtered
+scan_registered_latest_topic, radar_registered
+scan_registered_keyframe_topic, radar_registered_keyframe
+odom_latest_topic, radar_odom
+odom_keyframe_topic, radar_odom_keyframe
+use raw pointcloud, false
+submap keyframes, 4
+resolution r,3
+resample factor f, 1
+min. sensor distance [m], 1.5
+min. sensor rot. [deg], 5
+use keyframe, true
+use initial guess, true
+radar reversed, false
+disable registration, false
+soft velocity constraint, false
+compensate, true
+cost type, P2P
+loss type, Huber
+loss limit, 0.100000
+covar scale, 1.000000
+regularization, 1.000000
+weight intensity, true
+publish_tf, true
+store graph, true
+Weight, 4
+odom_est_topic, 
+gt_topic, 
+est_output_dir, /media/mattias/2TB/radardata/TBV_Eval/Oxford/2019-01-10-12-32-52-radar-oxford-10k/est/
+gt_output_dir, /media/mattias/2TB/radardata/TBV_Eval/Oxford/2019-01-10-12-32-52-radar-oxford-10k/gt/
+sequence, 2019-01-10-12-32-52-radar-oxford-10k
+job nr, 1
+save pcd, 0
+method, cfear-3
+
+nr_frames, 8617
+publish_etc avg, 0.705042
+publish_etc dev [σ], 0.042636
+publish_etc count, 8617
+register avg, 27.130689
+register dev [σ], 114.923184
+register count, 8617
+build_normals avg, 6.028905
+build_normals dev [σ], 3.524085
+build_normals count, 8617
+Registration avg, 118007451973.289185
+Registration dev [σ], 22221966417.483765
+Registration count, 8618
+compensate avg, 0.931859
+compensate dev [σ], 0.158841
+compensate count, 8617
+itrs avg, 4.640130
+itrs dev [σ], 0.896024
+itrs count, 8617
+Surface points avg, 313.160246
+Surface points dev [σ], 8088.341808
+Surface points count, 8618
+velocity avg, 4.201484
+velocity dev [σ], 8.160921
+velocity count, 8617
+Filtered points avg, 13819.838826
+Filtered points dev [σ], 1565036.971354
+Filtered points count, 8618
+Filtering avg, 11.684657
+Filtering dev [σ], 69.856453
+Filtering count, 8618
+

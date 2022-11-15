@@ -1,0 +1,51 @@
+input_directory, //media/daniel/m2_ssd/BAG_LOCATION/TBV_Eval
+dataset, Mulran
+sequence, Riverside03
+simple_graph path, //media/daniel/m2_ssd/BAG_LOCATION/TBV_Eval/Mulran/Riverside03/est/simple_graph.sgh
+eval_output dir, /media/daniel/m2_ssd/BAG_LOCATION/TBV_Eval/mulran_tbv_model_7_2022-10-28_13-46/job_8
+visualize, false
+experiment name, mulran_tbv_model_7
+method, TBV SLAM-8
+disable_optimization, 0
+est_output_dir, /media/daniel/m2_ssd/BAG_LOCATION/TBV_Eval/mulran_tbv_model_7_2022-10-28_13-46/job_8/est
+gt_output_dir, /media/daniel/m2_ssd/BAG_LOCATION/TBV_Eval/mulran_tbv_model_7_2022-10-28_13-46/job_8/gt
+DerivedMiniClosure - MiniClosure_enabled, 0
+DerivedMiniClosure - max_d_close_, 15.000000
+DerivedMiniClosure - max_d_travel_, 15.000000
+DerivedMiniClosure - min_d_travel_, 25.000000
+GTVicinity - GTVicinity_enabled, 0
+GTVicinity - max_d_close_, 15.000000
+GTVicinity - max_d_travel_, 4200.000000
+GTVicinity - min_d_travel_, 40.000000
+SC - NUM_CANDIDATES_FROM_TREE, 10
+SC - N_CANDIDATES, 3
+SC - PC_NUM_RING, 40
+SC - PC_NUM_SECTORS, 120
+SC - SC_DIST_THRES, 0.800000
+SC - SEARCH_RATIO, 0.100000
+SC - augment_sc, 1
+SC - desc_divider, 1000.000000
+SC - desc_function, sum
+SC - desc_plot, 0
+SC - interpolation, area
+SC - no_point, 0.000000
+SC - normalize, 0
+SC - odom_sigma_error, 0.050000
+SC - odometry_coupled_closure, 1
+SC - prints, 1
+SC - radar_threshold, 0.000000
+Scan Context - N_aggregate, 1
+Scan Context - SCClosure_enabled, 1
+Scan Context - raw_scan_context, 0
+Scan Context - use_peaks, 1
+all_candidates, 0
+data_dir, //media/daniel/m2_ssd/BAG_LOCATION/TBV_Eval/Mulran/Riverside03/radar
+idx_halt, 0
+model_threshold, 0.900000
+model_training_file_load, tbv_model_7.txt
+odom_sigma_error, 0.050000
+registration_disabled, 0
+training_data_dir, //media/daniel/m2_ssd/BAG_LOCATION/TBV_Eval/Mulran/Riverside03/training
+verification_disabled, 0
+verify_via_odometry, 1
+

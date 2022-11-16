@@ -38,9 +38,6 @@ ${BAG_LOCATION}
         │   
         └───radar
             │   bagfile (2019-01-10-12-32-52-radar-oxford-10k.bag)
-              
-   
-
 ```
 Download links
 Bag files can be downloaded from [here](https://drive.google.com/drive/folders/1uATfrAe-KHlz29e-Ul8qUbUKwPxBFIhP?usp=share_link).
@@ -48,16 +45,16 @@ Additional bag files can be created by following [our guide](https://github.com/
 
 
 ## Preprocessing odometry and generate training data
-To improve speed of evaluation, odometry is not being estimated on-the-fly, it is instead preprocessed separately and stored into constriant graphs (simple_graph.sgh). This can be done using:
+To improve speed of evaluation, odometry is not being estimated on-the-fly, it is instead preprocessed separately and stored into constraint graphs (simple_graph.sgh). This can be done using:
 
-## Single Oxford sequence - Odometry and CFEAR/CorAl training
+### Single Oxford sequence - Odometry and CFEAR/CorAl training
 Generate odometry and training data for Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
 ```
 roscd tbv_slam/script/oxford/training
 . odometry_training_oxford
 ```
 
-Odometry will be stored to _$BAG_LOCAITON/TBV_Eval/dataset/sequence_.
+Odometry will be stored to _$BAG_LOCATION/TBV_Eval/dataset/sequence_.
 Data includes:
 * __est/__ : odometry estimation
 * __gt/__ : ground truth
@@ -65,7 +62,7 @@ Data includes:
 * __training/__ : training data for alignment
 * __pars.txt__ : parameter file
 
-## (Optional) All Oxford sequences - Odometry and CFEAR/CorAl training
+### (Optional) All Oxford sequences - Odometry and CFEAR/CorAl training
 Generate odometry and training data for  8 Oxford sequences.
 ```
 roscd tbv_slam/script/oxford/training
@@ -105,7 +102,7 @@ roscd tbv_slam/script/oxford/tbv_eval
 . run_eval_oxford_all_tbv8.sh
 ```
 Output: _$BAG_LOCATION/TBV_Eval/oxford_all_tbv_model_8_current_date
-## Loop closure abliation oxford.
+## (Optional) Loop closure ablation
 This runs a parameter study, needed to generate Fig.4 in our article.
 ```
 roscd tbv_slam/script/oxford/evaluate_loop_closure

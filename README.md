@@ -16,20 +16,39 @@ This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM
 
 Clone the following repositories:
 ```
+git@github.com:dan11003/tbv_slam.git branch develop_TBV_slam
 git@github.com:dan11003/tbv_slam_public.git branch master
-git@github.com:dan11003/tbv_slam.git branch RAL-V1-SUBMISSION
-git@github.com:dan11003/CFEAR_Radarodometry_code_public.git branch RAL-V1-SUBMISSION
-git@github.com:dan11003/CorAl-ScanAlignmentClassification.git branch RAL-V1-SUBMISSION
-git@github.com:dan11003/radar_kitti_benchmark.git branch RAL-V1-SUBMISSION
-git@github.com:mattiask98/Place-Recognition-Radar-.git branch RAL-V1-SUBMISSION
+git@github.com:dan11003/CFEAR_Radarodometry_code_public.git branch release
+git@github.com:dan11003/CorAl-ScanAlignmentClassification.git branch tbv_integration
+git@github.com:dan11003/radar_kitti_benchmark.git branch master
+git@github.com:mattiask98/Place-Recognition-Radar-.git branch tbv_integration
 ```
 
-## Download radar data
+## Download/Store radar data
+Set the environment variable ${BAG_LOCATION} to where all data is stored.
 
+We assume all data is placed within the following structure
+
+```
+${BAG_LOCATION}
+│     
+└───Dataset (E.g. Oxford)
+    │
+    └───Sequence (E.g. 2019-01-10-12-32-52-radar-oxford-10k)
+        │   
+        └───radar
+            │   bagfile (2019-01-10-12-32-52-radar-oxford-10k.bag)
+              
+   
+
+```
 Download links
+Bag files can be downloaded from [here](https://drive.google.com/drive/folders/1uATfrAe-KHlz29e-Ul8qUbUKwPxBFIhP?usp=share_link).
+Additional bag files can be created by following [our guide](https://github.com/dan11003/CFEAR_Radarodometry_code_public)
 
-# Preprocessing odometry and generate training data
-To improve speed, odometry is not being estimated on-the-fly, it is instead preprocessed separately and stored into constraint graphs (simple_graph.sgh). This can be done using:
+
+## Preprocessing odometry and generate training data
+To improve speed of evaluation, odometry is not being estimated on-the-fly, it is instead preprocessed separately and stored into constriant graphs (simple_graph.sgh). This can be done using:
 
 ## Single Oxford sequence - Odometry and CFEAR/CorAl training
 Generate odometry and training data for Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
@@ -38,7 +57,7 @@ roscd tbv_slam/script/oxford/training
 . odometry_training_oxford
 ```
 
-Data generated in _$BAG_LOCATION/TBV_Eval/dataset/sequence_.
+Odometry will be stored to _$BAG_LOCAITON/TBV_Eval/dataset/sequence_.
 Data includes:
 * __est/__ : odometry estimation
 * __gt/__ : ground truth
@@ -46,7 +65,7 @@ Data includes:
 * __training/__ : training data for alignment
 * __pars.txt__ : parameter file
 
-## All Oxford sequences - Odometry and CFEAR/CorAl training
+## (Optional) All Oxford sequences - Odometry and CFEAR/CorAl training
 Generate odometry and training data for  8 Oxford sequences.
 ```
 roscd tbv_slam/script/oxford/training
@@ -54,7 +73,7 @@ roscd tbv_slam/script/oxford/training
 ```
 
 # Running TBV-SLAM
-## Single Oxford sequence - TBV SLAM-8
+## Single Oxford sequence - TBV SLAM-8 (no visualization)
 Run TBV SLAM-8 on the Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
 ```
 roscd tbv_slam/script/oxford/tbv_eval
@@ -79,16 +98,15 @@ Output: _$BAG_LOCATION/TBV_Eval/vis_dataset_sequence_current_date_
 <img src="https://i.imgur.com/BewBgH0.gif" width="640" height="360" />
 
 
-## All Oxford sequences - TBV SLAM-8
+## (Optional) All Oxford sequences - TBV SLAM-8
 Run TBV SLAM-8 on all 8 Oxford sequences.
 ```
 roscd tbv_slam/script/oxford/tbv_eval
 . run_eval_oxford_all_tbv8.sh
 ```
 Output: _$BAG_LOCATION/TBV_Eval/oxford_all_tbv_model_8_current_date
-
-## Loop closure evaluation
-A loop closure ablation study for all TBV settings 1-8 over all Oxford sequences.
+## Loop closure abliation oxford.
+This runs a parameter study, needed to generate Fig.4 in our article.
 ```
 roscd tbv_slam/script/oxford/evaluate_loop_closure
 . run_loop_closure_oxford.sh

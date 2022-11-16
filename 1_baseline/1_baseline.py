@@ -9,6 +9,9 @@ import glob
 import argparse
 import os
 
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
+
 def LoadData(base_dir):
     dfs = []
     search_string="*slam_eval.csv"

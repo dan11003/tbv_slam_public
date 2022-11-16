@@ -6,10 +6,12 @@ import math
 import argparse
 import numpy as np
 from itertools import product
-import seaborn as sns
 import pathlib
 from LoopClassifier import *
 from re import match
+
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
 def LoadData(base_dir):
     dfs = []

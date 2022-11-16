@@ -8,6 +8,9 @@ import pathlib
 import os
 import pandas as pd
 
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
+
 def LoadData(paths, align):
     concatinated=[]
     for path in paths:

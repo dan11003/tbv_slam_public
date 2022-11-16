@@ -1,4 +1,4 @@
-# tbv_slam_public
+# TBV Radar SLAM
 
 ## Description
 This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM
@@ -14,7 +14,7 @@ This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM
 
 ## How to build with catkin
 
-Clone the following reposistories:
+Clone the following repositories:
 ```
 git@github.com:dan11003/tbv_slam_public.git branch master
 git@github.com:dan11003/tbv_slam.git branch RAL-V1-SUBMISSION
@@ -29,71 +29,72 @@ git@github.com:mattiask98/Place-Recognition-Radar-.git branch RAL-V1-SUBMISSION
 Download links
 
 # Preprocessing odometry and generate training data
-To improve speed, odometry is not being estimated on-the-fly, it is instead preprocessed separately and stored into constriant graphs (simple_graph.sgh). This can be done using:
+To improve speed, odometry is not being estimated on-the-fly, it is instead preprocessed separately and stored into constraint graphs (simple_graph.sgh). This can be done using:
 
-## Odometry and CFEAR/CorAl training data for a single sequence (_2019-01-10-12-32-52-radar-oxford-10k_).
+## Single Oxford sequence - Odometry and CFEAR/CorAl training
+Generate odometry and training data for Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
 ```
 roscd tbv_slam/script/oxford/training
-. odometry_training_oxford 
+. odometry_training_oxford
 ```
 
-Data generated in _$BAG_LOCAITON/TBV_Eval/dataset/sequence_.
+Data generated in _$BAG_LOCATION/TBV_Eval/dataset/sequence_.
 Data includes:
 * __est/__ : odometry estimation
 * __gt/__ : ground truth
 * __radar/__ : raw radar images
 * __training/__ : training data for alignment
 * __pars.txt__ : parameter file
-## Generate odometry and CFEAR/CorAl training data  for all oxford sequences.
 
+## All Oxford sequences - Odometry and CFEAR/CorAl training
+Generate odometry and training data for  8 Oxford sequences.
 ```
 roscd tbv_slam/script/oxford/training
 . odometry_training_all_oxford
 ```
 
-## Generate training data for verification model (TBV-8) 
-Not needed if tbv_slam/model_parameters/tbv_model_8.txt already exists.
-```
-roscd tbv_slam/script/oxford/training
-. verification_training_tbv8.sh
-```
-
 # Running TBV-SLAM
-## TBV-8 single sequence (_2019-01-10-12-32-52-radar-oxford-10k_).
+## Single Oxford sequence - TBV SLAM-8
+Run TBV SLAM-8 on the Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
 ```
 roscd tbv_slam/script/oxford/tbv_eval
 . run_eval_oxford_tbv8.sh
 ```
 Output: _$BAG_LOCATION/TBV_Eval/oxford_tbv_model_8_current_date_
 
-## TBV-8 all oxford sequences.
-```
-roscd tbv_slam/script/oxford/tbv_eval
-. run_eval_oxford_all_tbv8.sh
-```
-Output: _$BAG_LOCATION/TBV_Eval/oxford_all_tbv_model_8_current_date
-## Loop closure abliation oxford.
-```
-roscd tbv_slam/script/oxford/evaluate_loop_closure
-. run_loop_closure_oxford.sh
-```
-Output: _$BAG_LOCATION/TBV_Eval/loop_closure_ablation_study_oxford_current_date_
-
-## Visualize
-Use __run.vis.sh__ to visualize the TBV SLAM process.
+## Single Oxford sequence - TBV SLAM-8 (visualization)
+Run any sequence from any dataset (Oxford/Mulran/Volvo/Kvarntorp) with visualization enabled, use __run_vis.sh__
 
 Parameters:
 * __-d__ dataset
 * __-s__ sequence
 
-Output: _$BAG_LOCATION/TBV_Eval/vis_dataset_sequence_current_date_
 
 Example command:
 ```
 roscd tbv_slam/script
 . run_vis.sh -d oxford -s 2019-01-10-12-32-52-radar-oxford-10k
 ```
+Output: _$BAG_LOCATION/TBV_Eval/vis_dataset_sequence_current_date_
 <img src="https://i.imgur.com/BewBgH0.gif" width="640" height="360" />
+
+
+## All Oxford sequences - TBV SLAM-8
+Run TBV SLAM-8 on all 8 Oxford sequences.
+```
+roscd tbv_slam/script/oxford/tbv_eval
+. run_eval_oxford_all_tbv8.sh
+```
+Output: _$BAG_LOCATION/TBV_Eval/oxford_all_tbv_model_8_current_date
+
+## Loop closure evaluation
+A loop closure ablation study for all TBV settings 1-8 over all Oxford sequences.
+```
+roscd tbv_slam/script/oxford/evaluate_loop_closure
+. run_loop_closure_oxford.sh
+```
+Output: _$BAG_LOCATION/TBV_Eval/loop_closure_ablation_study_oxford_current_date_
+
 
 # Evaluation
 
@@ -104,43 +105,43 @@ Git repo: __tbv_slam_public__
 cd 1_baseline
 python3 3_loop_closure --full_path True --dir path_to_experiment
 ```
-Output: generated in *path_to_experiment/output/baseline/* includes:
+Output: *path_to_experiment/output/baseline/*
 * *table.txt* with results for the evaluated SLAM method compared to odometry. See => Tab. I & II
 * Bar charts for comparing average results for evaluated method
 * Bar charts for comparing sequence results for evaluated method
 
 Parameters:
-* __--dir__ experiment directory 
+* __--dir__ experiment directory
 * __--full_path__ (True/False) if experiment directory is given relative to $BAG_LOCATION or given as full path (default False)
-* __--output__  output directory (default *path_to_experiment/output/baseline/*)
+* __--output__ output directory (default *path_to_experiment/output/baseline/*)
 
 ## 2_plot_trajectory
 ```
 cd 2_plot_trajectory
 python3 3_loop_closure --full_path True --dir path/to/experiment
 ```
-Output: generated in *path_to_experiment/output/plot_trajectory/* includes:
+Output: *path_to_experiment/output/plot_trajectory/*
 * .pdf trajectory plots for each sequence. See => Fig. 5 & 6
 
 Parameters:
-* __--dir__ experiment directory 
+* __--dir__ experiment directory
 * __--full_path__ (True/False) if experiment directory is given relative to $BAG_LOCATION or given as full path (default False)
-* __--output__  output directory (default *path_to_experiment/output/baseline/*)
-* __--flip__  (True/False) flip trajectory (default False)
-* __--gt__  (True/False) include Ground Truth (default True)
-* __--align__  (True/False) align trajectory with Ground Truth (default True)
+* __--output__ output directory (default *path_to_experiment/output/baseline/*)
+* __--flip__ (True/False) flip trajectory (default False)
+* __--gt__ (True/False) include Ground Truth (default True)
+* __--align__ (True/False) align trajectory with Ground Truth (default True)
 
 ## 3_loop_closure
 ```
 cd 3_loop_closure
 python3 3_loop_closure --full_path True --dir path/to/experiment
 ```
-Output: generated in *path_to_experiment/output/loop_closure/* includes:
+Output: *path_to_experiment/output/loop_closure/*
 * .pdf & .png PR-curves for loop closure. See => Fig. 4
 * .pdf & .png ROC-curves for loop closure.
 
 Parameters:
-* __--dir__ experiment directory 
+* __--dir__ experiment directory
 * __--full_path__ (True/False) if experiment directory is given relative to $BAG_LOCATION or given as full path (default False)
 * __--output__  output directory (default *path_to_experiment/output/baseline/*)
 

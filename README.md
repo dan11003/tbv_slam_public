@@ -92,6 +92,7 @@ roscd tbv_slam/script/oxford/tbv_eval
 ```
 Output: _$BAG_LOCATION/TBV_Eval/oxford_all_tbv_model_8_current_date
 ## Loop closure abliation oxford.
+This runs a parameter study, needed to generate Fig.4 in our article.
 ```
 roscd tbv_slam/script/oxford/evaluate_loop_closure
 . run_loop_closure_oxford.sh

@@ -16,12 +16,12 @@ This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM
 
 Clone the following repositories:
 ```
-git@github.com:dan11003/tbv_slam.git branch develop_TBV_slam
 git@github.com:dan11003/tbv_slam_public.git branch master
-git@github.com:dan11003/CFEAR_Radarodometry_code_public.git branch release
-git@github.com:dan11003/CorAl-ScanAlignmentClassification.git branch tbv_integration
-git@github.com:dan11003/radar_kitti_benchmark.git branch master
-git@github.com:mattiask98/Place-Recognition-Radar-.git branch tbv_integration
+git@github.com:dan11003/tbv_slam.git branch RAL-V1-SUBMISSION
+git@github.com:dan11003/CFEAR_Radarodometry_code_public.git branch RAL-V1-SUBMISSION
+git@github.com:dan11003/CorAl-ScanAlignmentClassification.git branch RAL-V1-SUBMISSION
+git@github.com:dan11003/radar_kitti_benchmark.git branch RAL-V1-SUBMISSION
+git@github.com:mattiask98/Place-Recognition-Radar-.git branch RAL-V1-SUBMISSION
 ```
 
 ## Download/Store radar data
@@ -141,7 +141,7 @@ Output: *path_to_experiment/output/plot_trajectory/*
 Parameters:
 * __--dir__ experiment directory
 * __--full_path__ (True/False) if experiment directory is given relative to $BAG_LOCATION or given as full path (default False)
-* __--output__ output directory (default *path_to_experiment/output/baseline/*)
+* __--output__ output directory (default *path_to_experiment/output/plot_trajectory/*)
 * __--flip__ (True/False) flip trajectory (default False)
 * __--gt__ (True/False) include Ground Truth (default True)
 * __--align__ (True/False) align trajectory with Ground Truth (default True)
@@ -158,7 +158,7 @@ Output: *path_to_experiment/output/loop_closure/*
 Parameters:
 * __--dir__ experiment directory
 * __--full_path__ (True/False) if experiment directory is given relative to $BAG_LOCATION or given as full path (default False)
-* __--output__  output directory (default *path_to_experiment/output/baseline/*)
+* __--output__  output directory (default *path_to_experiment/output/loop_closure/*)
 
 # Citation
 #### TBV-RADAR-SLAM

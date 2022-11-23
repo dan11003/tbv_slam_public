@@ -118,7 +118,7 @@ Git repo: __tbv_slam_public__
 ## 1_baseline
 ```
 cd 1_baseline
-python3 3_loop_closure --full_path True --dir path_to_experiment
+python3 1_baseline_eval.py --full_path True --dir path_to_experiment
 ```
 Output: *path_to_experiment/output/baseline/*
 * *table.txt* with results for the evaluated SLAM method compared to odometry. See => Tab. I & II

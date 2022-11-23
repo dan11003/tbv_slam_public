@@ -51,7 +51,7 @@ To improve speed of evaluation, odometry is not being estimated on-the-fly, it i
 Generate odometry and training data for Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
 ```
 roscd tbv_slam/script/oxford/training
-. odometry_training_oxford
+./odometry_training_oxford
 ```
 
 Odometry will be stored to _$BAG_LOCATION/TBV_Eval/dataset/sequence_.
@@ -66,7 +66,7 @@ Data includes:
 Generate odometry and training data for  8 Oxford sequences.
 ```
 roscd tbv_slam/script/oxford/training
-. odometry_training_all_oxford
+./odometry_training_all_oxford
 ```
 
 # Running TBV-SLAM
@@ -74,7 +74,7 @@ roscd tbv_slam/script/oxford/training
 Run TBV SLAM-8 on the Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
 ```
 roscd tbv_slam/script/oxford/tbv_eval
-. run_eval_oxford_tbv8.sh
+./run_eval_oxford_tbv8.sh
 ```
 Output: _$BAG_LOCATION/TBV_Eval/oxford_tbv_model_8_current_date_
 
@@ -89,7 +89,7 @@ Parameters:
 Example command:
 ```
 roscd tbv_slam/script
-. run_vis.sh -d oxford -s 2019-01-10-12-32-52-radar-oxford-10k
+./run_vis.sh -d oxford -s 2019-01-10-12-32-52-radar-oxford-10k
 ```
 Output: _$BAG_LOCATION/TBV_Eval/vis_dataset_sequence_current_date_
 <img src="https://i.imgur.com/BewBgH0.gif" width="640" height="360" />
@@ -99,7 +99,7 @@ Output: _$BAG_LOCATION/TBV_Eval/vis_dataset_sequence_current_date_
 Run TBV SLAM-8 on all 8 Oxford sequences.
 ```
 roscd tbv_slam/script/oxford/tbv_eval
-. run_eval_oxford_all_tbv8.sh
+./run_eval_oxford_all_tbv8.sh
 ```
 Output: _$BAG_LOCATION/TBV_Eval/oxford_all_tbv_model_8_current_date
 ## (Optional) Loop closure ablation

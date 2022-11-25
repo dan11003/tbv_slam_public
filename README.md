@@ -16,12 +16,12 @@ This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM
 
 Clone the following repositories:
 ```
-git@github.com:dan11003/tbv_slam_public.git branch master
-git@github.com:dan11003/tbv_slam.git branch RAL-V1-SUBMISSION
-git@github.com:dan11003/CFEAR_Radarodometry_code_public.git branch RAL-V1-SUBMISSION
-git@github.com:dan11003/CorAl-ScanAlignmentClassification.git branch RAL-V1-SUBMISSION
-git@github.com:dan11003/radar_kitti_benchmark.git branch RAL-V1-SUBMISSION
-git@github.com:mattiask98/Place-Recognition-Radar-.git branch RAL-V1-SUBMISSION
+git clone git@github.com:dan11003/tbv_slam_public.git branch master
+git clone git@github.com:dan11003/tbv_slam.git branch RAL-V1-SUBMISSION
+git clone git@github.com:dan11003/CFEAR_Radarodometry_code_public.git branch RAL-V1-SUBMISSION
+git clone git@github.com:dan11003/CorAl-ScanAlignmentClassification.git branch RAL-V1-SUBMISSION
+git clone git@github.com:dan11003/radar_kitti_benchmark.git branch RAL-V1-SUBMISSION
+git clone git@github.com:mattiask98/Place-Recognition-Radar-.git branch RAL-V1-SUBMISSION
 ```
 
 ## Download/Store radar data

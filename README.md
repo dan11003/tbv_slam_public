@@ -132,8 +132,8 @@ Parameters:
 
 ## 2_plot_trajectory
 ```
-cd 2_plot_trajectory
-python3 3_loop_closure --full_path True --dir path/to/experiment
+cd 2_plotTrajectory/
+python3 2_plotTrajectory.py --full_path True --dir path/to/experiment
 ```
 Output: *path_to_experiment/output/plot_trajectory/*
 * .pdf trajectory plots for each sequence. See => Fig. 5 & 6

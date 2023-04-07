@@ -1,11 +1,12 @@
 # TBV Radar SLAM
+This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM. This work integrates [__CFEAR radar odometry__](https://github.com/dan11003/CFEAR_Radarodometry) with __introspective loop closure__ for robust mapping of large-scale environments.
 
-## Description
-This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM
-## Paper
-Under review, but released in [arXiv](https://arxiv.org/abs/2301.04397)
-## Code
-To be released in the future.
+
+[__Paper__](https://arxiv.org/abs/2301.04397) is currently under review.
+
+[__Demo__](https://www.youtube.com/watch?v=t8HQtHAUHHc).
+
+__Code__ will To be released in the future.
 
 
 <!---[![Watch the demo of TBV Radar SLAM](https://i.imgur.com/XtEKzz1.png)](https://youtu.be/vt5fpE0bzSY)--->
@@ -184,7 +185,7 @@ year={2021},  volume={},  number={},  pages={5462-5469},
 doi={10.1109/IROS51168.2021.9636253}}
 ````
 
-#### CorAl Introspection (Fault awareness module)
+#### CorAl Introspection (Part of the robust loop closure)
 ```
 @article{ADOLFSSON2022104136,
 title = {CorAl: Introspection for robust radar and lidar perception in diverse environments using differential entropy},

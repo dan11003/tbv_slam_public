@@ -2,8 +2,11 @@
 
 ## Description
 This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM
+## Paper
+Under review, but released in [arXiv](https://arxiv.org/abs/2301.04397)
 ## Code
 To be released in the future.
+
 
 <!---[![Watch the demo of TBV Radar SLAM](https://i.imgur.com/XtEKzz1.png)](https://youtu.be/vt5fpE0bzSY)--->
 <img src="https://i.imgur.com/XtEKzz1.png" width="640" height="640" />

@@ -8,7 +8,7 @@ This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM. 
 
 [__Demo__](https://www.youtube.com/watch?v=t8HQtHAUHHc).
 
-__Code__ will To be released in the future.
+__Code__ will To be released in autumn 2023
 
 
 <!---[![Watch the demo of TBV Radar SLAM](https://i.imgur.com/XtEKzz1.png)](https://youtu.be/vt5fpE0bzSY)--->

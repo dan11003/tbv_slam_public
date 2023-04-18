@@ -4,7 +4,7 @@
 This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM. This work integrates [__CFEAR radar odometry__](https://github.com/dan11003/CFEAR_Radarodometry) with __introspective loop closure__ for robust mapping of large-scale environments.
 
 
-[__Paper__](https://arxiv.org/abs/2301.04397) is currently under review.
+__Paper__: [preprint](https://arxiv.org/abs/2301.04397) or [published](https://ieeexplore.ieee.org/document/10103570/)
 
 [__Demo__](https://www.youtube.com/watch?v=t8HQtHAUHHc).
 

@@ -171,20 +171,28 @@ Parameters:
 # Citation
 #### TBV-RADAR-SLAM
 ```
-@INPROCEEDINGS{9636253,  author={Adolfsson, Daniel and Magnusson, Martin and Alhashimi, Anas and Lilienthal, Achim J. and Andreasson, Henrik},
-booktitle={2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
-title={CFEAR Radarodometry - Conservative Filtering for Efficient and Accurate Radar Odometry},
-year={2021},  volume={},  number={},  pages={5462-5469},
-doi={10.1109/IROS51168.2021.9636253}}
+@ARTICLE{10103570,
+  author={Adolfsson, Daniel and Karlsson, Mattias and Kubelka, Vladimír and Magnusson, Martin and Andreasson, Henrik},
+  journal={IEEE Robotics and Automation Letters}, 
+  title={TBV Radar SLAM – Trust but Verify Loop Candidates}, 
+  year={2023},
+  volume={8},
+  number={6},
+  pages={3613-3620},
+  doi={10.1109/LRA.2023.3268040}}
 ```
 
 #### CFEAR Radarodometry (Odometry)
 ```
-@INPROCEEDINGS{9636253,  author={Adolfsson, Daniel and Magnusson, Martin and Alhashimi, Anas and Lilienthal, Achim J. and Andreasson, Henrik},
-booktitle={2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
-title={CFEAR Radarodometry - Conservative Filtering for Efficient and Accurate Radar Odometry},
-year={2021},  volume={},  number={},  pages={5462-5469},
-doi={10.1109/IROS51168.2021.9636253}}
+@ARTICLE{9969174,
+  author={Adolfsson, Daniel and Magnusson, Martin and Alhashimi, Anas and Lilienthal, Achim J. and Andreasson, Henrik},
+  journal={IEEE Transactions on Robotics}, 
+  title={Lidar-Level Localization With Radar? The CFEAR Approach to Accurate, Fast, and Robust Large-Scale Radar Odometry in Diverse Environments}, 
+  year={2023},
+  volume={39},
+  number={2},
+  pages={1476-1495},
+  doi={10.1109/TRO.2022.3221302}}
 ````
 
 #### CorAl Introspection (Part of the robust loop closure)

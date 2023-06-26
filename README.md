@@ -8,6 +8,8 @@ __Paper__: [preprint](https://arxiv.org/abs/2301.04397) or [published](https://i
 
 [__Demo__](https://www.youtube.com/watch?v=t8HQtHAUHHc).
 
+[__IROS-2023 presentation__](https://www.youtube.com/watch?v=3n-40a-WZ8A).
+
 __Code__ will To be released in autumn 2023
 
 

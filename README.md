@@ -57,7 +57,7 @@ Additional bag files can be created by following [our guide](https://github.com/
 ## Preprocessing odometry and generate training data
 To improve speed of evaluation, odometry is not being estimated on-the-fly, it is instead preprocessed separately and stored into constraint graphs (simple_graph.sgh). This can be done using:
 
-### Single Oxford sequence - Odometry and CFEAR/CorAl training
+### Either: Single Oxford sequence - Precompute Odometry and CFEAR/CorAl alignment training data
 Generate odometry and training data for Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
 ```
 roscd tbv_slam/script/oxford/training
@@ -72,10 +72,10 @@ Data includes:
 * __training/__ : training data for alignment
 * __pars.txt__ : parameter file
 
-### (Optional) All Oxford sequences - Odometry and CFEAR/CorAl training
+### Or: All Oxford sequences - Precompute Odometry and CFEAR/CorAl alignment training data
 Generate odometry and training data for  8 Oxford sequences.
 ```
-roscd tbv_slam/script/oxford/training
+roscd tbv_slam/script/oxford/training/multiple_sequences
 ./odometry_training_all_oxford
 ```
 

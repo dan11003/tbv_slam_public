@@ -54,10 +54,12 @@ Bag files can be downloaded from [here](https://drive.google.com/drive/folders/1
 Additional bag files can be created by following [our guide](https://github.com/dan11003/CFEAR_Radarodometry_code_public)
 
 
-## Preprocessing odometry and generate training data
-To improve speed of evaluation, odometry is not being estimated on-the-fly, it is instead preprocessed separately and stored into constraint graphs (simple_graph.sgh). This can be done using:
+# 1. Advanced usage for Evaluation purposes - Precompute odometry and and training data
+To improve speed of evaluation, odometry is not being estimated on-the-fly, it is instead precomputed separately and stored into constraint graphs (simple_graph.sgh). 
+This step will be made optional in the future for online integration.
+Currently, precomputing can be done using:
 
-### Either: Single Oxford sequence - Precompute Odometry and CFEAR/CorAl alignment training data
+## Either: Single Oxford sequence - Precompute of Odometry and CFEAR/CorAl alignment data
 Generate odometry and training data for Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
 ```
 roscd tbv_slam/script/oxford/training
@@ -72,14 +74,14 @@ Data includes:
 * __training/__ : training data for alignment
 * __pars.txt__ : parameter file
 
-### Or: All Oxford sequences - Precompute Odometry and CFEAR/CorAl alignment training data
-Generate odometry and training data for  8 Oxford sequences.
+## Or: All Oxford sequences - Precompute Odometry and CFEAR/CorAl alignment training data
+Generate odometry and training data for 8 Oxford sequences.
 ```
 roscd tbv_slam/script/oxford/training/multiple_sequences
 ./odometry_training_all_oxford
 ```
 
-# Running TBV-SLAM
+# 2. Running TBV-SLAM
 ## Single Oxford sequence - TBV SLAM-8 (no visualization)
 Run TBV SLAM-8 on the Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
 ```

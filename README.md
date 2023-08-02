@@ -123,7 +123,7 @@ roscd tbv_slam/script/oxford/evaluate_loop_closure
 Output: _$BAG_LOCATION/TBV_Eval/loop_closure_ablation_study_oxford_current_date_
 
 
-# Evaluation
+# 3. Evaluation
 
 Git repo: __tbv_slam_public__
 

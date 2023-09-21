@@ -145,6 +145,7 @@ def main():
     base_dir = args.dir if args.full_path == 'True' else os.environ["BAG_LOCATION"] + "/TBV_Eval/" + args.dir
     out_dir = args.output + "/output/baseline/" if args.output != '' else base_dir + "/output/baseline/"
     dataset = pd.read_csv(base_dir+"/job_0/pars.txt", index_col=0, header=0, skipinitialspace=True).T["dataset"].values[0]
+    #dataset = pd.read_csv(base_dir+"pars.txt", index_col=0, header=0, skipinitialspace=True).T["dataset"].values[0]
 
     pathlib.Path(out_dir).mkdir(parents=True, exist_ok=True)
     print("Output dir:", out_dir)

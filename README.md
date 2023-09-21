@@ -20,7 +20,9 @@ __Code__ will To be released in autumn 2023
 
 * Install the Google Ceres solver  http://ceres-solver.org/installation.html
 * ROS [Melodic](http://wiki.ros.org/melodic) or later, tested with ubuntu 16.04, 18.04 and 20.04
-* ...
+* Pybind11, numpy, scikit-learn, seaborn, tqdm, tabulate
+
+For a reproducible environment, we provide a Dockerfile with this repo. Find the instructions below. 
 
 ## How to build with catkin
 
@@ -29,7 +31,7 @@ Clone the following repositories:
 git clone -b master git@github.com:dan11003/tbv_slam_public.git
 git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/tbv_slam.git
 git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/CFEAR_Radarodometry_code_public.git
-git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/CorAl-ScanAlignmentClassification.git branch 
+git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/CorAl-ScanAlignmentClassification.git
 git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/radar_kitti_benchmark.git
 git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/Place-Recognition-Radar-.git
 ```
@@ -52,6 +54,24 @@ ${BAG_LOCATION}
 Download links
 Bag files can be downloaded from [here](https://drive.google.com/drive/folders/1uATfrAe-KHlz29e-Ul8qUbUKwPxBFIhP?usp=share_link).
 Additional bag files can be created by following [our guide](https://github.com/dan11003/CFEAR_Radarodometry_code_public)
+
+## How to use with Docker (optionally)
+
+* Build the container:
+```
+cd <your/ws/path/src>/tbv_slam/docker
+docker build -t tbv_docker .
+```
+
+* Run the container: first, make sure that the environment variables "catkin_ws_path" and "BAG_LOCATION" in docker/run_docker.sh are set correctly.
+```
+./run_docker.sh
+cd catkin_ws
+catkin build tbv_slam
+source devel/setup.bash
+```
+
+Now, you should be ready to use tbv_slam from inside the docker in the same way as running it natively.
 
 
 # 1. Advanced usage for Evaluation purposes - Precompute odometry and and training data
@@ -130,7 +150,7 @@ Git repo: __tbv_slam_public__
 ## 1_baseline
 ```
 cd 1_baseline
-python3 1_baseline_eval.py --full_path True --dir path_to_experiment
+python3 1_baseline.py --full_path True --dir path_to_experiment
 ```
 Output: *path_to_experiment/output/baseline/*
 * *table.txt* with results for the evaluated SLAM method compared to odometry. See => Tab. I & II
@@ -145,7 +165,7 @@ Parameters:
 ## 2_plot_trajectory
 ```
 cd 2_plotTrajectory/
-python3 2_plotTrajectory.py --full_path True --dir path/to/experiment
+python3 2_plot_trajectory.py --full_path True --dir path/to/experiment
 ```
 Output: *path_to_experiment/output/plot_trajectory/*
 * .pdf trajectory plots for each sequence. See => Fig. 5 & 6
@@ -161,7 +181,7 @@ Parameters:
 ## 3_loop_closure
 ```
 cd 3_loop_closure
-python3 3_loop_closure --full_path True --dir path/to/experiment
+python3 3_loop_closure.py --full_path True --dir path/to/experiment
 ```
 Output: *path_to_experiment/output/loop_closure/*
 * .pdf & .png PR-curves for loop closure. See => Fig. 4
@@ -171,6 +191,20 @@ Parameters:
 * __--dir__ experiment directory
 * __--full_path__ (True/False) if experiment directory is given relative to $BAG_LOCATION or given as full path (default False)
 * __--output__  output directory (default *path_to_experiment/output/loop_closure/*)
+
+# 4. Compute Odometry, Loop Closure Detection, and Pose Graph optimization simultaneously 
+We also have a node allowing to perform Odometry, Loop Closure Detection, and Pose Graph Optimization simultaneously. 
+This node relies on previously trained alignment and loop closure classifiers. The coefficients of these classifiers are stored in the model_parameters directory.
+Further parameters can be adjusted in the shell scripts.
+
+```
+roscd tbv_slam/script/<oxford or mulran or kvarntorp or volvo>/
+./run_parallel.sh
+```
+For Oxford and Mulran, make sure that the correct sequence is commented in in the top of the script.
+The evaluation can be performed the same way as for the offline version.
+Note that the performance metrics may deviate slightly from the published values. This is due to the multithreaded implementation.
+
 
 # Citation
 #### TBV-RADAR-SLAM

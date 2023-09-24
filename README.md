@@ -37,7 +37,7 @@ git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/Place-Recognition-Radar-.
 ## Downloading / storing radar data (Required)
 Set the environment variable ${BAG_LOCATION} to where all data is stored.
 
-Assuming data is saved under home/user/Documents/
+Assuming data is saved under home/${USER}/Documents/
 ```
 echo "export BAG_LOCATION=/home/${USER}/Documents" >> ~/.bashrc
 source ~/.bashrc

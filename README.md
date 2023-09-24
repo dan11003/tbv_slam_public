@@ -1,5 +1,5 @@
 # TBV Radar SLAM
-This is the project page for TBV Radar SLAM. The article is published in RA-L and code will be released in **October 2023**
+Project page for **TBV Radar SLAM**, published in **RA-L**. **Code** will be released in **October 2023**.
 # NEWS MAY 2023 - Article published in RA-L
 This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM. This work integrates [__CFEAR radar odometry__](https://github.com/dan11003/CFEAR_Radarodometry) with __introspective loop closure__ for robust loop closures and mapping of large-scale environments.
 

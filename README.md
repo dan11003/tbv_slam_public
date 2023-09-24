@@ -34,7 +34,7 @@ git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/radar_kitti_benchmark.git
 git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/Place-Recognition-Radar-.git
 ```
 
-## 0 Download/Store radar data (Required)
+## Downloading / storing radar data (Required)
 Set the environment variable ${BAG_LOCATION} to where all data is stored.
 
 Assuming data is saved under home/user/Documents/

@@ -18,6 +18,16 @@ __Code__ will To be released in autumn 2023
 
 # Quick start guide
 
+This guide aims to setup TBV SLAM for a quick demonstration. To reproduce the results of the publication, please referr to the [adavanced usage section](#1.-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
+The quick start guide has the following steps:
+1. [Clone repositories](#clone-repositories)
+2. [Download/Store radar data](#download/store-radar-data)
+3. [Prepare Docker image](#prepare-docker-image)
+4. [Run Docker container](#run-docker-container)
+5. [Run TBV-SLAM](#run-tbv-slam)
+
+The quick start guide assumes that you have a working Docker installation. If this is not the case, [you have to build tbv_slam locally](#build-tbv-slam-locally).
+
 ## Clone repositories
 ```
 cd ~/catkin_ws/src
@@ -105,8 +115,7 @@ To reproduce the results from the publications, please use the offline vesion ex
     source devel/setup.bash
     ```
 4. [Download data](#download/store-radar-data)
-5. [Run TBV SLAM](#run-tbv-slam)
-
+5. [Run TBV SLAM](#run-tbv-slam) or [Advanced usage for Evaluation purposes - Precompute odometry and and training data](#1.-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data)
 
 # 1. Advanced usage for Evaluation purposes - Precompute odometry and and training data
 To improve speed of evaluation, odometry is not being estimated on-the-fly, it is instead precomputed separately and stored into constraint graphs (simple_graph.sgh). 

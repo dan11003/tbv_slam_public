@@ -120,8 +120,7 @@ To reproduce the results from the publications, please use the offline vesion ex
     catkin build tbv_slam
     source devel/setup.bash
     ```
-4. [Download data](#download
-5. store-radar-data)
+4. [Download data](#downloadstore-radar-data)
 6. [Run TBV SLAM](#run-tbv-slam) or [Advanced usage for Evaluation purposes - Precompute odometry and training data](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data)
 
 # 1. Advanced usage for Evaluation purposes - Precompute odometry and training data
@@ -212,7 +211,7 @@ Parameters:
 
 ## 2_plot_trajectory
 ```
-cd 2_plotTrajectory/
+cd 2_plot_trajectory/
 python3 2_plot_trajectory.py --full_path True --dir path/to/experiment
 ```
 Output: *path_to_experiment/output/plot_trajectory/*

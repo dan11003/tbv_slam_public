@@ -18,28 +18,15 @@ __Code__ will To be released in autumn 2023
 
 # Quick start guide
 
-## Prerequisites
-
-* Install the Google Ceres solver  http://ceres-solver.org/installation.html
-* ROS [Melodic](http://wiki.ros.org/melodic) or later, tested with ubuntu 16.04, 18.04 and 20.04
-* Pybind11 and the python packages numpy, scikit-learn, seaborn, tqdm, and tabulate
-
-You can skip this step if you use the included Docker image. Find the instructions [here](#how-to-use-the-docker-container). 
-
-## How to build with catkin
-
-Clone the following repositories:
+## Clone repositories
 ```
+cd ~/catkin_ws/src
 git clone -b develop_release git@github.com:dan11003/tbv_slam_public.git
 git clone -b develop_release git@github.com:dan11003/tbv_slam.git
 git clone -b develop_tbv_release git@github.com:dan11003/CFEAR_Radarodometry_code_public.git
 git clone -b develop_release git@github.com:dan11003/CorAl-ScanAlignmentClassification.git
 git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/radar_kitti_benchmark.git
 git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/Place-Recognition-Radar-.git
-```
-Then, build the workspace using 
-```
-catkin build
 ```
 
 ## Download/Store radar data
@@ -61,6 +48,35 @@ Download links
 Bag files can be downloaded from [here](https://drive.google.com/drive/folders/1uATfrAe-KHlz29e-Ul8qUbUKwPxBFIhP?usp=share_link).
 Additional bag files can be created by following [our guide](https://github.com/dan11003/CFEAR_Radarodometry_code_public)
 
+
+## Prepare Docker image
+* Build the Docker image locally:
+```
+cd ~/catkin_ws/tbv_slam/docker
+docker build -t tbv_docker .
+```
+**OR**
+* Pull the prebuilt docker image:
+```
+docker pull maxhilger/tbv_docker 
+```
+
+## Run Docker container
+
+* Set environment variables in tbv_slam/docker/run_docker.sh:
+  - "catkin_ws_path": path of your catkin_ws
+  - "bag_location": set to the value of $BAG_LOCATION (see [here](#download/store-radar-data))
+* Run docker container and build workspace
+  
+```
+./run_docker.sh
+cd catkin_ws
+catkin build tbv_slam
+source devel/setup.bash
+```
+
+Now, you should be ready to use tbv_slam from inside the docker in the same way as running it natively.
+
 ## Run TBV SLAM
 
 For quick demonstration, the run_semi_online node calculates odometry, loop closure detection, and pose graph optimization in parallel. 
@@ -73,37 +89,23 @@ roscd tbv_slam/script/<oxford or mulran or kvarntorp or volvo>/
 For Oxford and Mulran, make sure that the correct sequence is commented in in the top of the script.
 The evaluation can be performed as described in the advanced usage section. 
 Note that the performance metrics may deviate slightly from the published values. This is due to the multithreaded implementation.
-To reproduce the results from the publications, please use the offline vesion explained in the advanced usage section.
+To reproduce the results from the publications, please use the offline vesion explained in the [advanced usage section](#1.-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
 
-# How to use the Docker container
+# Build tbv_slam locally
 
-## Prepare Docker image
-* Build the Docker image locally:
-```
-cd <your/ws/path/src>/tbv_slam/docker
-docker build -t tbv_docker .
-```
-**OR**
-* Pull the prebruilt docker image:
-```
-docker pull maxhilger/tbv_docker 
-```
-
-## Run Docker container
-
-* Set environment variables in tbv_slam/docker/run_docker.sh:
-  - "catkin_ws_path": path of your catkin_ws
-  - "bag_location": set to the value of $BAG_LOCATION (cf. [here](#download/store-radar-data))
-* Run docker container and build workspace
-  
-```
-./run_docker.sh
-cd catkin_ws
-catkin build tbv_slam
-source devel/setup.bash
-```
-
-Now, you should be ready to use tbv_slam from inside the docker in the same way as running it natively.
+1. Dependencies
+    * Install the Google Ceres solver  http://ceres-solver.org/installation.html
+    * ROS [Melodic](http://wiki.ros.org/melodic) or later, tested with ubuntu 16.04, 18.04 and 20.04
+    * Pybind11 and the python packages numpy, scikit-learn, seaborn, tqdm, and tabulate.
+2. [Clone repositories](#clone-repositories)
+3. Build workspace
+    ```
+    cd ~/catkin_ws
+    catkin build tbv_slam
+    source devel/setup.bash
+    ```
+4. [Download data](#download/store-radar-data)
+5. [Run TBV SLAM](#run-tbv-slam)
 
 
 # 1. Advanced usage for Evaluation purposes - Precompute odometry and and training data

@@ -31,12 +31,12 @@ The quick start guide assumes that you have a working Docker installation. If th
 ## Clone repositories
 ```
 cd ~/catkin_ws/src
-git clone -b develop_release git@github.com:dan11003/tbv_slam_public.git
-git clone -b develop_release git@github.com:dan11003/tbv_slam.git
-git clone -b develop_tbv_release git@github.com:dan11003/CFEAR_Radarodometry_code_public.git
-git clone -b develop_release git@github.com:dan11003/CorAl-ScanAlignmentClassification.git
-git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/radar_kitti_benchmark.git
-git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/Place-Recognition-Radar-.git
+git clone git@github.com:dan11003/tbv_slam_public.git
+git clone git@github.com:dan11003/tbv_slam.git
+git clone git@github.com:dan11003/CFEAR_Radarodometry_code_public.git
+git clone git@github.com:dan11003/CorAl-ScanAlignmentClassification.git
+git clone git@github.com:dan11003/radar_kitti_benchmark.git
+git clone git@github.com:dan11003/Place-Recognition-Radar-.git
 ```
 
 ## Download/Store radar data

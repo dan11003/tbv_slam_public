@@ -21,7 +21,7 @@ __Code__ will To be released in autumn 2023
 This guide aims to setup TBV SLAM for a quick demonstration. To reproduce the results of the publication, please referr to the [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
 The quick start guide has the following steps:
 1. [Clone repositories](#clone-repositories)
-2. [Download/Store radar data](#download/store-radar-data)
+2. [Download/Store radar data](#download-store-radar-data)
 3. [Prepare Docker image](#prepare-docker-image)
 4. [Run Docker container](#run-docker-container)
 5. [Run TBV-SLAM](#run-tbv-slam)
@@ -75,7 +75,7 @@ docker pull maxhilger/tbv_docker
 
 * Set environment variables in tbv_slam/docker/run_docker.sh:
   - "catkin_ws_path": path of your catkin_ws
-  - "bag_location": set to the value of $BAG_LOCATION (see [here](#download/store-radar-data))
+  - "bag_location": set to the value of $BAG_LOCATION (see [here](#download-store-radar-data))
 * Run docker container and build workspace
   
 ```
@@ -114,7 +114,7 @@ To reproduce the results from the publications, please use the offline vesion ex
     catkin build tbv_slam
     source devel/setup.bash
     ```
-4. [Download data](#download/store-radar-data)
+4. [Download data](#download-store-radar-data)
 5. [Run TBV SLAM](#run-tbv-slam) or [Advanced usage for Evaluation purposes - Precompute odometry and training data](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data)
 
 # 1. Advanced usage for Evaluation purposes - Precompute odometry and training data

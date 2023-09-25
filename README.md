@@ -18,7 +18,7 @@ __Code__ will To be released in autumn 2023
 
 # Quick start guide
 
-This guide aims to setup TBV SLAM for a quick demonstration. To reproduce the results of the publication, please referr to the [adavanced usage section](#1.-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
+This guide aims to setup TBV SLAM for a quick demonstration. To reproduce the results of the publication, please referr to the [adavanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
 The quick start guide has the following steps:
 1. [Clone repositories](#clone-repositories)
 2. [Download/Store radar data](#download/store-radar-data)
@@ -99,7 +99,7 @@ roscd tbv_slam/script/<oxford or mulran or kvarntorp or volvo>/
 For Oxford and Mulran, make sure that the correct sequence is commented in in the top of the script.
 The evaluation can be performed as described in the advanced usage section. 
 Note that the performance metrics may deviate slightly from the published values. This is due to the multithreaded implementation.
-To reproduce the results from the publications, please use the offline vesion explained in the [advanced usage section](#1.-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
+To reproduce the results from the publications, please use the offline vesion explained in the [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
 
 # Build tbv_slam locally
 
@@ -115,7 +115,7 @@ To reproduce the results from the publications, please use the offline vesion ex
     source devel/setup.bash
     ```
 4. [Download data](#download/store-radar-data)
-5. [Run TBV SLAM](#run-tbv-slam) or [Advanced usage for Evaluation purposes - Precompute odometry and and training data](#1.-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data)
+5. [Run TBV SLAM](#run-tbv-slam) or [Advanced usage for Evaluation purposes - Precompute odometry and and training data](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data)
 
 # 1. Advanced usage for Evaluation purposes - Precompute odometry and and training data
 To improve speed of evaluation, odometry is not being estimated on-the-fly, it is instead precomputed separately and stored into constraint graphs (simple_graph.sgh). 

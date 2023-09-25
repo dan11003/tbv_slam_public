@@ -16,22 +16,27 @@ __Code__ will To be released in autumn 2023
 <!---[![Watch the demo of TBV Radar SLAM](https://i.imgur.com/XtEKzz1.png)](https://youtu.be/vt5fpE0bzSY)--->
 <img src="https://i.imgur.com/XtEKzz1.png" width="640" height="640" />
 
-# Prerequisites
+# Quick start guide
 
-* Install the Google Ceres solver  http://ceres-solver.org/installation.html
-* ROS [Melodic](http://wiki.ros.org/melodic) or later, tested with ubuntu 16.04, 18.04 and 20.04
-* ...
+This guide aims to setup TBV SLAM for a quick demonstration. To reproduce the results of the publication, please referr to the [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
+The quick start guide has the following steps:
+1. [Clone repositories](#clone-repositories)
+2. [Download/Store radar data](#downloadstore-radar-data)
+3. [Prepare Docker image](#prepare-docker-image)
+4. [Run Docker container](#run-docker-container)
+5. [Run TBV-SLAM](#run-tbv-slam)
 
-## How to build with catkin
+The quick start guide assumes that you have a working Docker installation. If this is not the case, [you have to build tbv_slam locally](#build-tbv-slam-locally).
 
-Clone the following repositories:
+## Clone repositories
 ```
-git clone -b master git@github.com:dan11003/tbv_slam_public.git
-git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/tbv_slam.git
-git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/CFEAR_Radarodometry_code_public.git
-git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/CorAl-ScanAlignmentClassification.git branch 
-git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/radar_kitti_benchmark.git
-git clone -b RAL-V1-SUBMISSION git@github.com:dan11003/Place-Recognition-Radar-.git
+cd ~/catkin_ws/src
+git clone git@github.com:dan11003/tbv_slam_public.git
+git clone git@github.com:dan11003/tbv_slam.git
+git clone git@github.com:dan11003/CFEAR_Radarodometry_code_public.git
+git clone git@github.com:dan11003/CorAl-ScanAlignmentClassification.git
+git clone git@github.com:dan11003/radar_kitti_benchmark.git
+git clone git@github.com:dan11003/Place-Recognition-Radar-.git
 ```
 
 ## Downloading / storing radar data (Required)
@@ -60,11 +65,68 @@ Bag files can be downloaded from [here](https://drive.google.com/drive/folders/1
 Additional bag files can be created by following [our guide](https://github.com/dan11003/CFEAR_Radarodometry_code_public)
 
 
-# 1. Advanced usage for Evaluation purposes - Precompute odometry and and training data
-To improve speed of evaluation, odometry is not being estimated on-the-fly, it is instead precomputed separately and stored into constraint graphs (simple_graph.sgh). 
-This step will be made optional in the future for online integration.
-Currently, precomputing can be done using:
+## Prepare Docker image
+* Build the Docker image locally:
+```
+cd ~/catkin_ws/tbv_slam/docker
+docker build -t tbv_docker .
+```
+**OR**
+* Pull the prebuilt docker image:
+```
+docker pull maxhilger/tbv_docker 
+```
 
+## Run Docker container
+
+* Set environment variables in tbv_slam/docker/run_docker.sh:
+  - "catkin_ws_path": path of your catkin_ws
+  - "bag_location": set to the value of $BAG_LOCATION (see [here](#downloadstore-radar-data))
+* Run docker container and build workspace
+  
+```
+./run_docker.sh
+cd catkin_ws
+catkin build tbv_slam
+source devel/setup.bash
+```
+
+Now, you should be ready to use tbv_slam from inside the docker in the same way as running it natively.
+
+## Run TBV SLAM
+
+For quick demonstration, the run_semi_online node calculates odometry, loop closure detection, and pose graph optimization in parallel. 
+This node relies on previously trained alignment and loop closure classifiers. The coefficients of these classifiers are stored in the model_parameters directory.
+To run this node, use the bash scripts prepared for each dataset:
+```
+roscd tbv_slam/script/<oxford or mulran or kvarntorp or volvo>/
+./run_parallel.sh
+```
+For Oxford and Mulran, make sure that the correct sequence is commented in in the top of the script.
+The evaluation can be performed as described in the advanced usage section. 
+Note that the performance metrics may deviate slightly from the published values. This is due to the multithreaded implementation.
+To reproduce the results from the publications, please use the offline vesion explained in the [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
+
+# Build tbv_slam locally
+
+1. Dependencies
+    * Install the Google Ceres solver  http://ceres-solver.org/installation.html
+    * ROS [Melodic](http://wiki.ros.org/melodic) or later, tested with ubuntu 16.04, 18.04 and 20.04
+    * Pybind11 and the python packages numpy, scikit-learn, seaborn, tqdm, and tabulate.
+2. [Clone repositories](#clone-repositories)
+3. Build workspace
+    ```
+    cd ~/catkin_ws
+    catkin build tbv_slam
+    source devel/setup.bash
+    ```
+4. [Download data](#download
+5. store-radar-data)
+6. [Run TBV SLAM](#run-tbv-slam) or [Advanced usage for Evaluation purposes - Precompute odometry and training data](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data)
+
+# 1. Advanced usage for Evaluation purposes - Precompute odometry and training data
+To improve speed of evaluation, odometry is not being estimated on-the-fly, it is instead precomputed separately and stored into constraint graphs (simple_graph.sgh). 
+Precomputing can be done using:
 ## Either: Single Oxford sequence - Precompute of Odometry and CFEAR/CorAl alignment data
 Generate odometry and training data for Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
 ```
@@ -136,7 +198,7 @@ Git repo: __tbv_slam_public__
 ## 1_baseline
 ```
 cd 1_baseline
-python3 1_baseline_eval.py --full_path True --dir path_to_experiment
+python3 1_baseline.py --full_path True --dir path_to_experiment
 ```
 Output: *path_to_experiment/output/baseline/*
 * *table.txt* with results for the evaluated SLAM method compared to odometry. See => Tab. I & II
@@ -151,7 +213,7 @@ Parameters:
 ## 2_plot_trajectory
 ```
 cd 2_plotTrajectory/
-python3 2_plotTrajectory.py --full_path True --dir path/to/experiment
+python3 2_plot_trajectory.py --full_path True --dir path/to/experiment
 ```
 Output: *path_to_experiment/output/plot_trajectory/*
 * .pdf trajectory plots for each sequence. See => Fig. 5 & 6
@@ -167,7 +229,7 @@ Parameters:
 ## 3_loop_closure
 ```
 cd 3_loop_closure
-python3 3_loop_closure --full_path True --dir path/to/experiment
+python3 3_loop_closure.py --full_path True --dir path/to/experiment
 ```
 Output: *path_to_experiment/output/loop_closure/*
 * .pdf & .png PR-curves for loop closure. See => Fig. 4
@@ -177,6 +239,7 @@ Parameters:
 * __--dir__ experiment directory
 * __--full_path__ (True/False) if experiment directory is given relative to $BAG_LOCATION or given as full path (default False)
 * __--output__  output directory (default *path_to_experiment/output/loop_closure/*)
+
 
 # Citation
 #### TBV-RADAR-SLAM

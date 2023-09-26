@@ -27,7 +27,7 @@ git clone https://github.com/dan11003/tbv_slam_public.git
 # Do not build yet
 ```
 
-## 1.2 Downloading / storing radar data (Required)
+## 1.2 Downloading / storing radar data
 Set the environment variable ${BAG_LOCATION} to where all data is stored.
 
 We assume that data is stored in home/${USER}/Documents/
@@ -85,7 +85,7 @@ source devel/setup.bash
 
 Now, you should be ready to use tbv_slam from inside the docker in the same way as running it natively.
 
-## 1.5 Run TBV SLAM
+## 1.5 Run tbv_slam
 
 For quick demonstration, the run_semi_online node calculates odometry, loop closure detection, and pose graph optimization in parallel. 
 This node relies on previously trained alignment and loop closure classifiers. The coefficients of these classifiers are stored in the model_parameters directory.
@@ -140,7 +140,7 @@ roscd tbv_slam/script/oxford/training/multiple_sequences
 ./odometry_training_all_oxford
 ```
 
-# 2. Running TBV-SLAM
+# 2. Running tbv_slam
 ## Single Oxford sequence - TBV SLAM-8 (no visualization)
 Run TBV SLAM-8 on the Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
 ```

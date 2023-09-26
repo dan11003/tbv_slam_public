@@ -1,7 +1,9 @@
 # TBV Radar SLAM
-Project page for **TBV Radar SLAM**, published in **RA-L**. **Code** will be released in **October 2023**.
-# NEWS MAY 2023 - Article published in RA-L
-This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM. This work integrates [__CFEAR radar odometry__](https://github.com/dan11003/CFEAR_Radarodometry) with __introspective loop closure__ for robust loop closures and mapping of large-scale environments.
+This page contains the source code and evaluation for the article [**TBV Radar SLAM**](https://arxiv.org/abs/2301.04397),  published in [**RA-L**](https://ieeexplore.ieee.org/document/10103570) and presented at [**IROS2023**](https://www.youtube.com/watch?v=3n-40a-WZ8A).
+
+A tutorial is provided for building and testing the source code locally, or within an isolated docker environment.
+## TBV Radar SLAM - Trust but verify loop candidates
+This work integrates [__CFEAR radar odometry__](https://github.com/dan11003/CFEAR_Radarodometry) (published in T-RO) with [__introspective loop closure__](https://www.sciencedirect.com/science/article/pii/S0921889022000768) for robust loop closure and mapping of large-scale environments.
 
 
 __Paper__: [preprint](https://arxiv.org/abs/2301.04397) or [published](https://ieeexplore.ieee.org/document/10103570/)
@@ -10,11 +12,9 @@ __Paper__: [preprint](https://arxiv.org/abs/2301.04397) or [published](https://i
 
 [__IROS-2023 presentation__](https://www.youtube.com/watch?v=3n-40a-WZ8A).
 
-__Code__ will To be released in autumn 2023
 
-
-<!---[![Watch the demo of TBV Radar SLAM](https://i.imgur.com/XtEKzz1.png)](https://youtu.be/vt5fpE0bzSY)--->
-<img src="https://i.imgur.com/XtEKzz1.png" width="640" height="640" />
+<!---[![Watch the demo of TBV Radar SLAM](https://i.imgur.com/IHnKCFP.jpeg)](https://youtu.be/vt5fpE0bzSY)--->
+<img src="https://imgur.com/a/pyihjos" width="640" height="640" />
 
 # Quick start guide
 

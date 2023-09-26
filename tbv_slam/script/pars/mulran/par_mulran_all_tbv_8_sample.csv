@@ -1,0 +1,17 @@
+experiment_name,mulran_tbv_model_8_sample_cov
+input_directory,/$BAG_LOCATION/TBV_Eval
+dataset,Mulran
+method,"TBV SLAM-8"
+visualize,false
+N_CANDIDATES,3
+all_candidates,true
+model_threshold,0.9
+augment_sc,true
+odometry_coupled_closure,true
+raw_radar_scan,false
+sequence,KAIST01,KAIST02,KAIST03,DCC01,DCC02,DCC03,Riverside01,Riverside02,Riverside03
+model_features,odom-bounds sc-sim alignment_quality
+model_training_file_load,tbv_model_8.txt
+replace_cov_by_identity,false
+use_covariance_sampling_in_loop_closure,true
+

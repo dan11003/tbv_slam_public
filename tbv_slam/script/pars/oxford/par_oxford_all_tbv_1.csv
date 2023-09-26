@@ -1,0 +1,14 @@
+experiment_name,oxford_all_tbv_model_1
+input_directory,/$BAG_LOCATION/TBV_Eval
+dataset,oxford
+method,"TBV SLAM-1"
+visualize,false
+N_CANDIDATES,1
+all_candidates,false
+model_threshold,0.9
+augment_sc,false
+odometry_coupled_closure,false
+raw_radar_scan,true
+sequence,2019-01-10-12-32-52-radar-oxford-10k,2019-01-16-13-09-37-radar-oxford-10k,2019-01-17-13-26-39-radar-oxford-10k,2019-01-18-14-14-42-radar-oxford-10k,2019-01-18-15-20-12-radar-oxford-10k,2019-01-16-11-53-11-radar-oxford-10k,2019-01-10-11-46-21-radar-oxford-10k,2019-01-18-14-46-59-radar-oxford-10k
+model_features,sc-sim
+model_training_file_load,tbv_model_1.txt

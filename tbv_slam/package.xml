@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<package format="2">
+<name>tbv_slam</name>
+<version>0.0.0</version>
+<description>Trust but verify loop closure for robust radar SLAM</description>
+
+<!-- One maintainer tag required, multiple allowed, one person per tag -->
+<!-- Example:  -->
+<!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
+<maintainer email="daniel@todo.todo">daniel</maintainer>
+
+
+<!-- One license tag required, multiple allowed, one license per tag -->
+<!-- Commonly used license strings: -->
+<!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+<license>TODO</license>
+
+<buildtool_depend>catkin</buildtool_depend>
+<build_depend>roscpp</build_depend>
+<build_depend>pcl_ros</build_depend>
+<build_depend>rospy</build_depend>
+<build_depend>sensor_msgs</build_depend>
+<build_depend>graph_map</build_depend>
+<build_depend>std_msgs</build_depend>
+<build_depend>laser_geometry</build_depend>
+<build_depend>tf_conversions</build_depend>
+<build_depend>tf</build_depend>
+<build_depend>geometry_msgs</build_depend>
+<!--build_depend>cmake_modules</build_depend-->
+<build_depend>eigen_conversions</build_depend>
+<build_depend>robust_mapping_custom_msgs</build_depend>
+<build_depend>cfear_radarodometry</build_depend>
+<build_depend>place_recognition_radar</build_depend>
+<build_depend>alignment_checker</build_depend>
+
+
+
+<!--build_depend>fuzzy_psr_services </build_depend-->
+<!--build_depend>fuzzy_msgs</build_depend-->
+
+
+
+
+<exec_depend>catkin</exec_depend>
+<exec_depend>roscpp</exec_depend>
+<exec_depend>pcl_ros</exec_depend>
+<exec_depend>rospy</exec_depend>
+<exec_depend>sensor_msgs</exec_depend>
+<exec_depend>graph_map</exec_depend>
+<exec_depend>std_msgs</exec_depend>
+<exec_depend>laser_geometry</exec_depend>
+<exec_depend>tf_conversions</exec_depend>
+<exec_depend>tf</exec_depend>
+<exec_depend>geometry_msgs</exec_depend>
+<!--exec_depend>cmake_modules</exec_depend-->
+<exec_depend>eigen_conversions</exec_depend>
+<exec_depend>robust_mapping_custom_msgs</exec_depend>
+<exec_depend>cfear_radarodometry</exec_depend>
+<exec_depend>place_recognition_radar</exec_depend>
+<exec_depend>alignment_checker</exec_depend>
+
+
+
+
+
+</package>

@@ -1,0 +1,10 @@
+experiment_name,loop_closure_ablation_study_mulran
+input_directory,/$BAG_LOCATION/TBV_Eval
+dataset,Mulran
+method,"TBV SLAM-1"
+visualize,false
+raw_radar_scan,true,false,false,false
+augment_sc,false,false,true,true
+odometry_coupled_closure,false,false,false,true
+N_CANDIDATES,1,1,1,5
+sequence,KAIST01,KAIST01,KAIST01,KAIST01,KAIST02,KAIST02,KAIST02,KAIST02,KAIST03,KAIST03,KAIST03,KAIST03,DCC01,DCC01,DCC01,DCC01,DCC02,DCC02,DCC02,DCC02,DCC03,DCC03,DCC03,DCC03,Riverside01,Riverside01,Riverside01,Riverside01,Riverside02,Riverside02,Riverside02,Riverside02,Riverside03,Riverside03,Riverside03,Riverside03

@@ -1,0 +1,14 @@
+experiment_name,kvarntorp_tbv_model_8
+input_directory,/$BAG_LOCATION/TBV_Eval
+dataset,Kvarntorp
+method,"TBV SLAM-8"
+visualize,false
+N_CANDIDATES,3
+all_candidates,false
+model_threshold,0.9
+augment_sc,true
+odometry_coupled_closure,true
+raw_radar_scan,false
+sequence,2020-09-18-14-38-03
+model_features,odom-bounds sc-sim alignment_quality
+model_training_file_load,tbv_model_8.txt

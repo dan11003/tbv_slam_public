@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+    <arg name="run_bag" default="false"/>
+    <arg name="robot_id" default="3"/>
+    <arg name="rviz_enabled" default="true"/>
+    <arg name="robot_prefix" default="robot$(arg robot_id)"/>
+    <arg name="world_frame" default="map"/>
+    <arg name="virt_footprint_link" default="virt_footprint"/>
+    <arg name="lidar_odom_topic" default="/lidar_odom"/>
+
+
+    <arg name="velodyne_points_link" default="$(arg robot_prefix)/velodyne_link"/>
+    <arg name="odometry_parent_link" default="$(arg robot_prefix)/odom"/>
+    <arg name="odometry_child_link" default="$(arg robot_prefix)/base_link"/>
+    <arg name="output_points_topic" default="$(arg robot_prefix)/sensors/velodyne_points_unwarped"/>
+
+<arg name="sensor_pose_x" value="1.12"/>
+<arg name="sensor_pose_y" value="-0.13"/>
+<arg name="sensor_pose_z" value="1.8"/>
+<arg name="sensor_pose_r" value="0.0"/>
+<arg name="sensor_pose_p" value="0.000"/>
+<arg name="sensor_pose_t" value="1.6"/>
+<arg name="reg_service_topic" default="/registration"/>
+
+
+
+<include file="$(find robust_mapping)/launch/bt_lidar_odom.launch" >
+<arg name="odometry_child_link" default="$(arg odometry_child_link)"/>
+<arg name="lidar_odom_topic" default="$(arg lidar_odom_topic)"/>
+
+</include>
+
+<include file="$(find robust_mapping)/launch/optimize.launch" >
+<arg name="world_frame" default="$(arg world_frame)"/>
+<arg name="virt_footprint_link" default="$(arg virt_footprint_link)"/>
+<arg name="lidar_odom_topic" default="$(arg lidar_odom_topic)"/>
+
+</include>
+
+
+
+<node pkg="octomap_server" type="octomap_server_node" name="octomap_server" output="log">
+        <param name="resolution" value="0.1" />
+
+        <param name="frame_id" type="string" value="$(arg world_frame)" />
+        <param name="base_frame_id" type="string" value="$(arg virt_footprint_link)" />
+
+
+        <param name="sensor_model/max_range" value="30.0" />
+
+        <param name="sensor_model/min_range" value="0.8" />
+
+        <param name="sensor_model/max" value="0.97" />
+
+        <param name="sensor_model/min" value="0.03" />
+
+        <param name="filter_ground" value="false" />
+
+
+        <param name="pointcloud_min_z" value="0.35" />
+        <param name="pointcloud_max_z" value="2.0" />
+        <param name="occupancy_min_z" value="0.25"/>
+        <param name="occupancy_max_z" value="2.0"/>
+
+        <remap from="cloud_in" to="/points_corrected" />
+
+</node>
+
+<group if="$(arg rviz_enabled)">
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find robust_mapping)/rviz/slam.rviz" />
+</group>
+
+</launch>
+

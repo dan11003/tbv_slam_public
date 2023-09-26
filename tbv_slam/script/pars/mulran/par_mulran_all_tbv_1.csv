@@ -1,0 +1,14 @@
+experiment_name,mulran_tbv_model_1
+input_directory,/$BAG_LOCATION/TBV_Eval
+dataset,Mulran
+method,"TBV SLAM-1"
+visualize,false
+N_CANDIDATES,1
+all_candidates,false
+model_threshold,0.9
+augment_sc,false
+odometry_coupled_closure,false
+raw_radar_scan,true
+sequence,KAIST01,KAIST02,KAIST03,DCC01,DCC02,DCC03,Riverside01,Riverside02,Riverside03
+model_features,sc-sim
+model_training_file_load,tbv_model_1.txt

@@ -1,0 +1,10 @@
+experiment_name,loop_closure_ablation_study_oxford
+input_directory,/$BAG_LOCATION/TBV_Eval
+dataset,oxford
+method,"TBV SLAM"
+visualize,false
+raw_radar_scan,true,false,false,false
+augment_sc,false,false,true,true
+odometry_coupled_closure,false,false,false,true
+N_CANDIDATES,1,1,1,3
+sequence,2019-01-10-12-32-52-radar-oxford-10k,2019-01-10-12-32-52-radar-oxford-10k,2019-01-10-12-32-52-radar-oxford-10k,2019-01-10-12-32-52-radar-oxford-10k,2019-01-16-13-09-37-radar-oxford-10k,2019-01-16-13-09-37-radar-oxford-10k,2019-01-16-13-09-37-radar-oxford-10k,2019-01-16-13-09-37-radar-oxford-10k,2019-01-17-13-26-39-radar-oxford-10k,2019-01-17-13-26-39-radar-oxford-10k,2019-01-17-13-26-39-radar-oxford-10k,2019-01-17-13-26-39-radar-oxford-10k,2019-01-18-14-14-42-radar-oxford-10k,2019-01-18-14-14-42-radar-oxford-10k,2019-01-18-14-14-42-radar-oxford-10k,2019-01-18-14-14-42-radar-oxford-10k,2019-01-18-15-20-12-radar-oxford-10k,2019-01-18-15-20-12-radar-oxford-10k,2019-01-18-15-20-12-radar-oxford-10k,2019-01-18-15-20-12-radar-oxford-10k,2019-01-16-11-53-11-radar-oxford-10k,2019-01-16-11-53-11-radar-oxford-10k,2019-01-16-11-53-11-radar-oxford-10k,2019-01-16-11-53-11-radar-oxford-10k,2019-01-10-11-46-21-radar-oxford-10k,2019-01-10-11-46-21-radar-oxford-10k,2019-01-10-11-46-21-radar-oxford-10k,2019-01-10-11-46-21-radar-oxford-10k,2019-01-18-14-46-59-radar-oxford-10k,2019-01-18-14-46-59-radar-oxford-10k,2019-01-18-14-46-59-radar-oxford-10k,2019-01-18-14-46-59-radar-oxford-10k

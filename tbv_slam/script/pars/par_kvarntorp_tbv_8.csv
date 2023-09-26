@@ -12,3 +12,4 @@ raw_radar_scan,false
 sequence,2020-09-18-14-38-03
 model_features,odom-bounds sc-sim alignment_quality
 model_training_file_load,tbv_model_8.txt
+load_trained_classifier,true

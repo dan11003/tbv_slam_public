@@ -11,4 +11,5 @@ odometry_coupled_closure,true
 raw_radar_scan,false
 sequence,Volvo_CE
 model_features,odom-bounds sc-sim alignment_quality
+load_trained_classifier,true
 model_training_file_load,tbv_model_8.txt

@@ -61,7 +61,9 @@ export disable_compensate="false"
 
 export save_ROC="true"
 
-pars="--range-res ${range_resolution} --sequence ${SEQUENCE} --radar_ccw ${radar_ccw} --soft_constraint ${soft_constraint} --disable_compensate ${disable_compensate} --cost_type ${cost_type} --submap_scan_size ${submap_scan_size} --registered_min_keyframe_dist ${registered_min_keyframe_dist} --res ${res} --k_strongest ${kstrong} --bag_path ${BAG_FILE_PATH} --est_directory ${est_dir} --gt_directory ${gt_dir} --training_directory ${training_dir} --radar_directory ${radar_dir} --job_nr 1 --z-min ${zmin} --weight_option ${weight_option} --weight_intensity ${weight_intensity}  --method ${EVALUATION_description} --dataset Mulran --store_graph true --save_radar_img true --save_ROC ${save_ROC}"
+export disable_training="true"
+
+pars="--disable_training ${disable_training} --range-res ${range_resolution} --sequence ${SEQUENCE} --radar_ccw ${radar_ccw} --soft_constraint ${soft_constraint} --disable_compensate ${disable_compensate} --cost_type ${cost_type} --submap_scan_size ${submap_scan_size} --registered_min_keyframe_dist ${registered_min_keyframe_dist} --res ${res} --k_strongest ${kstrong} --bag_path ${BAG_FILE_PATH} --est_directory ${est_dir} --gt_directory ${gt_dir} --training_directory ${training_dir} --radar_directory ${radar_dir} --job_nr 1 --z-min ${zmin} --weight_option ${weight_option} --weight_intensity ${weight_intensity}  --method ${EVALUATION_description} --dataset Mulran --store_graph true --save_radar_img false --save_ROC ${save_ROC}"
 echo "|||||Estimating odometry with parameters: ${pars}||||"
 roslaunch cfear_radarodometry vis.launch&
 rosrun tbv_slam odometry_training_node ${pars} #>/dev/null

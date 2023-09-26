@@ -5,21 +5,21 @@ This page contains the source code and evaluation for the article [**TBV Radar S
 A tutorial is provided for building and testing the source code locally, or within an isolated docker environment.
 <img src="https://i.imgur.com/IHnKCFP.jpeg" width="980" height="700" />
 
-# Quick start guide
+# 1.0 Quick start guide
 
 This guide aims to setup TBV SLAM for a quick demonstration. Note that this version is less stable with reduced performance compared to the version which we use for development. If the user which to replicate the results from the paper, or experiments with loop closure, we refer to the
 [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
 
 The quick start guide has the following steps:
-1. [Clone repositories](#clone-repositories)
-2. [Download/Store radar data](#downloadstore-radar-data)
-3. [Prepare Docker image](#prepare-docker-image)
-4. [Run Docker container](#run-docker-container)
-5. [Run TBV-SLAM](#run-tbv-slam)
+* 1.1 [Clone repositories](#clone-repositories)
+* 1.2 [Download/Store radar data](#downloadstore-radar-data)
+* 1.3 [Prepare Docker image](#prepare-docker-image)
+* 1.4 [Run Docker container](#run-docker-container)
+* 1.5 [Run TBV-SLAM](#run-tbv-slam)
 
 The quick start guide assumes that you have a working Docker installation. If this is not the case, [you have to build tbv_slam locally](#build-tbv-slam-locally).
 
-## Clone repositories
+## 1.1 Clone repositories
 ```
 mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src
 catkin_init_workspace
@@ -27,7 +27,7 @@ git clone https://github.com/dan11003/tbv_slam_public.git
 # Do not build yet
 ```
 
-## Downloading / storing radar data (Required)
+## 1.2 Downloading / storing radar data (Required)
 Set the environment variable ${BAG_LOCATION} to where all data is stored.
 
 We assume that data is stored in home/${USER}/Documents/
@@ -57,7 +57,7 @@ Bag files can be downloaded from [here](https://drive.google.com/drive/folders/1
 Additional bag files can be created by following [our guide](https://github.com/dan11003/CFEAR_Radarodometry_code_public)
 
 
-## Prepare Docker image
+## 1.3 Prepare Docker image
 * Build the Docker image locally:
 ```
 cd ~/catkin_ws/tbv_slam/docker
@@ -69,7 +69,7 @@ docker build -t tbv_docker .
 docker pull maxhilger/tbv_docker 
 ```
 
-## Run Docker container
+## 1.4 Run Docker container
 
 * Set environment variables in tbv_slam/docker/run_docker.sh:
   - "catkin_ws_path": path of your catkin_ws
@@ -85,7 +85,7 @@ source devel/setup.bash
 
 Now, you should be ready to use tbv_slam from inside the docker in the same way as running it natively.
 
-## Run TBV SLAM
+## 1.5 Run TBV SLAM
 
 For quick demonstration, the run_semi_online node calculates odometry, loop closure detection, and pose graph optimization in parallel. 
 This node relies on previously trained alignment and loop closure classifiers. The coefficients of these classifiers are stored in the model_parameters directory.

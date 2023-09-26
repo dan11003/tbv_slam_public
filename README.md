@@ -49,7 +49,9 @@ ${BAG_LOCATION}
             │   bagfile (2019-01-10-12-32-52-radar-oxford-10k.bag)
 ```
 In other words, make sure that the bag file is located at the path: 
+```
 /home/${USER}/Documents/Oxford/2019-01-10-12-32-52-radar-oxford-10k/2019-01-10-12-32-52-radar-oxford-10k.bag
+```
 Download links
 Bag files can be downloaded from [here](https://drive.google.com/drive/folders/1uATfrAe-KHlz29e-Ul8qUbUKwPxBFIhP?usp=share_link).
 Additional bag files can be created by following [our guide](https://github.com/dan11003/CFEAR_Radarodometry_code_public)

@@ -13,7 +13,7 @@ This guide aims to setup TBV SLAM for a quick demonstration. Note that this vers
 The quick start guide has the following steps:
 
 * [1.1 Clone repositories](#11-clone-repositories)
-* [1.2 Downloading / storing radar data](#12-downloading-and-storing-radar-data)
+* [1.2 Downloading and storing radar data](#12-downloading-and-storing-radar-data)
 * [1.3 Prepare Docker image](#13-prepare-docker-image)
 * [1.4 Run Docker container](#14-run-docker-container)
 * [1.5 Run tbv_slam](#15-run-tbv_slam)

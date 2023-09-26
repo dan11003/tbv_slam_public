@@ -11,9 +11,10 @@ This guide aims to setup TBV SLAM for a quick demonstration. Note that this vers
 [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
 
 The quick start guide has the following steps:
-* 1.1 [Clone repositories](#clone-repositories)
+
+* [1.1 Clone repositories](#11-clone-repositories)
 * 1.2 [Download/Store radar data](#downloadstore-radar-data)
-* 1.3 [Prepare Docker image](#prepare-docker-image)
+* 1.3 [Prepare Docker image](#Prepare-Docker-image)
 * 1.4 [Run Docker container](#run-docker-container)
 * 1.5 [Run TBV-SLAM](#run-tbv-slam)
 

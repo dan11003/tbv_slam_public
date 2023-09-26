@@ -1,7 +1,7 @@
 # TBV Radar SLAM
-This is the project page for TBV Radar SLAM. The article is published in RA-L and code will be released in the future.
+Project page for **TBV Radar SLAM**, published in **RA-L**. **Code** will be released in **October 2023**.
 # NEWS MAY 2023 - Article published in RA-L
-This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM. This work integrates [__CFEAR radar odometry__](https://github.com/dan11003/CFEAR_Radarodometry) with __introspective loop closure__ for robust mapping of large-scale environments.
+This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM. This work integrates [__CFEAR radar odometry__](https://github.com/dan11003/CFEAR_Radarodometry) with __introspective loop closure__ for robust loop closures and mapping of large-scale environments.
 
 
 __Paper__: [preprint](https://arxiv.org/abs/2301.04397) or [published](https://ieeexplore.ieee.org/document/10103570/)
@@ -39,8 +39,14 @@ git clone git@github.com:dan11003/radar_kitti_benchmark.git
 git clone git@github.com:dan11003/Place-Recognition-Radar-.git
 ```
 
-## Download/Store radar data
+## Downloading / storing radar data (Required)
 Set the environment variable ${BAG_LOCATION} to where all data is stored.
+
+Assuming data is saved under home/${USER}/Documents/
+```
+echo "export BAG_LOCATION=/home/${USER}/Documents" >> ~/.bashrc
+source ~/.bashrc
+```
 
 We assume all data is placed within the following structure
 
@@ -114,8 +120,7 @@ To reproduce the results from the publications, please use the offline vesion ex
     catkin build tbv_slam
     source devel/setup.bash
     ```
-4. [Download data](#download
-5. store-radar-data)
+4. [Download data](#downloadstore-radar-data)
 6. [Run TBV SLAM](#run-tbv-slam) or [Advanced usage for Evaluation purposes - Precompute odometry and training data](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data)
 
 # 1. Advanced usage for Evaluation purposes - Precompute odometry and training data
@@ -206,7 +211,7 @@ Parameters:
 
 ## 2_plot_trajectory
 ```
-cd 2_plotTrajectory/
+cd 2_plot_trajectory/
 python3 2_plot_trajectory.py --full_path True --dir path/to/experiment
 ```
 Output: *path_to_experiment/output/plot_trajectory/*

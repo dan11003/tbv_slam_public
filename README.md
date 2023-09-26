@@ -99,7 +99,7 @@ run_tbv_simple provides a quick demo of the tbv_slam. Odometry, loop closure det
 Please note that the performance metrics in may deviate slightly from the published values. This is due to an error in the simplified multithreaded implementation.
 To correctly reproduce the same results as in the original publication, please use the "development version" where odometry is precomputed, as explained in the [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
 ## 1.6 Evaluation
-See section [3. Evaluation](3-Evaluation)
+See section [3. Evaluation](#3-evaluation)
 
 # Build tbv_slam locally
 

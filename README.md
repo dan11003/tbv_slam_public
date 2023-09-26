@@ -88,17 +88,18 @@ Now, you should be ready to use tbv_slam from inside the docker in the same way 
 
 ## 1.5 Run tbv_slam
 
-For quick demonstration, the run_semi_online node calculates odometry, loop closure detection, and pose graph optimization in parallel. 
-This node relies on previously trained alignment and loop closure classifiers. The coefficients of these classifiers are stored in the model_parameters directory.
-To run this node, use the bash scripts prepared for each dataset:
 ```
-roscd tbv_slam/script/<oxford or mulran or kvarntorp or volvo>/
-./run_parallel.sh
+roscd tbv_slam/script/oxford/
+./run_tbv_simple.sh
 ```
-For Oxford and Mulran, make sure that the correct sequence is commented in in the top of the script.
-The evaluation can be performed as described in the advanced usage section. 
-Note that the performance metrics may deviate slightly from the published values. This is due to the multithreaded implementation.
-To reproduce the results from the publications, please use the offline vesion explained in the [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
+Replace "oxford" with "mulran", "kvarntorp", or "volvo" or kvarn if testing sequences.
+Additionally, for Oxford and Mulran, make sure that the correct sequence is commented in in the top of the script.
+
+run_tbv_simple provides a quick demo of the tbv_slam. Odometry, loop closure detection and verification, and pose graph optimization runs in parallel. This node relies on previously trained alignment and loop closure classifiers. The coefficients of these classifiers are stored in the model_parameters directory.
+Please note that the performance metrics in may deviate slightly from the published values. This is due to an error in the simplified multithreaded implementation.
+To correctly reproduce the same results as in the original publication, please use the "development version" where odometry is precomputed, as explained in the [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
+## 1.6 Evaluation
+See section [3. Evaluation](3-Evaluation)
 
 # Build tbv_slam locally
 

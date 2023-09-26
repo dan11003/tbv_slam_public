@@ -1,48 +1,37 @@
 # TBV Radar SLAM
-Project page for **TBV Radar SLAM**, published in **RA-L**. **Code** will be released in **October 2023**.
-# NEWS MAY 2023 - Article published in RA-L
-This repository hosts the evaluation of our Radar SLAM pipeline TBV Radar SLAM. This work integrates [__CFEAR radar odometry__](https://github.com/dan11003/CFEAR_Radarodometry) with __introspective loop closure__ for robust loop closures and mapping of large-scale environments.
+This page contains the source code and evaluation for the article [**TBV Radar SLAM**](https://arxiv.org/abs/2301.04397),  published in [**RA-L**](https://ieeexplore.ieee.org/document/10103570) and presented at [**IROS2023**](https://www.youtube.com/watch?v=3n-40a-WZ8A). A [__Demo__](https://www.youtube.com/watch?v=t8HQtHAUHHc) of TBV is provided. This work integrates [__CFEAR radar odometry__](https://github.com/dan11003/CFEAR_Radarodometry) (published in T-RO) with [__introspective loop closure__](https://www.sciencedirect.com/science/article/pii/S0921889022000768) for robust loop closure and mapping of large-scale environments.
 
 
-__Paper__: [preprint](https://arxiv.org/abs/2301.04397) or [published](https://ieeexplore.ieee.org/document/10103570/)
+A tutorial is provided for building and testing the source code locally, or within an isolated docker environment.
+<img src="https://i.imgur.com/IHnKCFP.jpeg" width="980" height="700" />
 
-[__Demo__](https://www.youtube.com/watch?v=t8HQtHAUHHc).
+# 1.0 Quick start guide
 
-[__IROS-2023 presentation__](https://www.youtube.com/watch?v=3n-40a-WZ8A).
+This guide aims to setup TBV SLAM for a quick demonstration. Note that this version is less stable with reduced performance compared to the version which we use for development. If the user which to replicate the results from the paper, or experiments with loop closure, we refer to the
+[advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
 
-__Code__ will To be released in autumn 2023
-
-
-<!---[![Watch the demo of TBV Radar SLAM](https://i.imgur.com/XtEKzz1.png)](https://youtu.be/vt5fpE0bzSY)--->
-<img src="https://i.imgur.com/XtEKzz1.png" width="640" height="640" />
-
-# Quick start guide
-
-This guide aims to setup TBV SLAM for a quick demonstration. To reproduce the results of the publication, please referr to the [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
 The quick start guide has the following steps:
-1. [Clone repositories](#clone-repositories)
-2. [Download/Store radar data](#downloadstore-radar-data)
-3. [Prepare Docker image](#prepare-docker-image)
-4. [Run Docker container](#run-docker-container)
-5. [Run TBV-SLAM](#run-tbv-slam)
+
+* [1.1 Clone repositories](#11-clone-repositories)
+* [1.2 Downloading and storing radar data](#12-downloading-and-storing-radar-data)
+* [1.3 Prepare Docker image](#13-prepare-docker-image)
+* [1.4 Run Docker container](#14-run-docker-container)
+* [1.5 Run tbv_slam](#15-run-tbv_slam)
 
 The quick start guide assumes that you have a working Docker installation. If this is not the case, [you have to build tbv_slam locally](#build-tbv-slam-locally).
 
-## Clone repositories
+## 1.1 Clone repositories
 ```
-cd ~/catkin_ws/src
-git clone git@github.com:dan11003/tbv_slam_public.git
-git clone git@github.com:dan11003/tbv_slam.git
-git clone git@github.com:dan11003/CFEAR_Radarodometry_code_public.git
-git clone git@github.com:dan11003/CorAl-ScanAlignmentClassification.git
-git clone git@github.com:dan11003/radar_kitti_benchmark.git
-git clone git@github.com:dan11003/Place-Recognition-Radar-.git
+mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src
+catkin_init_workspace
+git clone https://github.com/dan11003/tbv_slam_public.git
+# Do not build yet
 ```
 
-## Downloading / storing radar data (Required)
+## 1.2 Downloading and storing radar data
 Set the environment variable ${BAG_LOCATION} to where all data is stored.
 
-Assuming data is saved under home/${USER}/Documents/
+We assume that data is stored in home/${USER}/Documents/
 ```
 echo "export BAG_LOCATION=/home/${USER}/Documents" >> ~/.bashrc
 source ~/.bashrc
@@ -60,12 +49,16 @@ ${BAG_LOCATION}
         └───radar
             │   bagfile (2019-01-10-12-32-52-radar-oxford-10k.bag)
 ```
+In other words, make sure that the bag file is located at the path: 
+```
+/home/${USER}/Documents/Oxford/2019-01-10-12-32-52-radar-oxford-10k/2019-01-10-12-32-52-radar-oxford-10k.bag
+```
 Download links
 Bag files can be downloaded from [here](https://drive.google.com/drive/folders/1uATfrAe-KHlz29e-Ul8qUbUKwPxBFIhP?usp=share_link).
 Additional bag files can be created by following [our guide](https://github.com/dan11003/CFEAR_Radarodometry_code_public)
 
 
-## Prepare Docker image
+## 1.3 Prepare Docker image
 * Build the Docker image locally:
 ```
 cd ~/catkin_ws/tbv_slam/docker
@@ -77,7 +70,7 @@ docker build -t tbv_docker .
 docker pull maxhilger/tbv_docker 
 ```
 
-## Run Docker container
+## 1.4 Run Docker container
 
 * Set environment variables in tbv_slam/docker/run_docker.sh:
   - "catkin_ws_path": path of your catkin_ws
@@ -93,19 +86,20 @@ source devel/setup.bash
 
 Now, you should be ready to use tbv_slam from inside the docker in the same way as running it natively.
 
-## Run TBV SLAM
+## 1.5 Run tbv_slam
 
-For quick demonstration, the run_semi_online node calculates odometry, loop closure detection, and pose graph optimization in parallel. 
-This node relies on previously trained alignment and loop closure classifiers. The coefficients of these classifiers are stored in the model_parameters directory.
-To run this node, use the bash scripts prepared for each dataset:
 ```
-roscd tbv_slam/script/<oxford or mulran or kvarntorp or volvo>/
-./run_parallel.sh
+roscd tbv_slam/script/oxford/
+./run_tbv_simple.sh
 ```
-For Oxford and Mulran, make sure that the correct sequence is commented in in the top of the script.
-The evaluation can be performed as described in the advanced usage section. 
-Note that the performance metrics may deviate slightly from the published values. This is due to the multithreaded implementation.
-To reproduce the results from the publications, please use the offline vesion explained in the [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
+Replace "oxford" with "mulran", "kvarntorp", or "volvo" or kvarn if testing sequences.
+Additionally, for Oxford and Mulran, make sure that the correct sequence is commented in in the top of the script.
+
+run_tbv_simple provides a quick demo of the tbv_slam. Odometry, loop closure detection and verification, and pose graph optimization runs in parallel. This node relies on previously trained alignment and loop closure classifiers. The coefficients of these classifiers are stored in the model_parameters directory.
+Please note that the performance metrics in may deviate slightly from the published values. This is due to an error in the simplified multithreaded implementation.
+To correctly reproduce the same results as in the original publication, please use the "development version" where odometry is precomputed, as explained in the [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
+## 1.6 Evaluation
+See section [3. Evaluation](#3-evaluation)
 
 # Build tbv_slam locally
 
@@ -148,7 +142,7 @@ roscd tbv_slam/script/oxford/training/multiple_sequences
 ./odometry_training_all_oxford
 ```
 
-# 2. Running TBV-SLAM
+# 2. Running tbv_slam
 ## Single Oxford sequence - TBV SLAM-8 (no visualization)
 Run TBV SLAM-8 on the Oxford sequence _2019-01-10-12-32-52-radar-oxford-10k_.
 ```

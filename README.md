@@ -13,10 +13,10 @@ This guide aims to setup TBV SLAM for a quick demonstration. Note that this vers
 The quick start guide has the following steps:
 
 * [1.1 Clone repositories](#11-clone-repositories)
-* 1.2 [Download/Store radar data](#downloadstore-radar-data)
-* 1.3 [Prepare Docker image](#Prepare-Docker-image)
-* 1.4 [Run Docker container](#run-docker-container)
-* 1.5 [Run TBV-SLAM](#run-tbv-slam)
+* [1.2 Downloading / storing radar data](#12-downloading-and-storing-radar-data)
+* [1.3 Prepare Docker image](#13-prepare-docker-image)
+* [1.4 Run Docker container](#14-run-docker-container)
+* [1.5 Run tbv_slam](#15-run-tbv_slam)
 
 The quick start guide assumes that you have a working Docker installation. If this is not the case, [you have to build tbv_slam locally](#build-tbv-slam-locally).
 
@@ -28,7 +28,7 @@ git clone https://github.com/dan11003/tbv_slam_public.git
 # Do not build yet
 ```
 
-## 1.2 Downloading / storing radar data
+## 1.2 Downloading and storing radar data
 Set the environment variable ${BAG_LOCATION} to where all data is stored.
 
 We assume that data is stored in home/${USER}/Documents/

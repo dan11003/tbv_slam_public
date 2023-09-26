@@ -36,11 +36,11 @@
 #include "pcl_ros/publisher.h"
 #include "tbv_slam/posegraph.h"
 #include "cfear_radarodometry/types.h"
-#include "robust_mapping_custom_msgs/registration.h"
-#include "robust_mapping_custom_msgs/DetectLoop.h"
+//#include "robust_mapping_custom_msgs/registration.h"
+//#include "robust_mapping_custom_msgs/DetectLoop.h"
 
 #include "ros/service.h"
-#include "robust_mapping_custom_msgs/n_registration.h"
+//#include "robust_mapping_custom_msgs/n_registration.h"
 #include "unordered_map"
 #include "cfear_radarodometry/n_scan_normal.h"
 #include "alignment_checker/AlignmentQuality.h"
@@ -277,7 +277,7 @@ protected:
 
   bool Register(const unsigned int from, const unsigned int to, const Eigen::Affine3d& Tfrom, const Eigen::Affine3d& Tto, Eigen::Affine3d& Talign, Eigen::Matrix<double, 6, 6> &reg_cov);
 
-  void CreateSrvMsg(const std::vector<unsigned int> &from, const std::vector<unsigned int> &to, robust_mapping_custom_msgs::registration &srv);
+  //void CreateSrvMsg(const std::vector<unsigned int> &from, const std::vector<unsigned int> &to, robust_mapping_custom_msgs::registration &srv);
 
   BaseParameters par_; // Parameters
 

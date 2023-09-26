@@ -37,11 +37,11 @@
 #include "pcl_ros/publisher.h"
 #include "tbv_slam/posegraph.h"
 #include "cfear_radarodometry/types.h"
-#include "robust_mapping_custom_msgs/registration.h"
-#include "robust_mapping_custom_msgs/DetectLoop.h"
+//#include "robust_mapping_custom_msgs/registration.h"
+//#include "robust_mapping_custom_msgs/DetectLoop.h"
 
 #include "ros/service.h"
-#include "robust_mapping_custom_msgs/n_registration.h"
+//#include "robust_mapping_custom_msgs/n_registration.h"
 #include "tbv_slam/loopclosure.h"
 #include "boost/shared_ptr.hpp"
 namespace tbv_slam {

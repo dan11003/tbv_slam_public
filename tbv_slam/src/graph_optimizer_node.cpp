@@ -57,7 +57,7 @@
 #include "tf/transform_listener.h"
 #include "std_srvs/SetBool.h"
 
-#include "robust_mapping_custom_msgs/IndexedPoseScan.h"
+//#include "robust_mapping_custom_msgs/IndexedPoseScan.h"
 
 /** \brief A ROS node which implements scan matching based on ndt
  * \author Daniel adolfsson
@@ -155,7 +155,7 @@ public:
 
     srv = param_nh.advertiseService("force_optimization", &GraphOptimization::forceOptimization, this);
     srv_save = param_nh.advertiseService("save_map", &GraphOptimization::SaveSrvCallback, this);
-    pub_idx_scan = param_nh.advertise<robust_mapping_custom_msgs::IndexedPoseScan>("/idx_scan",100);
+    //pub_idx_scan = param_nh.advertise<robust_mapping_custom_msgs::IndexedPoseScan>("/idx_scan",100);
 
 
   }
@@ -194,12 +194,12 @@ public:
       graph->AddNode(Tdiff, cloud, cov_rotated, node, node-1);*/
 
 
-    robust_mapping_custom_msgs::IndexedPoseScan msg;
-    pcl::toROSMsg(*cloud, msg.cloudsrc);
-    msg.id = node-1;
+    //robust_mapping_custom_msgs::IndexedPoseScan msg;
+    //pcl::toROSMsg(*cloud, msg.cloudsrc);
+    //msg.id = node-1;
     //Eigen::Affine3d T = robust_mapping::PoseCeresToEig(graph->GetPoses()[graph->GetPosesSize()-1]);
     //tf::poseEigenToMsg(T, msg.Tsrc);
-    pub_idx_scan.publish(msg);
+    //pub_idx_scan.publish(msg);
     node++;
     Tprev = Tpose;
   }

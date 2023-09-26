@@ -23,7 +23,6 @@ find_package(catkin REQUIRED COMPONENTS
     tf
     genmsg
     tf_conversions
-    robust_mapping_custom_msgs
     cfear_radarodometry
     place_recognition_radar
     alignment_checker
@@ -55,7 +54,7 @@ find_package(Eigen3 REQUIRED COMPONENTS)
 catkin_package(
     INCLUDE_DIRS include
     DEPENDS Eigen3 #libpcl-all-dev
-    CATKIN_DEPENDS  roscpp laser_geometry sensor_msgs tf_conversions tf geometry_msgs  eigen_conversions pcl_ros  robust_mapping_custom_msgs  cfear_radarodometry place_recognition_radar alignment_checker
+    CATKIN_DEPENDS  roscpp laser_geometry sensor_msgs tf_conversions tf geometry_msgs  eigen_conversions pcl_ros  cfear_radarodometry place_recognition_radar alignment_checker
     LIBRARIES ${PROJECT_NAME}
     )
 

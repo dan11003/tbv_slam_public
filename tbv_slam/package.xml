@@ -28,7 +28,7 @@
 <build_depend>geometry_msgs</build_depend>
 <!--build_depend>cmake_modules</build_depend-->
 <build_depend>eigen_conversions</build_depend>
-<build_depend>robust_mapping_custom_msgs</build_depend>
+<!--build_depend>robust_mapping_custom_msgs</build_depend-->
 <build_depend>cfear_radarodometry</build_depend>
 <build_depend>place_recognition_radar</build_depend>
 <build_depend>alignment_checker</build_depend>
@@ -54,7 +54,7 @@
 <exec_depend>geometry_msgs</exec_depend>
 <!--exec_depend>cmake_modules</exec_depend-->
 <exec_depend>eigen_conversions</exec_depend>
-<exec_depend>robust_mapping_custom_msgs</exec_depend>
+<!--exec_depend>robust_mapping_custom_msgs</exec_depend-->
 <exec_depend>cfear_radarodometry</exec_depend>
 <exec_depend>place_recognition_radar</exec_depend>
 <exec_depend>alignment_checker</exec_depend>

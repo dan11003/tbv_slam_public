@@ -1,24 +1,15 @@
 # TBV Radar SLAM
-This page contains the source code and evaluation for the article [**TBV Radar SLAM**](https://arxiv.org/abs/2301.04397),  published in [**RA-L**](https://ieeexplore.ieee.org/document/10103570) and presented at [**IROS2023**](https://www.youtube.com/watch?v=3n-40a-WZ8A).
+This page contains the source code and evaluation for the article [**TBV Radar SLAM**](https://arxiv.org/abs/2301.04397),  published in [**RA-L**](https://ieeexplore.ieee.org/document/10103570) and presented at [**IROS2023**](https://www.youtube.com/watch?v=3n-40a-WZ8A). A [__Demo__](https://www.youtube.com/watch?v=t8HQtHAUHHc) of TBV is provided. This work integrates [__CFEAR radar odometry__](https://github.com/dan11003/CFEAR_Radarodometry) (published in T-RO) with [__introspective loop closure__](https://www.sciencedirect.com/science/article/pii/S0921889022000768) for robust loop closure and mapping of large-scale environments.
+
 
 A tutorial is provided for building and testing the source code locally, or within an isolated docker environment.
-## TBV Radar SLAM - Trust but verify loop candidates
-This work integrates [__CFEAR radar odometry__](https://github.com/dan11003/CFEAR_Radarodometry) (published in T-RO) with [__introspective loop closure__](https://www.sciencedirect.com/science/article/pii/S0921889022000768) for robust loop closure and mapping of large-scale environments.
-
-
-__Paper__: [preprint](https://arxiv.org/abs/2301.04397) or [published](https://ieeexplore.ieee.org/document/10103570/)
-
-[__Demo__](https://www.youtube.com/watch?v=t8HQtHAUHHc).
-
-[__IROS-2023 presentation__](https://www.youtube.com/watch?v=3n-40a-WZ8A).
-
-
-<!---[![Watch the demo of TBV Radar SLAM](https://i.imgur.com/IHnKCFP.jpeg)](https://youtu.be/vt5fpE0bzSY)--->
-<img src="https://imgur.com/a/pyihjos" width="640" height="640" />
+<img src="https://i.imgur.com/IHnKCFP.jpeg" width="980" height="700" />
 
 # Quick start guide
 
-This guide aims to setup TBV SLAM for a quick demonstration. To reproduce the results of the publication, please referr to the [advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
+This guide aims to setup TBV SLAM for a quick demonstration. Note that this version is less stable with reduced performance compared to the version which we use for development. If the user which to replicate the results from the paper, or experiments with loop closure, we refer to the
+[advanced usage section](#1-advanced-usage-for-evaluation-purposes---precompute-odometry-and-training-data).
+
 The quick start guide has the following steps:
 1. [Clone repositories](#clone-repositories)
 2. [Download/Store radar data](#downloadstore-radar-data)
@@ -30,19 +21,16 @@ The quick start guide assumes that you have a working Docker installation. If th
 
 ## Clone repositories
 ```
-cd ~/catkin_ws/src
-git clone git@github.com:dan11003/tbv_slam_public.git
-git clone git@github.com:dan11003/tbv_slam.git
-git clone git@github.com:dan11003/CFEAR_Radarodometry_code_public.git
-git clone git@github.com:dan11003/CorAl-ScanAlignmentClassification.git
-git clone git@github.com:dan11003/radar_kitti_benchmark.git
-git clone git@github.com:dan11003/Place-Recognition-Radar-.git
+mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src
+catkin_init_workspace
+git clone https://github.com/dan11003/tbv_slam_public.git
+# Do not build yet
 ```
 
 ## Downloading / storing radar data (Required)
 Set the environment variable ${BAG_LOCATION} to where all data is stored.
 
-Assuming data is saved under home/${USER}/Documents/
+We assume that data is stored in home/${USER}/Documents/
 ```
 echo "export BAG_LOCATION=/home/${USER}/Documents" >> ~/.bashrc
 source ~/.bashrc
@@ -60,6 +48,8 @@ ${BAG_LOCATION}
         └───radar
             │   bagfile (2019-01-10-12-32-52-radar-oxford-10k.bag)
 ```
+In other words, make sure that the bag file is located at the path: 
+/home/${USER}/Documents/Oxford/2019-01-10-12-32-52-radar-oxford-10k/2019-01-10-12-32-52-radar-oxford-10k.bag
 Download links
 Bag files can be downloaded from [here](https://drive.google.com/drive/folders/1uATfrAe-KHlz29e-Ul8qUbUKwPxBFIhP?usp=share_link).
 Additional bag files can be created by following [our guide](https://github.com/dan11003/CFEAR_Radarodometry_code_public)

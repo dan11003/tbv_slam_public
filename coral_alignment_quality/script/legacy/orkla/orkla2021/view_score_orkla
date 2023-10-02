@@ -1,0 +1,18 @@
+
+clouds_dir=/home/daniel/ros/alignment_ws/src/robust_mapping_oru/robust_mapping/data
+pose_est=$clouds_dir/sensor.txt
+cloud_prefix=cloud_
+output_dir=$clouds_dir
+if pgrep -x "rviz" > /dev/null
+then
+    echo "Rviz already running"
+else
+    rosrun rviz rviz -d "$(rospack find alignment_checker)/rviz/alignment_arla.rviz"  &>/dev/null &
+
+fi
+
+
+rosrun alignment_checker score_viewer --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir  --method entropy --index-first-scan 0  --ent-reject-ratio 0.2   --radius 0.4  --max-swell 1
+
+
+

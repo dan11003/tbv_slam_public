@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+
+
+
+
+<node pkg="rviz" type="rviz" name="rviz" args="-d $(find alignment_checker)/rviz/vis.rviz" />
+
+
+
+</launch>
+

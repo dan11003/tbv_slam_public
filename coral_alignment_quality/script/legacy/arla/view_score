@@ -1,0 +1,16 @@
+
+clouds_dir=/mnt/disk0/arla_pcds
+pose_est=$clouds_dir/offarla-2012_gt=1_submap=1_sizexy=300_Z=15_intrchR=8_compR=0_res=0.7_maxSensd=130_keyF=1_d=0.1_deg=1_alpha=0_dl=0_xyzir=0_mpsu=0_mnpfg=3kmnp1_sensorpose_est.txt
+cloud_prefix=cloud_
+output_dir=$clouds_dir
+if pgrep -x "rviz" > /dev/null
+then
+    echo "Rviz already running"
+else
+    rosrun rviz rviz -d "$(rospack find alignment_checker)/rviz/alignment_arla.rviz"  &>/dev/null &
+
+fi
+
+rosrun alignment_checker score_viewer --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir --method entropy --radius 0.2 --ent-reject-ratio 0.15 --max-swell 3
+
+

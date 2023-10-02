@@ -1,0 +1,20 @@
+dataset=stairs #ETH_Hauptgebaude #
+clouds_dir=/mnt/disk0/challanging_datasets/$dataset/global_frame/pcd
+pose_est=$clouds_dir/gt.txt
+cloud_prefix=cloud_
+output_dir=$clouds_dir/no_inconsistencies
+mkdir -p $output_dir
+if pgrep -x "rviz" > /dev/null
+then
+    echo "Rviz already running"
+else
+    rosrun rviz rviz -d "$(rospack find alignment_checker)/rviz/alignment_origin.rviz"  &>/dev/null &
+
+fi
+rosrun alignment_checker score_viewer --index-first-scan 0 --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir --radius 0.3 --min-distance 0.2 --method entropy --ent-reject-ratio 0.15
+
+
+
+
+
+

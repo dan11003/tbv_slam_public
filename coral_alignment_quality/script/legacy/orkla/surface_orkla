@@ -1,0 +1,18 @@
+dataset=stairs
+clouds_dir=/mnt/disk0/orkla_pcds
+pose_est=$clouds_dir/offorkla-velodyne_gt=0_submap=0_sizexy=300_Z=22_intrchR=8_compR=0_res=0.55_maxSensd=130_keyF=1_d=0.2_deg=100_alpha=0_dl=0_xyzir=0_mpsu=0_mnpfg=3kmnp1_sensorpose_est.txt
+cloud_prefix=cloud_
+output_dir=$clouds_dir
+if pgrep -x "rviz" > /dev/null
+then
+    echo "Rviz already running"
+else
+    rosrun rviz rviz -d "$(rospack find alignment_checker)/rviz/alignment_origin.rviz"  &>/dev/null &
+
+fi
+
+
+#rosrun alignment_checker function_surface --index-first-scan 1 --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-filename surface-$dataset-r=$radius.txt --Smin 0.4 0.0 0.0 0.0 0.0 0.2 --Smax 0.4 0 0.0 0.0 0.0 0.2 --Sinc 0.02 0.00 0 0 0 0.005 --radius 0.2 --ent-reject-ratio 0.2   --max-swell 5
+rosrun alignment_checker function_surface --index-first-scan 1 --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-filename surface-$dataset-r=$radius.txt --Smin 5.0 5 0.0 0.0 0.0 0.0 --Smax 5.0 5.0 0.0 0.0 0.0 0.0 --Sinc 0.2 0.2 0 0 0 0.000 --radius 0.2 --ent-reject-ratio 0.2   --max-swell 5
+
+

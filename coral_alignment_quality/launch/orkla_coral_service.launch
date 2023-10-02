@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="visualize" default="true"/>
+
+    <group if="$(arg visualize)">
+       <node pkg="rviz" type="rviz" name="rviz" args="-d $(find alignment_checker)/rviz/coral_server_orkla.rviz" />
+    </group>
+
+    <node pkg="alignment_checker" type="CorAlServer" name="CorAlServer" output="screen">
+
+    </node>
+
+</launch>

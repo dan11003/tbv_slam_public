@@ -1,0 +1,13 @@
+dataset,oxford
+sequence,2019-01-10-11-46-21-radar-oxford-10k
+experiment_name,oxford_sc_coral
+distance_thresholds,10 5 3 1
+radar_threshold,0
+interpolation,area
+normalize,false
+pc_num_rings,40
+pc_num_sectors,120
+search_ratio,0.1
+nr_sc_thresholds,500
+visualize,false
+prints,false

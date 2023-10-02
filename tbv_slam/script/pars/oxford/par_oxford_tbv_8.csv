@@ -1,0 +1,17 @@
+experiment_name,oxford_tbv_model_8
+input_directory,/$BAG_LOCATION/TBV_Eval
+dataset,oxford
+method,"TBV SLAM-6"
+visualize,false
+N_CANDIDATES,1
+all_candidates,false
+model_threshold,0.9
+augment_sc,true
+odometry_coupled_closure,true
+raw_radar_scan,false
+sequence,2019-01-10-12-32-52-radar-oxford-10k
+model_features,odom-bounds sc-sim alignment_quality
+model_training_file_load,tbv_model_8.txt
+speedup,true
+load_trained_classifier,true
+use_covariance_sampling_in_loop_closure,false

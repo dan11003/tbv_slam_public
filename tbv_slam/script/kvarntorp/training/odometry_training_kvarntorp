@@ -1,0 +1,71 @@
+#!/bin/bash
+
+killall rviz
+
+SEQUENCE="2020-09-18-14-38-03"
+current_date=`date '+%Y-%m-%d_%H-%M'`
+EVALUATION_description="cfear-3"
+
+BAG_BASE_PATH="${BAG_LOCATION}/Kvarntorp"
+EVAL_BASE_DIR="${BAG_LOCATION}/TBV_Eval/Kvarntorp/${SEQUENCE}"
+# source pars >/dev/null
+est_dir="${EVAL_BASE_DIR}/est/"
+gt_dir="${EVAL_BASE_DIR}/gt/"
+training_dir="${EVAL_BASE_DIR}/training/"
+radar_dir="${EVAL_BASE_DIR}/radar/"
+mkdir -p "${est_dir}"
+mkdir -p "${gt_dir}"
+mkdir -p "${training_dir}"
+mkdir -p "${radar_dir}"
+BAG_FILE_PATH="${BAG_BASE_PATH}/${SEQUENCE}/radar/${SEQUENCE}.bag"
+echo "${BAG_FILE_PATH}"
+
+
+
+#PARAMETERS CFEAR-3
+export cost_type="P2P"
+export submap_scan_size="4"
+export registered_min_keyframe_dist="1.5"
+export res="3"
+export kstrong="12"
+export zmin="60"
+export weight_option="4"
+export weight_intensity="true"
+
+# CFEAR-2
+#export cost_type="P2L"
+#export submap_scan_size="3"
+#export registered_min_keyframe_dist="1.5"
+#export res="3.5"
+#export kstrong="12"
+#export zmin="70"
+#export weight_option="4"
+#export weight_intensity="true"
+
+
+# CFEAR-1
+#export cost_type="P2L"
+#export submap_scan_size="3"
+#export registered_min_keyframe_dist="1.5"
+#export res="3.5"
+#export kstrong="12"
+#export zmin="70"
+#export weight_option="4"
+#export weight_intensity="true"
+
+# OTHER PARAMETERS #
+export range_resolution="0.175"
+export radar_ccw="true" #False for oxford, otherwise true
+export soft_constraint="false"
+export disable_compensate="false"
+
+export disable_training="false"
+export save_ROC="true"
+
+pars="--disable_training ${disable_training} --range-res ${range_resolution} --sequence ${SEQUENCE} --radar_ccw ${radar_ccw} --soft_constraint ${soft_constraint} --disable_compensate ${disable_compensate} --cost_type ${cost_type} --submap_scan_size ${submap_scan_size} --registered_min_keyframe_dist ${registered_min_keyframe_dist} --res ${res} --k_strongest ${kstrong} --bag_path ${BAG_FILE_PATH} --est_directory ${est_dir} --gt_directory ${gt_dir} --training_directory ${training_dir} --radar_directory ${radar_dir} --job_nr 1 --z-min ${zmin} --weight_option ${weight_option} --weight_intensity ${weight_intensity}  --method ${EVALUATION_description} --dataset Kvarntorp --store_graph true --save_radar_img true --save_ROC ${save_ROC}"
+echo "|||||Estimating odometry with parameters: ${pars}||||"
+roslaunch cfear_radarodometry vis.launch&
+rosrun tbv_slam odometry_training_node ${pars} #>/dev/null
+
+# KITTI_DIR=`rospack find kitti-odom-eval`
+# python3 $KITTI_DIR/python/eval_odom.py --dir ${EVAL_BASE_DIR} --align 6dof --force yes >/dev/null

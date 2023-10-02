@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!--arg name="clouds_dir" default="/mnt/storage/arla_pcds"/>
+    <arg name="pose_est" default="/mnt/storage/arla_pcds/offarla-2012_gt=1_submap=0_sizexy=250_Z=15_intrchR=8_compR=0_res=0.4_maxSensd=130_keyF=1_d=0.3_deg=3_alpha=0_dl=0_xyzir=0_mpsu=0_mnpfg=6kmnp0_sensorpose_est.txt"/>
+    <arg name="cloud_prefix" default="cloud_"/>
+    <arg name="visualize" default=""/>
+    <arg name="clusters" default="2"/-->
+
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find prepare_localization)/rviz/vis_cluster.rviz" />
+    <!--node pkg="prepare_localization" type="Affinity" name="Affinity" args=" cloud-dir $(arg clouds_dir) pose-file-path $(arg pose_est) cloud-prefix $(arg cloud_prefix) output-dir $(arg clouds_dir) k-clusters $(arg clusters) visualize create-map" /-->
+
+</launch>

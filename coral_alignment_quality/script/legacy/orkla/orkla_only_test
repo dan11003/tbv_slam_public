@@ -1,0 +1,28 @@
+radius=$2
+ARGUMENTS=$3
+dataset=warehouse
+clouds_dir=/mnt/disk0/orkla_pcds
+output_dir=$clouds_dir/csv_output
+pose_est=$clouds_dir/offorkla-velodyne_gt=0_submap=0_sizexy=300_Z=22_intrchR=8_compR=0_res=0.55_maxSensd=130_keyF=1_d=0.2_deg=100_alpha=0_dl=0_xyzir=0_mpsu=0_mnpfg=3kmnp1_sensorpose_est.txt
+cloud_prefix=cloud_
+
+mkdir -p $output_dir
+output_file_name=${dataset}
+
+
+
+if pgrep -x "rviz" > /dev/null
+then
+    echo "Rviz already running"
+else
+    rosrun rviz rviz -d "$(rospack find alignment_checker)/rviz/alignment_origin.rviz"  &>/dev/null &
+
+fi
+
+
+
+rosrun alignment_checker test_align --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir  --output-file-name ${output_file_name}_  --radius 0.5 --index-first-scan 1 --data-set $dataset --downsample --min-distance 0.2 --method entropy --rejection-ratio 0.0 --medium-error
+
+
+
+

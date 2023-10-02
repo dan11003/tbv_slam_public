@@ -1,0 +1,27 @@
+clear all
+close all
+clc
+r=1;
+x=-r:2*r/10:r;
+pnts=zeros(3,size(x,2)*size(x,2)*size(x,2));
+count =0;
+for i=1:11
+    for j=1:11
+        for k=1:11
+            
+            pnt=[x(i) x(j) x(k)]';
+            if(norm(pnt)<=r)
+                count=count+1;
+                pnts(1:3,count) = pnt;
+            end
+        end
+    end
+end
+%Q=cov(pnts*pnts')/size(pnts,2);
+Q=cov(pnts');%/size(pnts,2)
+sq=sqrt(Q(1,1))
+2*s
+d=det(Q)
+
+I=1/2*log(2*pi*exp(1)*d);
+plot3(pnts(1,:),pnts(2,:),pnts(3,:),'*')

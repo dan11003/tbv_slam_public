@@ -1,0 +1,7 @@
+declare -a arr=( "Apartment" "ETH_Hauptgebaude" "Gazebo_in_summer" "Gazebo_in_winter" "Mountain_plain" "stairs" "Wood_in_autumn" "Wood_in_summer")
+#declare -a arr=( "Apartment" )
+for i in "${arr[@]}"
+do
+   echo "$i"
+   ./test_alignment_ETH $i|grep "diff aligned"
+done

@@ -1,0 +1,9 @@
+OUTPUT_FOLDER="/mnt/disk0/orkla_pcds/logistics_top_competitors/"
+
+RADIUS="0.2"
+REJECTION="0.2"
+MAX_SWEL_FACTOR="5"
+../arla/test_alignment_arla $OUTPUT_FOLDER $RADIUS $REJECTION $MAX_SWEL_FACTOR
+#./test_alignment_orkla $OUTPUT_FOLDER $RADIUS $REJECTION $MAX_SWEL_FACTOR
+
+

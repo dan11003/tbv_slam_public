@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+<arg name="world_frame" default="world"/>
+<arg name="reg_service_topic" default="/registration"/>
+<arg name="virt_footprint_link" default="virt_footprint"/>
+<arg name="lidar_odom_topic" default="/lidar_odom_node/lidar_pose_est"/>
+
+<node pkg="robust_mapping" type="graph_optimizer_node" name="graph_optimizer_node" output="screen">
+
+  <param name="world_frame" value="$(arg world_frame)"/>
+  <param name="virt_footprint" value="$(arg virt_footprint_link)"/>
+  <param name="map_optimized_topic" value="map_optimized"/>
+  <param name="graph_path" value="$(find robust_mapping)/data/orkla.pgh"/>
+  <param name="load_graph" value="true"/>
+  <param name="save_graph" value="false"/>
+  <param name="points_topic" value="/lidar_odom_node/registered"/>
+  <param name="lidar_odom_topic" value="$(arg lidar_odom_topic)"/>
+  <param name="registration_service_topic" value="$(arg reg_service_topic)"/>
+  <param name="min_d_travel" value="15"/>
+  <param name="max_d_registration" value="1.5"/>
+  <param name="min_d_registration" value="0.0"/>
+  <param name="T_vis" value="3.0"/>
+  <param name="t_min_constraint_search" value="0.05" />
+  <param name="t_max_constraint_search" value="0.05" />
+  <param name="visualize" value="true"/>
+  <param name="disable_loop_closure" value="true"/>
+  <param name="save_pcd" value="true"/>
+  <param name="pcd_output_dir" value="$(find robust_mapping)/data/"/>
+  <param name="save_graph_map" value="true"/>
+  <param name="enable_odom_refinement" value="false"/>
+
+
+  <param name="use_keyframe" value="false"/>
+  <param name="use_submap" value="false"/>
+  <param name="size_x_meters" value="300"/>
+  <param name="size_y_meters" value="300"/>
+  <param name="size_z_meters" value="20"/>
+  <param name="resolution" value="0.7"/>
+  <param name="enable_registration" value="true"/>
+  <!--param name="sensor_pose_z" value="$(arg sensor_pose_z)"/-->
+  <param name="map_output_path" value="$(find graph_map)/maps/"/>
+</node>
+
+
+<node pkg="robust_mapping" type="reg_service_node" name="reg_service_node" output="screen">
+  <param name="registration_service_topic" value="$(arg reg_service_topic)"/>
+  <param name="world_frame" value="$(arg world_frame)"/>
+  <param name="multires" value="true"/>
+  <param name="LocalService" value="true"/>
+
+  <param name="resolution" value="0.6"/>
+  <param name="enable_registration" value="true"/>
+  <param name="visualize" value="true"/>
+  <param name="calculate_cov" value="true"/>
+  <param name="check_consistency" value="false"/>
+  <param name="max_translation_norm" value="1.2"/>
+  <param name="max_rotation_norm" value="20"/>
+  <param name="max_range" value="150"/>
+</node>
+
+</launch>
+

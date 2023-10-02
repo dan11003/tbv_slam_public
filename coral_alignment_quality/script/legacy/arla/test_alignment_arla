@@ -1,0 +1,38 @@
+output_dir=$1
+radius=$2
+rejection=$3
+swell=$4
+dataset=dairy-production
+clouds_dir=/mnt/disk0/arla_pcds
+pose_est=$clouds_dir/offarla-2012_gt=1_submap=1_sizexy=300_Z=15_intrchR=8_compR=0_res=0.7_maxSensd=130_keyF=1_d=0.1_deg=1_alpha=0_dl=0_xyzir=0_mpsu=0_mnpfg=3kmnp1_sensorpose_est.txt
+cloud_prefix=cloud_
+
+mkdir -p $output_dir
+output_file_name=${dataset}
+
+
+if pgrep -x "rviz" > /dev/null
+then
+    echo "Rviz already running"
+else
+    rosrun rviz rviz -d "$(rospack find alignment_checker)/rviz/alignment_origin.rviz"  &>/dev/null &
+
+fi
+
+echo "rosrun alignment_checker test_align --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir  --output-file-name ${output_file_name}_  --index-first-scan 1 --data-set $dataset  --min-distance 0.2 --method entropy --rejection-ratio $rejection --small-error --radius $radius --max-swell-distance $swell"
+rosrun alignment_checker test_align --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir  --output-file-name ${output_file_name}_   --index-first-scan 1 --data-set $dataset --downsample --min-distance 0.2 --method entropy --rejection-ratio $rejection --medium-error --radius $radius  --max-swell $swell
+rosrun alignment_checker test_align --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir  --output-file-name ${output_file_name}_   --index-first-scan 1 --data-set $dataset --downsample --min-distance 0.2 --method mean-map-entropy --rejection-ratio $rejection --medium-error --radius $radius  --max-swell $swell
+rosrun alignment_checker test_align --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir  --output-file-name ${output_file_name}_   --index-first-scan 1 --data-set $dataset --downsample --min-distance 0.2 --method ndtp2d --rejection-ratio $rejection --medium-error --radius 0.4  --max-swell $swell
+
+#rosrun alignment_checker test_align --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir  --output-file-name ${output_file_name}_   --index-first-scan 1 --data-set $dataset  --min-distance 0.2 --method entropy --rejection-ratio $rejection --small-error --radius $radius  --max-swell $swell
+#rosrun alignment_checker test_align --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir  --output-file-name ${output_file_name}_   --index-first-scan 1 --data-set $dataset  --min-distance 0.2 --method mean-map-entropy --rejection-ratio $rejection --small-error --radius $radius  --max-swell $swell
+#osrun alignment_checker test_align --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir  --output-file-name ${output_file_name}_   --index-first-scan 1 --data-set $dataset  --min-distance 0.2 --method entropy-median --rejection-ratio $rejection --small-error --radius $radius  --max-swell $swell
+#rosrun alignment_checker test_align --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir  --output-file-name ${output_file_name}_   --index-first-scan 1 --data-set $dataset  --min-distance 0.2 --method ndtp2d --rejection-ratio $rejection --small-error --radius $radius  --max-swell $swell
+#rosrun alignment_checker test_align --cloud-dir $clouds_dir --pose-file-path $pose_est --cloud-prefix $cloud_prefix --output-dir $output_dir  --output-file-name ${output_file_name}_   --index-first-scan 1 --data-set $dataset  --min-distance 0.2 --method rel-ndtp2d --rejection-ratio $rejection --small-error --radius $radius  --max-swell $swell
+
+
+
+
+
+
+

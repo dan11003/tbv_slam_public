@@ -1,0 +1,17 @@
+###### Requirements without Version Specifiers ######
+pytest
+sklearn
+seaborn
+rospkg
+
+robust_mapping (from our GitLab source, branch: develop_cfearjournal)
+Ceres solver (see: https://brucknem.github.io/posts/install-ceres-solver/)
+octomap_mapping (clone: https://github.com/OctoMap/octomap_mapping.git) 
+octomap_msgs (clone: https://github.com/OctoMap/octomap_msgs.git)
+octomap_ros (clone: https://github.com/OctoMap/octomap_ros.git)
+(Optional, ros version dependant): $ sudo apt-get install ros-noetic-octomap
+
+NOTE: if opencv version locally installed is >= 4 then, in file "Utils.h" replace
+    #include "cv.h"
+by
+    #include <opencv4/opencv2/imgproc/imgproc.hpp>

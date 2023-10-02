@@ -82,7 +82,10 @@ public:
     int job_nr = -1;
     bool save_pcd = false;
     bool synced_callback = true;
+<<<<<<< HEAD
     bool interpolate = true;
+=======
+>>>>>>> Initial release commit
 
     void GetParametersFromRos( ros::NodeHandle& param_nh){
       param_nh.param<std::string>("est_topic", odom_est_topic, "/lidar_odom");

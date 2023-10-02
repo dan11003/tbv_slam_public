@@ -61,12 +61,11 @@ void radarDriver::Process(){
   else if (par.filter_type_ == filtertype::kstrong){
     StructuredKStrongest filt(cv_polar_image, par.z_min, par.k_strongest, par.min_distance, par.range_res);
     filt.getPeaksFilteredPointCloud(cloud_filtered_, false);
-    filt.getPeaksFilteredPointCloud(cloud_filtered_peaks_, true);
   }
-  else {
-    BFAR_filter(cv_polar_image, cloud_filtered_, par.window_size_, par.scale_factor, par.offset_factor_, par.range_res, par.min_distance);
     cloud_filtered_peaks_ = cloud_filtered_;
   }
+=======
+>>>>>>> Initial release commit
   //Fill header
 
   cloud_filtered_peaks_->header.frame_id = cloud_filtered_->header.frame_id = par.radar_frameid;

@@ -52,7 +52,7 @@ class radarReader
 private:
 
   ros::NodeHandle nh_;
-  ros::Publisher pub_odom;
+  ros::Publisher pub_odom, pub_odom_adjusted;
   EvalTrajectory eval;
   std::string output_dir;
   radarDriver driver;
@@ -71,6 +71,7 @@ public:
               const training_parameters& training_par) : nh_("~"), driver(rad_pars,true), fuser(odom_pars, true), eval(eval_par,true),output_dir(eval_par.est_output_dir), training_pars(training_par){
 
     pub_odom = nh_.advertise<nav_msgs::Odometry>("/gt", 1000);
+    pub_odom_adjusted = nh_.advertise<nav_msgs::Odometry>("/gt_adjusted", 1000);
     cout<<"Loading bag from: "<<p.bag_file_path<<endl;
     rosbag::Bag bag;
     bag.open(p.bag_file_path, rosbag::bagmode::Read);
@@ -91,17 +92,52 @@ public:
         nav_msgs::Odometry msg_odom = *odom_msg;
         poseStamped stamped_gt_pose(Eigen::Affine3d::Identity(), Covariance::Identity(), odom_msg->header.stamp);
         tf::poseMsgToEigen(msg_odom.pose.pose, stamped_gt_pose.pose);
-        //stamped_gt_pose.pose = stamped_gt_pose.pose;//transform into sensor frame
-        Eigen::Matrix4d m = stamped_gt_pose.pose.matrix();
-        m(0,2) = 0; m(2,0) = 0; m(2,1) = 0; m(1,2) = 0; m(2,2) = 1; // 3d -> 2d
-        stamped_gt_pose.pose = Eigen::Affine3d(m);
+        Eigen::AngleAxisd rollAngle(M_PI, Eigen::Vector3d::UnitX());
+        Eigen::AngleAxisd pitchAngle(0, Eigen::Vector3d::UnitY());
+        Eigen::AngleAxisd yawAngle(0, Eigen::Vector3d::UnitZ());
+        Eigen::Quaterniond q180RotX = yawAngle * pitchAngle * rollAngle;
+
+        Eigen::Quaterniond qPose(stamped_gt_pose.pose.linear());
+        qPose = qPose*q180RotX;
+        Eigen::Matrix3d qPoseMat = qPose.toRotationMatrix();
+        qPoseMat(0,2) = 0; qPoseMat(2,0) = 0; qPoseMat(2,1) = 0; qPoseMat(1,2) = 0; qPoseMat(2,2) = 1; // 3d -> 2d
+        Eigen::Quaterniond qNormalized(qPoseMat);
+        qNormalized.normalize();
+        stamped_gt_pose.pose.linear() = qNormalized.toRotationMatrix();
+        //usleep(100*1000);
+
+
+
+
+
+        std::cout << stamped_gt_pose.pose.linear() << std::endl;
+        std::cout << stamped_gt_pose.pose.linear().determinant();
+
+        stamped_gt_pose.pose = Eigen::Affine3d(stamped_gt_pose.pose.matrix());
         static Eigen::Affine3d Tfirst_i = stamped_gt_pose.pose.inverse();
-        stamped_gt_pose.pose = Tfirst_i*stamped_gt_pose.pose;
+        //std::cout << "first GT:\n" << Tfirst_i.matrix() << std::endl;
+        //std::cout << "first GT det:\n" << stamped_gt_pose.pose.linear().determinant() << std::endl;
+        Eigen::Affine3d TZeroedPose = Tfirst_i*stamped_gt_pose.pose;
+        //Eigen::Matrix4d m = TZeroedPose.matrix();
+        /*m(0,2) = 0; m(2,0) = 0; m(2,1) = 0; m(1,2) = 0; m(2,2) = 1; // 3d -> 2d
+        Eigen::Quaterniond q(m.block<3,3>(0,0));
+        q.normalize();
+        m.block<3,3>(0,0) = q.toRotationMatrix();*/
+
+        //stamped_gt_pose.pose = Eigen::Affine3d(m);
+        stamped_gt_pose.pose = TZeroedPose;
+        std::cout << "current GT:\n" << stamped_gt_pose.pose.linear() << std::endl;
         eval.CallbackGTEigen(stamped_gt_pose);
+
 
         msg_odom.header.stamp = ros::Time::now();
         msg_odom.header.frame_id = "world";
         pub_odom.publish(msg_odom);
+
+        //tf::poseEigenToMsg(Tfirst_i.inverse(), msg_odom.pose.pose);
+        tf::poseEigenToMsg(stamped_gt_pose.pose, msg_odom.pose.pose);
+        pub_odom_adjusted.publish(msg_odom);
+
         //cout << "gt: " << odom_msg->header.stamp.toNSec() << endl;
         continue;
       }
@@ -134,6 +170,7 @@ public:
           scan_learner.AddTrainingData(current_scan);
         }
         
+        //std::cout << "current EST:\n" << Tcurrent.matrix() << std::endl;
         eval.CallbackESTEigen(poseStamped(Tcurrent, cov_current, t));
         ros::Time tnow = ros::Time::now();
         ros::Duration d = ros::Duration(tnow-tinit);

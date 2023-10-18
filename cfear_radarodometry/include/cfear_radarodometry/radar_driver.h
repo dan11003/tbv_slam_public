@@ -21,7 +21,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-typedef enum filter_type{kstrong, CACFAR}filtertype;
+typedef enum filter_type{kstrong, CACFAR, BFAR}filtertype;
 
 std::string Filter2str(const filtertype& filter);
 
@@ -41,6 +41,9 @@ public:
     float range_res = 0.0438;
     int azimuths = 400, k_strongest = 12;
     int nb_guard_cells = 20, window_size = 10;
+    int window_size_ = 12;
+    float offset_factor_= 30;
+    float scale_factor = 1.0;
     float false_alarm_rate = 0.01;
     float min_distance = 2.5, max_distance = 200;
     std::string radar_frameid = "sensor_est", topic_filtered = "/Navtech/Filtered";
@@ -99,6 +102,8 @@ private:
   void Callback(const sensor_msgs::ImageConstPtr &radar_image_polar);
 
   void CallbackOxford(const sensor_msgs::ImageConstPtr &radar_image_polar);
+  
+  void CallbackBoreas(const sensor_msgs::ImageConstPtr &radar_image_polar);
 
   void Process();
 

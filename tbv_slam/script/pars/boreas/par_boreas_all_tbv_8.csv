@@ -1,0 +1,17 @@
+experiment_name,boreas_tbv_model_8
+input_directory,/$BAG_LOCATION/TBV_Eval
+dataset,boreas
+method,"TBV SLAM-8"
+visualize,false
+N_CANDIDATES,3
+all_candidates,false
+model_threshold,0.9
+augment_sc,true
+odometry_coupled_closure,true
+raw_radar_scan,false
+sequence,boreas-2020-12-01-13-26
+model_features,odom-bounds sc-sim alignment_quality
+model_training_file_save,tbv_model_8.txt
+model_training_file_load,''
+load_trained_classifier,false
+replace_cov_by_identity,true

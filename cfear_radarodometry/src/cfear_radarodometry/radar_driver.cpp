@@ -7,15 +7,17 @@ namespace CFEAR_Radarodometry {
 filtertype Str2filter(const std::string& str){
   if (str=="CA-CFAR")
     return filtertype::CACFAR;
-  else
+  else if(str=="kstrong")
     return filtertype::kstrong;
-
+  else
+    return filtertype::BFAR;
 }
 
 std::string Filter2str(const filtertype& filter){
   switch (filter){
   case filtertype::CACFAR: return "CA-CFAR";
-  case kstrong: return "kstrong";
+  case filtertype::kstrong: return "kstrong";
+  case filtertype::BFAR: return "BFAR";
   }
   return "kstrong";
 }
@@ -30,6 +32,8 @@ radarDriver::radarDriver(const Parameters& pars, bool disable_callback):par(pars
   if(!disable_callback){
     if(par.dataset=="oxford")
       sub = nh_.subscribe<sensor_msgs::Image>("/Navtech/Polar", 1000, &radarDriver::CallbackOxford, this);
+    else if(par.dataset=="boreas")
+      sub = nh_.subscribe<sensor_msgs::Image>("/Navtech/Polar", 1000, &radarDriver::CallbackBoreas, this);
     else
       sub = nh_.subscribe<sensor_msgs::Image>("/Navtech/Polar", 1000, &radarDriver::Callback, this);
   }
@@ -54,10 +58,14 @@ void radarDriver::Process(){
     AzimuthCACFAR filter(par.window_size, par.false_alarm_rate, par.nb_guard_cells, par.range_res, par.z_min , par.min_distance, 400.0);
     filter.getFilteredPointCloud(cv_polar_image, cloud_filtered_);
   }
-  else{
+  else if (par.filter_type_ == filtertype::kstrong){
     StructuredKStrongest filt(cv_polar_image, par.z_min, par.k_strongest, par.min_distance, par.range_res);
     filt.getPeaksFilteredPointCloud(cloud_filtered_, false);
     filt.getPeaksFilteredPointCloud(cloud_filtered_peaks_, true);
+  }
+  else {
+    BFAR_filter(cv_polar_image, cloud_filtered_, par.window_size_, par.scale_factor, par.offset_factor_, par.range_res, par.min_distance);
+    cloud_filtered_peaks_ = cloud_filtered_;
   }
   //Fill header
 
@@ -160,10 +168,35 @@ void radarDriver::Process(){
     */
   }
 
+  void radarDriver::CallbackBoreas(const sensor_msgs::ImageConstPtr &radar_image_polar)
+  {
+    if(radar_image_polar==NULL){
+      cerr<<"Radar image NULL"<<endl;
+      exit(0);
+    }
+    ros::Time t0 = ros::Time::now();
+
+    cv_polar_image = cv_bridge::toCvCopy(radar_image_polar, sensor_msgs::image_encodings::TYPE_8UC1);
+    //cv::imshow("debug_noflip", cv_polar_image->image);
+
+    //cv::waitKey(10);
+    cv::Mat cv_polar_image_flipped;
+    cv::flip(cv_polar_image->image, cv_polar_image_flipped, 0);
+    cv_polar_image->image = cv_polar_image_flipped;
+    //cv::imshow("debug_flip", cv_polar_image->image);
+    //cv::waitKey(10);
+    cv_polar_image->header.stamp = radar_image_polar->header.stamp.toSec() < 0.001 ? ros::Time::now() : radar_image_polar->header.stamp;; //rosparam set use_sim_time true
+    Process();
+    ros::Time t1 = ros::Time::now();
+    CFEAR_Radarodometry::timing.Document("Filtering",CFEAR_Radarodometry::ToMs(t1-t0));
+  }
+
   void radarDriver::CallbackOffline(const sensor_msgs::ImageConstPtr& radar_image_polar,  pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud, pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud_peaks){
 
     if(par.dataset=="oxford")
       CallbackOxford(radar_image_polar);
+    else if(par.dataset=="boreas")
+      CallbackBoreas(radar_image_polar);
     else
       Callback(radar_image_polar);
 

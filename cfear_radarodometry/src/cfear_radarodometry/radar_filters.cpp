@@ -335,4 +335,114 @@ void StructuredKStrongest::getPeaksFilteredPointCloud(pcl::PointCloud<pcl::Point
     }
   }
 }
+void BFAR_filter(cv_bridge::CvImagePtr &polar, pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud, int window_size_, double scale_factor, double offset_factor_, double range_res, double min_distance)
+{
+    if(cloud==NULL)
+        cloud = pcl::PointCloud<pcl::PointXYZI>::Ptr (new pcl::PointCloud<pcl::PointXYZI>());
+
+    float scan_thr_mat[400][4000] = {{0}};
+    float scan_float[400][4000] = {{0}};
+    bool  det_mat[400][4000] = {{0}};
+    // added by Anas to convert the scan into float and to calculate azimuth mean
+    // float azimuth_mean[400] = {0};
+    for (int bearing = 0; bearing < polar->image.rows; bearing++){
+        for (size_t i = 0; i < polar->image.cols; i++){
+            scan_float[bearing][i] = (float)(polar->image.at<uchar>(bearing, i));
+            scan_float[bearing][i] = pow(10.0f,scan_float[bearing][i]/40.0f);
+            //azimuth_mean[bearing]  = azimuth_mean[bearing] + scan_float[bearing][i];
+        }
+        //azimuth_mean[bearing] = azimuth_mean[bearing] /(polar->image.cols);
+    }
+
+
+    int nb_guard_cells_ = 2;
+
+    float trailing_mean, mean, forwarding_mean, max_value_thr;
+    int trailing_window_start, trailing_window_end, forwarding_window_start, forwarding_window_end;
+    for (int azimuth_nb = 0; azimuth_nb < polar->image.rows; azimuth_nb++){
+        for(int range_bin = 0; range_bin < polar->image.cols; range_bin++){
+            float cells_number = 0.0;
+            trailing_window_start = std::max(0, range_bin - nb_guard_cells_ - window_size_);
+            trailing_window_end = range_bin - nb_guard_cells_;
+            //trailing_mean = getMean(azimuth, trailing_window_start, trailing_window_end);
+            float sum = 0.;
+            //int N = 0;
+            for(int i = trailing_window_start; i < trailing_window_end; i++){
+                sum += scan_float[azimuth_nb][i];
+                cells_number += 1.;
+                }
+            trailing_mean = sum;
+            //cells_number = (float)N;
+            forwarding_window_start = range_bin + nb_guard_cells_;
+            forwarding_window_end = std::min(polar->image.cols, range_bin + nb_guard_cells_ + window_size_);
+            //forwarding_mean = getMean(azimuth, forwarding_window_start, forwarding_window_end);
+            sum = 0.;
+            //N = 0;
+            for(int i = forwarding_window_start; i < forwarding_window_end; i++){
+                sum += scan_float[azimuth_nb][i];
+                cells_number += 1.;
+                }
+            forwarding_mean = sum;
+            //cells_number = cells_number + (float)N;
+            mean = (trailing_mean + forwarding_mean)/cells_number;//(2.0 * (float)window_size_);
+            //cout << cells_number <<" " ;
+
+            scan_thr_mat[azimuth_nb][range_bin] = offset_factor_ + mean * scale_factor;
+            //cout <<"offset_factor_"<<"="<<offset_factor_<<" --";
+            //cout <<"scale_factor"<<"="<<scale_factor<<" --";
+            det_mat[azimuth_nb][range_bin] = (scan_float[azimuth_nb][range_bin] > scan_thr_mat[azimuth_nb][range_bin]);
+          }
+        }
+  pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_nofilter(new pcl::PointCloud<pcl::PointXYZI>);
+  const  double min_distance_sqrd = min_distance*min_distance;
+  sensor_msgs::ImagePtr msg = polar->toImageMsg();
+  float theta;
+  /*if(cv_polar_image->image.rows!=400 || cv_polar_image->image.cols!=3768){
+    std::cout<<"Size error rows: "<<cv_polar_image->image.rows<<", cols:"<<cv_polar_image->image.cols<<std::endl;
+    exit(0);
+  }*/
+  for (int bearing = 0; bearing < polar->image.rows; bearing++){
+    theta = ((float)(bearing+1) / polar->image.rows) * 2 * M_PI;
+    std::vector<pcl::PointXYZI> pnts_sorted;
+    for (size_t i = 0; i < polar->image.cols; i++){
+      int ind = i+0; //Unsure about this one!
+      //double d = range_res*(ind);
+
+      /*if(d < min_distance || d > max_distance){
+        continue;
+      }*/
+      pcl::PointXYZI p;
+      p.x = range_res * ind * cos(theta);
+      p.y = range_res * ind * sin(theta);
+      p.intensity = polar->image.at<uchar>(bearing, ind);
+      p.z = 0.0;//(p.intensity-z_min)/10.0;
+
+      if (det_mat[bearing][ind] == 1 ) // only push the good ones :)
+        pnts_sorted.push_back(p);
+      cloud_nofilter->push_back(p);
+      //InsertStrongestK(pnts_sorted, p, k_strongest);
+    }
+    for(auto && p :pnts_sorted){
+      if (p.x*p.x+p.y*p.y>min_distance_sqrd)
+        cloud->push_back(p);
+    }
+  }
+
+  cloud->width = (int)cloud->points.size();
+  cloud->height = 1;
+
+
+
+  /*cloud_nofilter->width = (int)cloud_nofilter->points.size();
+  cloud_nofilter->height = 1;
+  cloud_nofilter->header.frame_id = radar_frameid;*/
+
+  pcl_conversions::toPCL(polar->header.stamp, cloud->header.stamp);//pcl_conversions::toPCL(cv_polar_image->header.stamp,cloud->header.stamp);
+  //pcl_conversions::toPCL(cv_polar_image->header.stamp, cloud_nofilter->header.stamp);//pcl_conversions::toPCL(cv_polar_image->header.stamp,cloud->header.stamp);
+  //FilteredPublisher.publish(cloud);
+  //UnfilteredPublisher.publish(cloud_nofilter);
+}
+// end of BFAR
+
+
 }

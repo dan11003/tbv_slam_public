@@ -210,6 +210,32 @@ void EvalTrajectory::WriteTUM(const std::string& path, const poseStampedVector& 
     return;
 }
 
+void EvalTrajectory::WriteBoreas(const std::string& path, const poseStampedVector& v){
+  std::ofstream evalfile;
+  cout<<"Saving: "<<v.size()<<" poses to file: "<<path<<endl;
+  evalfile.open(path);
+  /*
+  Eigen::AngleAxisd rollAngle(M_PI, Eigen::Vector3d::UnitX());
+  Eigen::AngleAxisd pitchAngle(0, Eigen::Vector3d::UnitY());
+  Eigen::AngleAxisd yawAngle(0, Eigen::Vector3d::UnitZ());
+  Eigen::Quaterniond q180RotX = yawAngle * pitchAngle * rollAngle;
+  Eigen::Affine3d rot180aff = Eigen::Affine3d::Identity();
+  rot180aff.linear() = q180RotX.toRotationMatrix();
+  */
+  for(size_t i=0;i<v.size();i++){
+    // get the Affine3d matrix from the tuple
+    //Eigen::MatrixXd m((rot180aff * v[i].pose).matrix());
+    Eigen::MatrixXd m(v[i].pose.matrix());
+    // print to the file
+    evalfile << v[i].t.sec << std::setfill('0') << std::setw(6) << int(v[i].t.nsec/1000) << " " << std::setw(0);
+    evalfile << std::fixed << std::showpoint;
+    assert(m.rows()== 4 && m.cols()==4);
+    evalfile << MatToString(m) << endl;
+  }
+  evalfile.close();
+  return;
+}
+
 
 void EvalTrajectory::WriteCov(const std::string& path, const poseStampedVector& v){
     std::ofstream evalfile;
@@ -275,11 +301,13 @@ void EvalTrajectory::Save(){
     boost::filesystem::create_directories(par.est_output_dir);
     std::string est_path = par.est_output_dir+DatasetToSequence(par.sequence);
     std::string est_path_tum = par.est_output_dir+ "tum_" +DatasetToSequence(par.sequence);
+    std::string est_path_boreas = par.est_output_dir+ par.sequence +".txt";
     std::string est_path_cov = par.est_output_dir+ "cov_" +DatasetToSequence(par.sequence);
     cout<<"Saving estimate poses only, no ground truth, total: "<<est_vek.size()<<" poses"<<endl;
     cout<<"To path: "<<est_path<<endl;
     Write(est_path,  est_vek);
     WriteTUM(est_path_tum, est_vek);
+    WriteBoreas(est_path_boreas, est_vek);
     WriteCov(est_path_cov, est_vek);
     cout<<"Trajectory saved"<<endl;
     return;
@@ -288,7 +316,9 @@ void EvalTrajectory::Save(){
     //PrintStatus();
     //RemoveExtras();
     //PrintStatus();
-    One2OneCorrespondance();
+    if(par.interpolate) {
+      One2OneCorrespondance();
+    }
   }
 
 
@@ -300,6 +330,7 @@ void EvalTrajectory::Save(){
   std::string gt_path_tum  = par.gt_output_dir+ "tum_" +DatasetToSequence(par.sequence);
   std::string est_path = par.est_output_dir+DatasetToSequence(par.sequence);
   std::string est_path_tum = par.est_output_dir + "tum_" + DatasetToSequence(par.sequence);
+  std::string est_path_boreas = par.est_output_dir + par.sequence + ".txt";
   std::string est_path_cov = par.est_output_dir + "cov_" + DatasetToSequence(par.sequence);
   cout<<"Saving est_vek.size()="<<est_vek.size()<<", gt_vek.size()="<<gt_vek.size()<<endl;
   cout<<"To path: \n\" "<<gt_path<<"\""<<"\n\""<<est_path<<"\""<<endl;
@@ -308,6 +339,7 @@ void EvalTrajectory::Save(){
   WriteTUM(gt_path_tum, gt_vek);
   Write(est_path,  est_vek);
   WriteTUM(est_path_tum,  est_vek);
+  WriteBoreas(est_path_boreas,  est_vek);
   WriteCov(est_path_cov,  est_vek);
   cout<<"Trajectories saved"<<endl;
 

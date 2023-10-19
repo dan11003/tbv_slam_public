@@ -11,7 +11,6 @@ odometry_coupled_closure,true
 raw_radar_scan,false
 sequence,boreas-2020-12-01-13-26
 model_features,odom-bounds sc-sim alignment_quality
-model_training_file_save,tbv_model_8.txt
-model_training_file_load,''
-load_trained_classifier,false
+model_training_file_load,tbv_model_8.txt
+load_trained_classifier,true
 replace_cov_by_identity,true

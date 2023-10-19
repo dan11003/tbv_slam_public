@@ -106,13 +106,6 @@ public:
         stamped_gt_pose.pose.linear() = qNormalized.toRotationMatrix();
         //usleep(100*1000);
 
-
-
-
-
-        std::cout << stamped_gt_pose.pose.linear() << std::endl;
-        std::cout << stamped_gt_pose.pose.linear().determinant();
-
         stamped_gt_pose.pose = Eigen::Affine3d(stamped_gt_pose.pose.matrix());
         static Eigen::Affine3d Tfirst_i = stamped_gt_pose.pose.inverse();
         //std::cout << "first GT:\n" << Tfirst_i.matrix() << std::endl;
@@ -126,7 +119,6 @@ public:
 
         //stamped_gt_pose.pose = Eigen::Affine3d(m);
         stamped_gt_pose.pose = TZeroedPose;
-        std::cout << "current GT:\n" << stamped_gt_pose.pose.linear() << std::endl;
         eval.CallbackGTEigen(stamped_gt_pose);
 
 
@@ -152,8 +144,8 @@ public:
         Eigen::Affine3d Tcurrent;
         Covariance cov_current;
         
-        ros::Time t;
-        pcl_conversions::fromPCL(cloud_filtered->header.stamp, t);
+        const ros::Time t = image_msg->header.stamp;
+        //pcl_conversions::fromPCL(cloud_filtered->header.stamp, t);
 
         ros::Time t1 = ros::Time::now();
         fuser.pointcloudCallback(cloud_filtered, cloud_filtered_peaks, Tcurrent, t, cov_current);
@@ -223,6 +215,7 @@ void ReadOptions(const int argc, char**argv, OdometryKeyframeFuser::Parameters& 
   desc.add_options()
       ("help,h", "Help screen")
       ("res", po::value<double>()->default_value(3.5), "res")
+      ("do_not_interpolate", po::value<bool>()->default_value(false), "do_not_interpolate")
       ("range-res", po::value<double>()->default_value(0.0438), "range resolution")
       ("min_distance", po::value<double>()->default_value(2.5), "min sensor distance")
       ("max_distance", po::value<double>()->default_value(200), "mib sensor distance ")
@@ -291,9 +284,11 @@ void ReadOptions(const int argc, char**argv, OdometryKeyframeFuser::Parameters& 
   if (vm.count("covar_sampling"))
     par.estimate_cov_by_sampling = vm["covar_sampling"].as<bool>();
   if (vm.count("covar_sample_save"))
-    par.cov_samples_to_file_as_well = vm["covar_sample_save"].as<bool>();
+      par.cov_samples_to_file_as_well = vm["covar_sample_save"].as<bool>();
   if (vm.count("covar_sample_dir"))
-    par.cov_sampling_file_directory = vm["covar_sample_dir"].as<std::string>();
+    par.cov_samples_to_file_as_well = vm["covar_sample_save"].as<bool>();
+  if (vm.count("do_not_interpolate"))
+    eval_par.interpolate = false;
   if (vm.count("covar_XY_sample_range"))
     par.cov_sampling_xy_range = vm["covar_XY_sample_range"].as<double>();
   if (vm.count("covar_yaw_sample_range"))

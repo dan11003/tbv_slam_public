@@ -17,7 +17,8 @@ mkdir -p "${est_dir}"
 mkdir -p "${gt_dir}"
 mkdir -p "${training_dir}"
 mkdir -p "${radar_dir}"
-BAG_FILE_PATH="${BAG_BASE_PATH}/${SEQUENCE}/radar/${SEQUENCE}.bag"
+# BAG_FILE_PATH="${BAG_BASE_PATH}/${SEQUENCE}/radar/${SEQUENCE}.bag"
+BAG_FILE_PATH="${BAG_BASE_PATH}/${SEQUENCE}/${SEQUENCE}.bag"
 echo "${BAG_FILE_PATH}"
 
 

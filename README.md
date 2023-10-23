@@ -1,3 +1,4 @@
+# Note: This branch is WIP and currently adapted for evalualtion on BOREAS dataset. Do not use it for different datasets. 
 # TBV Radar SLAM
 This page contains the source code and evaluation for the article [**TBV Radar SLAM**](https://arxiv.org/abs/2301.04397),  published in [**RA-L**](https://ieeexplore.ieee.org/document/10103570) and presented at [**IROS2023**](https://www.youtube.com/watch?v=3n-40a-WZ8A). A [__Demo__](https://www.youtube.com/watch?v=t8HQtHAUHHc) of TBV is provided. This work integrates [__CFEAR radar odometry__](https://github.com/dan11003/CFEAR_Radarodometry) (published in T-RO) with [__introspective loop closure__](https://www.sciencedirect.com/science/article/pii/S0921889022000768) for robust loop closure and mapping of large-scale environments.
 

@@ -55,7 +55,7 @@ export weight_intensity="true"
 
 # OTHER PARAMETERS #
 export range_resolution="0.0595238"
-export radar_ccw="true" #False for oxford, otherwise true
+export radar_ccw="false" #False for oxford, otherwise true
 export soft_constraint="false"
 export disable_compensate="false"
 export LOSS_TYPE="Huber"

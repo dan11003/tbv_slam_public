@@ -92,7 +92,8 @@ public:
         nav_msgs::Odometry msg_odom = *odom_msg;
         poseStamped stamped_gt_pose(Eigen::Affine3d::Identity(), Covariance::Identity(), odom_msg->header.stamp);
         tf::poseMsgToEigen(msg_odom.pose.pose, stamped_gt_pose.pose);
-        Eigen::AngleAxisd rollAngle(M_PI, Eigen::Vector3d::UnitX());
+
+        /*Eigen::AngleAxisd rollAngle(M_PI, Eigen::Vector3d::UnitX());
         Eigen::AngleAxisd pitchAngle(0, Eigen::Vector3d::UnitY());
         Eigen::AngleAxisd yawAngle(0, Eigen::Vector3d::UnitZ());
         Eigen::Quaterniond q180RotX = yawAngle * pitchAngle * rollAngle;
@@ -112,13 +113,14 @@ public:
         //std::cout << "first GT det:\n" << stamped_gt_pose.pose.linear().determinant() << std::endl;
         Eigen::Affine3d TZeroedPose = Tfirst_i*stamped_gt_pose.pose;
         //Eigen::Matrix4d m = TZeroedPose.matrix();
-        /*m(0,2) = 0; m(2,0) = 0; m(2,1) = 0; m(1,2) = 0; m(2,2) = 1; // 3d -> 2d
-        Eigen::Quaterniond q(m.block<3,3>(0,0));
-        q.normalize();
-        m.block<3,3>(0,0) = q.toRotationMatrix();*/
+        //m(0,2) = 0; m(2,0) = 0; m(2,1) = 0; m(1,2) = 0; m(2,2) = 1; // 3d -> 2d
+        //Eigen::Quaterniond q(m.block<3,3>(0,0));
+        //q.normalize();
+        //m.block<3,3>(0,0) = q.toRotationMatrix();
 
         //stamped_gt_pose.pose = Eigen::Affine3d(m);
         stamped_gt_pose.pose = TZeroedPose;
+        */
         eval.CallbackGTEigen(stamped_gt_pose);
 
 

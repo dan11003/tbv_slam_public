@@ -39,7 +39,7 @@ export range_resolution="0.0595238"
 export radar_ccw="true" #False for oxford, otherwise true
 export soft_constraint="false"
 export disable_compensate="false"
-export save_ROC="true"
+export save_ROC="false"
 
 export disable_training="true"
 

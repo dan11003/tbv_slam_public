@@ -214,18 +214,18 @@ void EvalTrajectory::WriteBoreas(const std::string& path, const poseStampedVecto
   std::ofstream evalfile;
   cout<<"Saving: "<<v.size()<<" poses to file: "<<path<<endl;
   evalfile.open(path);
-  /*
+  
   Eigen::AngleAxisd rollAngle(M_PI, Eigen::Vector3d::UnitX());
   Eigen::AngleAxisd pitchAngle(0, Eigen::Vector3d::UnitY());
   Eigen::AngleAxisd yawAngle(0, Eigen::Vector3d::UnitZ());
   Eigen::Quaterniond q180RotX = yawAngle * pitchAngle * rollAngle;
-  Eigen::Affine3d rot180aff = Eigen::Affine3d::Identity();
-  rot180aff.linear() = q180RotX.toRotationMatrix();
-  */
+  
   for(size_t i=0;i<v.size();i++){
     // get the Affine3d matrix from the tuple
-    //Eigen::MatrixXd m((rot180aff * v[i].pose).matrix());
-    Eigen::MatrixXd m(v[i].pose.matrix());
+    Eigen::MatrixXd rot((v[i].pose.linear() * q180RotX.toRotationMatrix()).matrix());
+    Eigen::MatrixXd trans(v[i].pose.matrix());
+    trans.block<3,3>(0,0) = rot;
+    Eigen::MatrixXd m(trans.inverse());
     // print to the file
     evalfile << v[i].t.sec << std::setfill('0') << std::setw(6) << int(v[i].t.nsec/1000) << " " << std::setw(0);
     evalfile << std::fixed << std::showpoint;

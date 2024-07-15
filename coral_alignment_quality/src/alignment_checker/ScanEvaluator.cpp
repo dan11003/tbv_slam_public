@@ -98,7 +98,7 @@ scanEvaluator::scanEvaluator(dataHandler_U& reader, const parameters& eval_par, 
                 //cout<<"publish: "<<training_data.data<<endl;
                 pub_train_data.publish(training_data);
                 datapoints_.push_back(datapoint(index, res, verr, quality_measure, prev_scans.back(), current));
-                CFEAR_Radarodometry::timing.Document("quality",CFEAR_Radarodometry::ToMs(t2-t1));
+                cfear::timing.Document("quality",cfear::ToMs(t2-t1));
 
             }
             ros::Time t4 = ros::Time::now();

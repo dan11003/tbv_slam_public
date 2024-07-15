@@ -324,7 +324,7 @@ void radar_polar_to_cartesian(const cv::Mat &polar_in, const std::vector<double>
 
 void RotoTranslation(const cv::Mat& input, cv::Mat& output, const Eigen::Affine3d& T, const float image_res){
     Eigen::Vector3d pars;
-    CFEAR_Radarodometry::Affine3dToEigVectorXYeZ(T,pars);
+    cfear::Affine3dToEigVectorXYeZ(T,pars);
     cv::Point2f center((input.cols - 1) / 2.0, (input.rows - 1) / 2.0);
     cv::Mat rotation_matix = getRotationMatrix2D(center, pars(2), 1.0);
     cv::Mat rotated_image;

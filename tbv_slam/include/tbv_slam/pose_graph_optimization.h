@@ -18,7 +18,7 @@
 
 namespace tbv_slam {
 using namespace Eigen;
-using namespace CFEAR_Radarodometry;
+using namespace cfear;
 using tbv_slam::CeresLeastSquares;
 
 
@@ -50,6 +50,7 @@ struct PGOptimizationParameters{
 class PGAdapter
 {
 public:
+  
   PGAdapter(ConstraintsHandler& constraints, RadarScanHandler& nodes, const PGOptimizationParameters& pars) : constraints_(constraints), nodes_(nodes), pars_(pars){}
 
   virtual void Solve() {};
@@ -64,11 +65,14 @@ public:
 class AdapterCeresLeastSquares : public PGAdapter
 {
 public:
+  
   AdapterCeresLeastSquares(ConstraintsHandler& constraints, RadarScanHandler& nodes, const PGOptimizationParameters& pars);
 
   void Solve();
 
-  class CeresLeastSquares solver_;
+  private:
+
+  CeresLeastSquares solver_;
 };
 
 

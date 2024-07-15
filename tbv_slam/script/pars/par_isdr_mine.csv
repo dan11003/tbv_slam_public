@@ -1,0 +1,15 @@
+experiment_name,isdr_test
+input_directory,/$BAG_LOCATION/TBV_Eval
+dataset,Kroelpa_IdrH
+method,"TBV SLAM-8"
+visualize,true
+N_CANDIDATES,1
+all_candidates,false
+model_threshold,0.5
+augment_sc,true
+odometry_coupled_closure,true
+raw_radar_scan,false
+sequence,Isdr_2024-06-13_19-30-28_1
+model_features,odom-bounds sc-sim alignment_quality
+load_trained_classifier,true
+model_training_file_load,tbv_model_8.txt

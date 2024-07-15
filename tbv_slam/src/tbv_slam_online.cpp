@@ -14,9 +14,10 @@
 #include "tbv_slam/tbv_slam.h"
 
 #include "cfear_radarodometry/radar_driver.h"
-#include "cfear_radarodometry/odometrykeyframefuser.h"
+#include "cfear_radarodometry/odometry.h"
 #include "cfear_radarodometry/eval_trajectory.h"
 #include "alignment_checker/alignmentinterface.h"
+#include "cfear_radarodometry/utils.h"
 
 #include "boost/foreach.hpp"
 #include "rosbag/view.h"
@@ -71,7 +72,7 @@ public:
 
   std::string ToString(){
     std::ostringstream stringStream;
-    //stringStream << "OdometryKeyframeFuser::Parameters"<<endl;
+    //stringStream << "cfear::Odometry::Parameters"<<endl;
     stringStream << "input_directory, "<<input_directory<<endl;
     stringStream << "dataset, "<<dataset<<endl;
     stringStream << "sequence, "<<sequence<<endl;
@@ -86,17 +87,18 @@ public:
 
 };
 
+
 class radarReader
 {
 
 private:
 
   ros::NodeHandle nh_;
-  ros::Publisher pub_odom;
+  ros::Publisher pub_odom, pub_camera;
   EvalTrajectory eval;
   std::string output_dir;
   radarDriver driver;
-  OdometryKeyframeFuser fuser;
+  cfear::Odometry fuser;
   Eigen::Affine3d Toffset = Eigen::Affine3d::Identity();
 
   ScanLearningInterface scan_learner;
@@ -104,19 +106,20 @@ private:
 
 public:
 
-  radarReader(const OdometryKeyframeFuser::Parameters& odom_pars,
+  radarReader(const cfear::Odometry::Parameters& odom_pars,
               const radarDriver::Parameters& rad_pars,
               const EvalTrajectory::Parameters& eval_par,
               const cfear_eval_parameters& p,
               const training_parameters& training_par,
-              const PoseGraphPtr graph) : nh_("~"), driver(rad_pars,true), fuser(odom_pars, true), eval(eval_par,true),output_dir(eval_par.est_output_dir), training_pars(training_par){
+              const PoseGraphPtr graph) : nh_("~"), driver(rad_pars,true), fuser(odom_pars), eval(eval_par,true),output_dir(eval_par.est_output_dir), training_pars(training_par){
 
     pub_odom = nh_.advertise<nav_msgs::Odometry>("/gt", 1000);
+    pub_camera = nh_.advertise<sensor_msgs::Image>("/camera", 1000);
     cout<<"Loading bag from: "<<p.bag_file_path<<endl;
     rosbag::Bag bag;
     bag.open(p.bag_file_path, rosbag::bagmode::Read);
 
-    std::vector<std::string> topics = {"/Navtech/Polar","/gt","/your_polar_image"};
+    std::vector<std::string> topics = {"indurad/isdr_h_01/isdr/spectrum","/gt", "indurad/icam_01/icam/image_raw/compressed"/*,"/your_polar_image"*/};
     rosbag::View view(bag, rosbag::TopicQuery(topics));
 
     int frame = 0;
@@ -125,6 +128,9 @@ public:
 
     foreach(rosbag::MessageInstance const m, view)
     {
+      frame ++;
+      
+      //cout << "Frame: " << frame << endl;
 
       if(!ros::ok())
         break;
@@ -147,31 +153,68 @@ public:
         pub_odom.publish(msg_odom);
         continue;
       }
+      if(m.getTopic() == "indurad/icam_01/icam/image_raw/compressed"){
+        cout << "indurad topic" << endl;
+        sensor_msgs::CompressedImage::ConstPtr camera_msg = m.instantiate<sensor_msgs::CompressedImage>();
+        if(camera_msg == nullptr){
+          continue;
+        }
 
-      sensor_msgs::ImageConstPtr image_msg = m.instantiate<sensor_msgs::Image>();
-      if(image_msg != NULL) {
+        cv_bridge::CvImagePtr cv_ptr;
+        try {
+          cv_ptr = cv_bridge::toCvCopy(camera_msg, sensor_msgs::image_encodings::RGB8);
+        } catch (cv_bridge::Exception& e) {
+          ROS_ERROR("cv_bridge exception: %s", e.what());
+          return;
+        }
+        sensor_msgs::ImagePtr cam_msg = cv_ptr->toImageMsg();
+        cam_msg->encoding = sensor_msgs::image_encodings::RGB8;
+        cam_msg->header.stamp = ros::Time::now();
+        cout << "Publish camera" << endl;
+        pub_camera.publish(cam_msg);
+        continue;
+      }
+      
+
+
+      //sensor_msgs::ImageConstPtr image_msg = m.instantiate<sensor_msgs::Image>();
+      auto radar_image_msg = m.instantiate<indurad_radar_msgs::SpectrumPng_ros1>();
+      if(radar_image_msg != NULL ) {
+
+        const ros::Time t = getCenterTime(*radar_image_msg);
         ros::Time tinit = ros::Time::now();
+        auto t0 = TimeNow();
+        SpectrumData spectrum_data = SpectrumMsgToData(*radar_image_msg);
+        //cv::flip( spectrum_data.data_, spectrum_data.data_, 0 );
+        if(std::isinf(spectrum_data.GetParams().intensity_min)){
+          cout << "inf spectrum data" << endl;
+          continue;
+        }
+        
+        spectrum_data.data_ = removeElementsBelowThreshold(spectrum_data.data_);
+        //cout << "spectrum_data.data_: " << spectrum_data.data_.rows << ", " << spectrum_data.data_.cols << endl;
+        cv::Mat roi  = spectrum_data.data_(cv::Rect(0, 0, 30, spectrum_data.data_.rows));
+        roi.setTo(0);
+        
         //if(frame==0)
         pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_filtered, cloud_filtered_peaks;
-        driver.CallbackOffline(image_msg, cloud_filtered, cloud_filtered_peaks);
-        CFEAR_Radarodometry::timing.Document("Filtered points",cloud_filtered->size());
+        //driver.CallbackOffline(image_msg, cloud_filtered, cloud_filtered_peaks);
+        driver.CallbackOfflineSpectrum(spectrum_data , cloud_filtered, cloud_filtered_peaks);
+        cfear::timing.Document("Filtered points",cloud_filtered->size());
         Eigen::Affine3d Tcurrent;
         Covariance cov_current;
-        
-        ros::Time t;
-        pcl_conversions::fromPCL(cloud_filtered->header.stamp, t);
 
         ros::Time t1 = ros::Time::now();
         fuser.pointcloudCallback(cloud_filtered, cloud_filtered_peaks, Tcurrent, t, cov_current);
         ros::Time t2 = ros::Time::now();
-        CFEAR_Radarodometry::timing.Document("Odometry",CFEAR_Radarodometry::ToMs(t2-t1));
+        cfear::timing.Document("Odometry",cfear::ToMs(t2-t1));
         if(fuser.updated && p.save_radar_img){
           const std::string path = p.radar_dir + std::to_string(t.toNSec())+".png";
           cv::imwrite(path, driver.cv_polar_image->image);
         }
         if(fuser.updated) {
           auto node = fuser.GetLastNode();
-          nodes.emplace_back(std::make_pair(image_msg->header.stamp, node));
+          nodes.emplace_back(std::make_pair(t, node));
           /*
           if (image_msg->header.stamp != ros::Time(0,0)) {
             node_map[image_msg->header.stamp] = node;
@@ -193,9 +236,8 @@ public:
         tot +=d;
         //usleep(100*1000);
 
-
-        cout<<"Frame: "<<frame<<", dur: "<<d<<", avg: "<<++frame/tot.toSec()<<endl;
       }
+      //cout<<"Frame: "<<frame<<", dur: "<<d<<", avg: "<<++frame/tot.toSec()<<endl;
       //for (auto pose_it = node_map.begin(); pose_it != node_map.end();) {
       for (auto pose_it = nodes.begin(); pose_it != nodes.end();) {
         poseStamped interpolated;
@@ -218,10 +260,10 @@ public:
     }
     cout<<fuser.GetStatus()<<endl;
     bag.close();
-    CFEAR_Radarodometry::timing.PresentStatistics();
+    cfear::timing.PresentStatistics();
     std::ofstream statistics_file;
     statistics_file.open (output_dir + "/time_statistics.txt");
-    statistics_file << CFEAR_Radarodometry::timing.GetStatistics();
+    statistics_file << cfear::timing.GetStatistics();
     statistics_file.close();
     return;
   }
@@ -273,7 +315,7 @@ void ReadOptions(const int argc, char**argv,  eval_parameters& p, ){
 */
 
 
-void ReadOptions(const int argc, char**argv, OdometryKeyframeFuser::Parameters& par, radarDriver::Parameters& rad_par, CFEAR_Radarodometry::EvalTrajectory::Parameters& eval_par, cfear_eval_parameters& p, training_parameters& training_par,tbv_eval_parameters& tbv_eval_par, PoseGraph::Parameters& pose_graph_par, TBVSLAM::Parameters& slam_pars, PoseGraphVis::Parameters& pose_vis_par){
+void ReadOptions(const int argc, char**argv, cfear::Odometry::Parameters& par, radarDriver::Parameters& rad_par, cfear::EvalTrajectory::Parameters& eval_par, cfear_eval_parameters& p, training_parameters& training_par,tbv_eval_parameters& tbv_eval_par, PoseGraph::Parameters& pose_graph_par, TBVSLAM::Parameters& slam_pars, PoseGraphVis::Parameters& pose_vis_par){
 
   po::options_description desc{"Options"};
   desc.add_options()
@@ -592,10 +634,10 @@ public:
 
   void Save()
   {
-    CFEAR_Radarodometry::timing.PresentStatistics();
+    cfear::timing.PresentStatistics();
     std::ofstream statistics_file;
     statistics_file.open (eval_par_.eval_output_dir + "/time_statistics.txt");
-    statistics_file << CFEAR_Radarodometry::timing.GetStatistics();
+    statistics_file << cfear::timing.GetStatistics();
     statistics_file.close();
 
     graph->Align();
@@ -661,7 +703,7 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "tbv_slam");
 
 
-  OdometryKeyframeFuser::Parameters odom_pars;
+  Odometry::Parameters odom_pars;
   radarDriver::Parameters rad_pars;
   EvalTrajectory::Parameters eval_pars;
   cfear_eval_parameters eval_p;
@@ -676,7 +718,7 @@ int main(int argc, char **argv)
   ReadOptions(argc, argv, odom_pars, rad_pars, eval_pars, eval_p, training_pars, tbv_eval_par, pose_graph_par, slam_pars, pose_vis_par);
 
   std::ofstream ofs_before(eval_pars.est_output_dir+std::string("../pars.txt")); // Write
-  std::string par_str_before = rad_pars.ToString()+odom_pars.ToString()+eval_pars.ToString()+"nr_frames, "+std::to_string(0)+"\n"+CFEAR_Radarodometry::timing.GetStatistics();
+  std::string par_str_before = rad_pars.ToString()+odom_pars.ToString()+eval_pars.ToString()+"nr_frames, "+std::to_string(0)+"\n"+cfear::timing.GetStatistics();
   cout<<"Odometry parameters:\n" << par_str_before<<endl;
   ofs_before<<par_str_before<<endl;
   ofs_before.close();
@@ -691,7 +733,7 @@ int main(int argc, char **argv)
   std::cout << "tbv output dir: " << tbv_eval_par.eval_output_dir << std::endl;
 
   std::ofstream ofs(eval_pars.est_output_dir+std::string("../pars.txt")); // Write
-  std::string par_str = rad_pars.ToString()+odom_pars.ToString()+eval_pars.ToString()+"\nnr_frames, "+std::to_string(reader.GetSize())+"\n"+CFEAR_Radarodometry::timing.GetStatistics();
+  std::string par_str = rad_pars.ToString()+odom_pars.ToString()+eval_pars.ToString()+"\nnr_frames, "+std::to_string(reader.GetSize())+"\n"+cfear::timing.GetStatistics();
   ofs<<par_str<<endl;
   ofs.close();
 

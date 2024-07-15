@@ -123,7 +123,7 @@ void PoseGraph::ForceOptimize(){
       optimizer.Solve();
     }
     ros::Time t1 = ros::Time::now();
-    CFEAR_Radarodometry::timing.Document("Pose grapgh optimization", CFEAR_Radarodometry::ToMs(t1-t0));
+    cfear::timing.Document("Pose grapgh optimization", cfear::ToMs(t1-t0));
     //OutputGraph();
     m_graph.unlock();
   }
@@ -297,7 +297,7 @@ bool PoseGraph::LoadSimpleGraph(const std::string& path, PoseGraphPtr &graph, Po
   simple_graph sg;
   std::vector<std::tuple<int,int>> asd;
   try{
-    bool status = CFEAR_Radarodometry::LoadSimpleGraph(path, sg);
+    bool status = cfear::LoadSimpleGraph(path, sg);
     graph = PoseGraphPtr(new PoseGraph(par));
     graph->AddSimpleGraphUnsafe(sg);
 

@@ -8,7 +8,7 @@
 
 namespace tbv_slam {
 
-using namespace CFEAR_Radarodometry;
+using namespace cfear;
 
 class RadarReader
 {

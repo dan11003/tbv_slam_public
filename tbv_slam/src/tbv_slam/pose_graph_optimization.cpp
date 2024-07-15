@@ -17,10 +17,15 @@ void AdapterCeresLeastSquares::Solve(){
 
 std::shared_ptr<PGAdapter> PoseGraphHandler::CreatePGSolver(ConstraintsHandler& constraints, RadarScanHandler& nodes, const PGOptimizationParameters& pars){
   if(pars.solver == PoseGraphSolver::CeresLeastSquares_E){
-    return std::make_shared<AdapterCeresLeastSquares>( AdapterCeresLeastSquares(constraints, nodes, pars));
+    auto adapter = new AdapterCeresLeastSquares(constraints, nodes, pars);
+    return std::shared_ptr<AdapterCeresLeastSquares> (adapter);
+    //return std::make_shared<AdapterCeresLeastSquares>( AdapterCeresLeastSquares(constraints, nodes, pars));
   }
-  else
-    return std::make_shared<AdapterCeresLeastSquares>( AdapterCeresLeastSquares(constraints, nodes, pars));
+  else{
+    //auto adapter = new AdapterCeresLeastSquares(constraints, nodes, pars);
+    //std::shared_ptr<AdapterCeresLeastSquares>(adapter);
+    //return std::make_shared<AdapterCeresLeastSquares>( AdapterCeresLeastSquares(constraints, nodes, pars));
+  }
 }
 
 

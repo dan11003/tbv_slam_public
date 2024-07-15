@@ -132,7 +132,7 @@ class ScanLearningInterface{
     Eigen::Affine3d T;
     pcl::PointCloud<pcl::PointXYZI>::Ptr cld;
     pcl::PointCloud<pcl::PointXYZI>::Ptr cldPeaks;
-    CFEAR_Radarodometry::MapNormalPtr CFEAR;
+    cfear::MapNormalPtr CFEAR;
 
     void Print(){
       std::string scld   = (cld==nullptr) ? "Null" : std::to_string(cld->size());

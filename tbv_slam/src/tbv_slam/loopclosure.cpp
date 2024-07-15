@@ -36,9 +36,9 @@ bool loopclosure::Register(const unsigned int from, const unsigned int to, const
   // Build registration vectors
   auto normals_from = (*graph_)[from].cloud_normal_;
   auto normals_to = (*graph_)[to].cloud_normal_;
-  std::vector<CFEAR_Radarodometry::MapNormalPtr> scans_vek{ normals_to, normals_from};
+  std::vector<cfear::MapNormalPtr> scans_vek{ normals_to, normals_from};
   std::vector<Eigen::Affine3d> T_vek{Tto, Tfrom};
-  std::vector<Matrix6d> cov_vek{CFEAR_Radarodometry::Matrix6d::Identity(), CFEAR_Radarodometry::Matrix6d::Identity()};
+  std::vector<Matrix6d> cov_vek{cfear::Matrix6d::Identity(), cfear::Matrix6d::Identity()};
   Covariance cov_sampled;
 
   // Ground truth - debug only
@@ -53,7 +53,10 @@ bool loopclosure::Register(const unsigned int from, const unsigned int to, const
   cout << "reg tar size: " << scans_vek.front()->GetCells().size() << endl;*/
 
 
-  n_scan_normal_reg radar_reg(Str2Cost("P2L"));
+  //NScanReg radar_reg(Str2Cost("P2L"));
+  bool course_to_fine = true;
+  const double loss_limit = 0.1;
+  NScanReg radar_reg(Str2Cost("P2L"), Str2loss("Huber"), loss_limit, weight_options::Combined_weights, course_to_fine);
   radar_reg.SetParameters(4,10);
 
   const bool reg_success = radar_reg.Register(scans_vek, T_vek, cov_vek, false); // Register loop and current
@@ -74,16 +77,19 @@ bool loopclosure::Register(const unsigned int from, const unsigned int to, const
   auto cloud_from = (*graph_)[from].cloud_nopeaks_;
   auto cloud_to = (*graph_)[to].cloud_nopeaks_;
   if(par_.visualize){
-    MapPointNormal::PublishMap("map_point_normal_target", normals_to, Tto, "world", 45);// TARGET, loop (blue 45)
+    //MapPointNormal::PublishMap("map_point_normal_target", normals_to, Tto, "world", 45);// TARGET, loop (blue 45)
+    normals_to->PublishMap("map_point_normal_target", Tto, "world", ros::Time::now());// TARGET, loop (blue 45)
     CorAlignment::AlignmentQualityPlot::PublishCloud("registration/target", cloud_to, Tto, "target");
 
-    MapPointNormal::PublishMap("map_point_normal_source", normals_from, Tfrom, "world", 192);// SOURCE, current (red 192)
+    //MapPointNormal::PublishMap("map_point_normal_source", normals_from, Tfrom, "world", 192);// SOURCE, current (red 192)
+    normals_from->PublishMap("map_point_normal_source", Tfrom, "world", ros::Time::now());// SOURCE, current (red 192)
     CorAlignment::AlignmentQualityPlot::PublishCloud("registration/source", cloud_from, Tfrom, "source");
 
-    MapPointNormal::PublishMap("map_point_normal_source_revised", scans_vek.back(), Trevised, "world", 48);// SOURCE REVISED (green 48)
+    //MapPointNormal::PublishMap("map_point_normal_source_revised", scans_vek.back(), Trevised, "world", 48);// SOURCE REVISED (green 48)
+    scans_vek.back()->PublishMap("map_point_normal_source_revised", Trevised, "world", ros::Time::now());// SOURCE REVISED (green 48)
     CorAlignment::AlignmentQualityPlot::PublishCloud("registration/source_revised", cloud_from, Trevised, "source_revised");
 
-    PoseGraphVis::pubTFForPose({Tto, Tfrom, Trevised, Tto*Tgt_diff}, {"target", "source", "source_revised", "source_gt"}, ros::Time::now());
+    //PoseGraphVis::pubTFForPose({Tto, Tfrom, Trevised, Tto*Tgt_diff}, {"target", "source", "source_revised", "source_gt"}, ros::Time::now());
   }
 
 
@@ -96,8 +102,8 @@ bool loopclosure::Register(const unsigned int from, const unsigned int to, const
   return reg_success;
 }
 
-bool loopclosure::approximateCovarianceBySampling(n_scan_normal_reg &radar_reg,
-                                                  std::vector<CFEAR_Radarodometry::MapNormalPtr> &scans_vek,
+bool loopclosure::approximateCovarianceBySampling(NScanReg &radar_reg,
+                                                  std::vector<cfear::MapNormalPtr> &scans_vek,
                                                   const std::vector<Eigen::Affine3d> &T_vek,
                                                   Covariance &cov_sampled){
   bool cov_sampled_success = true;
@@ -375,10 +381,14 @@ double loopclosure::VerifyLoopCandidate(Constraint3d& constraint){
   VerifyByOdometry(from, to, constraint.quality[ODOM_BOUNDS]);
   ros::Time t2 = ros::Time::now();
   const double verified_prob = par_.verification_disabled ? 0.0 : VerificationModel(constraint.quality);
+  for(auto && [key, value] : constraint.quality){
+    cout << key << " : " << value << ", ";
+  }
+  cout << std::setprecision(2) << "loop score:  " << verified_prob << endl;
   ros::Time t3 = ros::Time::now();
-  CFEAR_Radarodometry::timing.Document("VerifyByAlignment", CFEAR_Radarodometry::ToMs(t1-t0));
-  CFEAR_Radarodometry::timing.Document("VerifyByOdometry", CFEAR_Radarodometry::ToMs(t2-t1));
-  CFEAR_Radarodometry::timing.Document("VerificationModel", CFEAR_Radarodometry::ToMs(t3-t2));
+  cfear::timing.Document("VerifyByAlignment", cfear::ToMs(t1-t0));
+  cfear::timing.Document("VerifyByOdometry", cfear::ToMs(t2-t1));
+  cfear::timing.Document("VerificationModel", cfear::ToMs(t3-t2));
   return verified_prob;
 
 }
@@ -644,13 +654,14 @@ bool ScanContextClosure::SearchAndAddConstraint(){
     ros::Time t1 = ros::Time::now();
     CreateContext(itr_current, Todom_);
     ros::Time t2 = ros::Time::now();
-    CFEAR_Radarodometry::timing.Document("Descriptor", CFEAR_Radarodometry::ToMs(t2-t1));
+    cfear::timing.Document("Descriptor", cfear::ToMs(t2-t1));
 
     const auto candidates = rsc_.detectLoopClosureID();
     ros::Time t3 = ros::Time::now();
-    CFEAR_Radarodometry::timing.Document("Detect loop", CFEAR_Radarodometry::ToMs(t3-t2));
+    cfear::timing.Document("Detect loop", cfear::ToMs(t3-t2));
 
     if(candidates.empty()){
+      cout << "No loops" << endl;
       graph_->UpdateStatistics(std::make_pair(itr_current->second.idx_,itr_current->second.idx_), Eigen::Affine3d::Identity(), {{ODOM_BOUNDS,1.0},{SC_SIM,1.0+par_.DSCCP.rsc_pars.odometry_coupled_closure},{COMBINED_COST,-20.0}}, -1); // Force classified as not a loop
     }
     std::vector<std::pair<double, Constraint3d>> candidate_probabilities;
@@ -659,6 +670,7 @@ bool ScanContextClosure::SearchAndAddConstraint(){
       ros::Time t5 = ros::Time::now();
       unsigned int idx_from = itr_current->second.idx_; //+ par_.dataset_start_offset;
       unsigned int idx_to = itr->nn_idx; //+ par_.dataset_start_offset;
+      cout << "Found: " << idx_from << " - " << idx_to << ", sc score: " << itr->min_dist_sc << ", min_dist_odom: " << itr->min_dist_odom <<  endl; 
 
 
 
@@ -681,9 +693,11 @@ bool ScanContextClosure::SearchAndAddConstraint(){
 
       if(par_.DSCCP.rsc_pars.odometry_coupled_closure){
         if(par_.speedup && itr->min_dist_odom > 0.7 ){
+          cout << "update statistics " << endl;
           graph_->UpdateStatistics(std::make_pair(idx_from,idx_to), Eigen::Affine3d::Identity(), {{ODOM_BOUNDS,itr->min_dist_odom},{SC_SIM,itr->min_dist},{COMBINED_COST,-20}}, guess_nr); // Force classified as not a loop
           ros::Time t7 = ros::Time::now();
-          CFEAR_Radarodometry::timing.Document("Loop-full", CFEAR_Radarodometry::ToMs(t7-t0));
+          cfear::timing.Document("Loop-full", cfear::ToMs(t7-t0));
+          cout << "updated" << endl;
           continue;
         }
       }
@@ -702,18 +716,19 @@ bool ScanContextClosure::SearchAndAddConstraint(){
 
       ros::Time t6 = ros::Time::now();
       bool reg_ok = RegisterLoopCandidate(idx_from, idx_to, ApperanceCandidate);
+      cout << "Register: " << reg_ok << endl;
       ros::Time t7 = ros::Time::now();
-      CFEAR_Radarodometry::timing.Document("Register", CFEAR_Radarodometry::ToMs(t7-t6));
+      cfear::timing.Document("Register", cfear::ToMs(t7-t6));
 
       const double prob = VerifyLoopCandidate(ApperanceCandidate);
       ros::Time t8 = ros::Time::now();
-      CFEAR_Radarodometry::timing.Document("Verify loop candidate", CFEAR_Radarodometry::ToMs(t8-t7));
+      cfear::timing.Document("Verify loop candidate", cfear::ToMs(t8-t7));
 
       candidate_probabilities.push_back(std::make_pair(prob, ApperanceCandidate));
       
       graph_->UpdateStatistics(trusted_candidate, PoseCeresToEig(ApperanceCandidate.t_be), ApperanceCandidate.quality, guess_nr); // add statistics to evaluate if at least one of the candidates is a real loop
       ros::Time t9 = ros::Time::now();
-      CFEAR_Radarodometry::timing.Document("gather statistics", CFEAR_Radarodometry::ToMs(t9-t8));
+      cfear::timing.Document("gather statistics", cfear::ToMs(t9-t8));
 
       if (par_.model_training_file_save != "") {
         AddVerificationTrainingData(ApperanceCandidate);  // Add training data to verification_model_
@@ -723,12 +738,12 @@ bool ScanContextClosure::SearchAndAddConstraint(){
     ros::Time t10 = ros::Time::now();
     ApplyConstratins(candidate_probabilities);  // Apply contraints depending on candidate probabilities and selected strategy
     ros::Time t11 = ros::Time::now();
-    CFEAR_Radarodometry::timing.Document("Apply contraints", CFEAR_Radarodometry::ToMs(t11-t10));
+    cfear::timing.Document("Apply contraints", cfear::ToMs(t11-t10));
 
     //graph_->m_graph.unlock();
     ros::Time t_end = ros::Time::now();
 
-    CFEAR_Radarodometry::timing.Document("Loop-full", CFEAR_Radarodometry::ToMs(t_end-t0));
+    cfear::timing.Document("Loop-full", cfear::ToMs(t_end-t0));
     //cout << "loop: " << tend - t << endl;
   }
 

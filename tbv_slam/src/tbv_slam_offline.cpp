@@ -221,7 +221,7 @@ public:
     slam_pars_(slam_pars),
     last_config(tbv_slam::OptimizationParamsConfig()) {
     Load();
-    vis = new PoseGraphVis(graph, pose_vis_par);
+    //vis = new PoseGraphVis(graph, pose_vis_par);
     slam = new TBVSLAM(graph, slam_pars_);
 
     if(eval_par_.debug_optimizer){
@@ -247,10 +247,10 @@ public:
   }
   void Save()
   {
-    CFEAR_Radarodometry::timing.PresentStatistics();
+    cfear::timing.PresentStatistics();
     std::ofstream statistics_file;
     statistics_file.open (eval_par_.eval_output_dir + "/time_statistics.txt");
-    statistics_file << CFEAR_Radarodometry::timing.GetStatistics();
+    statistics_file << cfear::timing.GetStatistics();
     statistics_file.close();
 
     graph->Align();

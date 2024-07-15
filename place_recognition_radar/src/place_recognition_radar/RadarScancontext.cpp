@@ -162,7 +162,8 @@ void RSCManager::makeAndSaveScancontextAndKeysRadarCloud(pcl::PointCloud<pcl::Po
   if(par.augment_sc)
   {
     int count = 1;
-    auto augments_vek = std::vector<std::vector<double>>( { {0.0, -2.0, 0.0}, {0.0, 2.0, 0.0}, {0.0, -4.0, 0.0}, {0.0, 4.0, 0.0} } ); // Augmentations
+    //auto augments_vek = std::vector<std::vector<double>>( { {0.0, -2.0, 0.0}, {0.0, 2.0, 0.0}, {0.0, -4.0, 0.0}, {0.0, 4.0, 0.0} } ); // Augmentations
+    auto augments_vek = std::vector<std::vector<double>>( { {0.0, -1.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, -2.0, 0.0}, {0.0, 2.0, 0.0} } ); // More suitable for undregorund mines
     for(auto && augment : augments_vek)
     {
       pcl::PointCloud<pcl::PointXYZI>::Ptr augmented(new pcl::PointCloud<pcl::PointXYZI>());

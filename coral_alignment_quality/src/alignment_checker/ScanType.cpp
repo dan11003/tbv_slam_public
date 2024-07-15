@@ -84,7 +84,7 @@ Cen2018Radar::Cen2018Radar(const PoseScan::Parameters& pars, cv_bridge::CvImageP
         cloud_->push_back(p);
     }
     if(pars.compensate)
-        CFEAR_Radarodometry::Compensate(*cloud_, Tmotion_, pars.ccw); ;
+        cfear::Compensate(*cloud_, Tmotion_, pars.ccw); ;
 }
 
 Cen2019Radar::Cen2019Radar(const PoseScan::Parameters& pars, cv_bridge::CvImagePtr& polar, const Eigen::Affine3d& T, const Eigen::Affine3d& Tmotion)
@@ -106,10 +106,10 @@ kstrongRadar::kstrongRadar(const PoseScan::Parameters& pars, cv_bridge::CvImageP
 {
     //assert(polar !=NULL);
 
-    CFEAR_Radarodometry::k_strongest_filter(polar, cloud_, pars.kstrong, pars.z_min, pars.range_res, pars.sensor_min_distance);
+    cfear::k_strongest_filter(polar->image, cloud_, pars.kstrong, pars.z_min, pars.range_res, pars.sensor_min_distance);
     //assert(cloud_ != nullptr);
     if(pars.compensate){
-        CFEAR_Radarodometry::Compensate(*cloud_, Tmotion_, pars.ccw); //cout<<"k strongest: "<<cloud_->size()<<endl;
+        cfear::Compensate(*cloud_, Tmotion_, pars.ccw); //cout<<"k strongest: "<<cloud_->size()<<endl;
     }
 }
 
@@ -119,26 +119,25 @@ kstrongRadar::kstrongRadar(const PoseScan::Parameters& pars, const Eigen::Affine
 {
     //assert(cloud_ != nullptr);
     if(pars.compensate){
-        CFEAR_Radarodometry::Compensate(*cloud_, Tmotion_, pars.ccw); //cout<<"k strongest: "<<cloud_->size()<<endl;
+        cfear::Compensate(*cloud_, Tmotion_, pars.ccw); //cout<<"k strongest: "<<cloud_->size()<<endl;
     }
 }
 
 kstrongStructuredRadar::kstrongStructuredRadar(const PoseScan::Parameters& pars, cv_bridge::CvImagePtr& polar, const Eigen::Affine3d& T, const Eigen::Affine3d& Tmotion, bool peaks)
     : RawRadar(pars, polar, T, Tmotion)
 {
-    //assert(polar !=NULL);
-    CFEAR_Radarodometry::StructuredKStrongest kstrong(polar_, pars.z_min, pars.kstrong, pars.sensor_min_distance, pars.range_res);
+    throw std::runtime_error("Not implemented, filtering has changed");
+    cfear::StructuredKStrongest kstrong(polar_->image, pars.z_min, pars.kstrong, pars.sensor_min_distance, pars.range_res);
     kstrong.getPeaksFilteredPointCloud(kstrong_peaks_, peaks); // get peaks
-    //kstrong.getPeaksFilteredPointCloud(kstrong_filtered_, false); // get peaks
     cloud_ = kstrong_peaks_;
 
     if(pars.normalize_intensity)
         NormalizeIntensity(cloud_, pars.z_min);
 
     if(pars.compensate){
-        CFEAR_Radarodometry::Compensate(*kstrong_peaks_, Tmotion_, pars.ccw); //cout<<"k strongest: "<<cloud_->size()<<endl;
-        //CFEAR_Radarodometry::Compensate(kstrong_filtered_, Tmotion_, pars.ccw); //cout<<"k strongest: "<<cloud_->size()<<endl;
+        cfear::Compensate(*kstrong_peaks_, Tmotion_, pars.ccw); //cout<<"k strongest: "<<cloud_->size()<<endl;
     }
+
 }
 
 // Constructor using point cloud
@@ -155,8 +154,8 @@ kstrongStructuredRadar::kstrongStructuredRadar(const PoseScan::Parameters& pars,
         NormalizeIntensity(cloud_, pars.z_min);
 
     if(pars.compensate){
-        CFEAR_Radarodometry::Compensate(*kstrong_peaks_, Tmotion_, pars.ccw); //cout<<"k strongest: "<<cloud_->size()<<endl;
-        //CFEAR_Radarodometry::Compensate(kstrong_filtered_, Tmotion_, pars.ccw); //cout<<"k strongest: "<<cloud_->size()<<endl;
+        cfear::Compensate(*kstrong_peaks_, Tmotion_, pars.ccw); //cout<<"k strongest: "<<cloud_->size()<<endl;
+        //cfear::Compensate(kstrong_filtered_, Tmotion_, pars.ccw); //cout<<"k strongest: "<<cloud_->size()<<endl;
     }
 }
 
@@ -165,7 +164,7 @@ BFARScan::BFARScan(const PoseScan::Parameters& pars, cv_bridge::CvImagePtr& pola
 {
     //assert(polar !=NULL);
     
-    // CFEAR_Radarodometry::BFAR_filter(polar, cloud_, pars.window_size_, pars.scale_factor, pars.offset_factor_, pars.range_res, pars.sensor_min_distance);
+    // cfear::BFAR_filter(polar, cloud_, pars.window_size_, pars.scale_factor, pars.offset_factor_, pars.range_res, pars.sensor_min_distance);
     //assert(cloud_ != nullptr);
     
 }
@@ -174,12 +173,12 @@ CFEARFeatures::CFEARFeatures(const PoseScan::Parameters& pars, cv_bridge::CvImag
     : kstrongRadar(pars, polar, T, Tmotion)
 {
 
-    CFEARFeatures_ = CFEAR_Radarodometry::MapNormalPtr(new CFEAR_Radarodometry::MapPointNormal(cloud_, pars.resolution));
+    CFEARFeatures_ = cfear::MapNormalPtr(new cfear::PointSet(cloud_, pars.resolution));
     //cout<<"frame: "<<pose_id<<"time: "<<cloud_->header.stamp<<", "<<cloud_->size()<<", "<<CFEARFeatures_->GetSize()<<endl;
 }
 
 // Contructor without polar image input
-CFEARFeatures::CFEARFeatures(const PoseScan::Parameters& pars, const CFEAR_Radarodometry::MapNormalPtr& CFEARFeatures, const Eigen::Affine3d& T, const Eigen::Affine3d& Tmotion )
+CFEARFeatures::CFEARFeatures(const PoseScan::Parameters& pars, const cfear::MapNormalPtr& CFEARFeatures, const Eigen::Affine3d& T, const Eigen::Affine3d& Tmotion )
     : kstrongRadar(pars, T, Tmotion)
 {
 
@@ -195,7 +194,7 @@ CartesianRadar::CartesianRadar(const PoseScan::Parameters& pars, cv_bridge::CvIm
     cart_->encoding = polar_->encoding;
     cart_->header.stamp = polar_->header.stamp;
     //cout<<"CartesianRadar::CartesianRadar"<<endl;
-    //CFEAR_Radarodometry::KstrongestPolar filter(pars.z_min, pars.kstrong, pars.sensor_min_distance);
+    //cfear::KstrongestPolar filter(pars.z_min, pars.kstrong, pars.sensor_min_distance);
     //filter.getFilteredImage(polar_,polar_filtered_);
     polar_->image.convertTo(polar_->image, CV_32F, 1/255.0);
 

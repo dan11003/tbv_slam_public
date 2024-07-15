@@ -58,7 +58,7 @@
 namespace CorAlignment {
 
 typedef std::pair<Eigen::Affine3d,ros::Time> poseStamped;
-using namespace CFEAR_Radarodometry;
+using namespace cfear;
 
 
 class dataHandler

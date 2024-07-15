@@ -19,9 +19,9 @@
 #include <pcl/kdtree/kdtree_flann.h>
 #include "pcl/common/transforms.h"
 
-//cfear_radarodometry
+//cfear
 #include "cfear_radarodometry/radar_filters.h"
-#include "cfear_radarodometry/pointnormal.h"
+#include "cfear_radarodometry/pointset.h"
 #include "pcl/point_types.h"
 #include "cfear_radarodometry/utils.h"
 #include "string"
@@ -219,10 +219,10 @@ class CFEARFeatures: public kstrongRadar
 public:
 
     CFEARFeatures(const PoseScan::Parameters& pars, cv_bridge::CvImagePtr& polar, const Eigen::Affine3d& T, const Eigen::Affine3d& Tmotion);
-    CFEARFeatures(const PoseScan::Parameters& pars, const CFEAR_Radarodometry::MapNormalPtr& CFEARFeatures, const Eigen::Affine3d& T, const Eigen::Affine3d& Tmotion );
+    CFEARFeatures(const PoseScan::Parameters& pars, const cfear::MapNormalPtr& CFEARFeatures, const Eigen::Affine3d& T, const Eigen::Affine3d& Tmotion );
     const std::string ToString(){return "CFEARFeatures";}
 
-    CFEAR_Radarodometry::MapNormalPtr CFEARFeatures_;
+    cfear::MapNormalPtr CFEARFeatures_;
 };
 
 class RawLidar: public PoseScan{

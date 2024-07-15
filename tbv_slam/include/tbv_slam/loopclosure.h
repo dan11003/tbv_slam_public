@@ -42,7 +42,7 @@
 #include "ros/service.h"
 //#include "robust_mapping_custom_msgs/n_registration.h"
 #include "unordered_map"
-#include "cfear_radarodometry/n_scan_normal.h"
+#include "cfear_radarodometry/n_scan_reg.h"
 #include "alignment_checker/AlignmentQuality.h"
 #include "place_recognition_radar/RadarScancontext.h"
 #include "tbv_slam/utils.h"
@@ -63,7 +63,7 @@ using std::string;
 using std::cout;
 using std::cerr;
 using std::endl;
-using namespace CFEAR_Radarodometry;
+using namespace cfear;
 using namespace PlaceRecognitionRadar;
 using namespace CorAlignment;
 
@@ -244,7 +244,7 @@ protected:
 
   bool Register(pcl::PointCloud<pcl::PointXYZ>::Ptr src_local, pcl::PointCloud<pcl::PointXYZ>::Ptr target_local, const Eigen::Affine3d& Tfrom, const Eigen::Affine3d& Tto, Eigen::Affine3d& Tresponse, Eigen::Matrix<double, 6, 6> &reg_cov, double& quality);
 
-  bool approximateCovarianceBySampling(n_scan_normal_reg &radar_reg, std::vector<CFEAR_Radarodometry::MapNormalPtr> &scans_vek, const std::vector<Eigen::Affine3d> &T_vek, Covariance &cov_sampled);
+  bool approximateCovarianceBySampling(NScanReg &radar_reg, std::vector<cfear::MapNormalPtr> &scans_vek, const std::vector<Eigen::Affine3d> &T_vek, Covariance &cov_sampled);
 
   bool RegisterLoopCandidate(const unsigned int from, const unsigned int to, Constraint3d& constraint);
 

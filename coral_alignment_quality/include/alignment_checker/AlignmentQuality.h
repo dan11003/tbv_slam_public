@@ -20,7 +20,7 @@
 #include "pcl/kdtree/kdtree.h"
 #include "memory.h"
 #include <iomanip>
-#include "cfear_radarodometry/n_scan_normal.h"
+#include "cfear_radarodometry/n_scan_reg.h"
 
 // ROS tf
 #include "tf/transform_broadcaster.h"

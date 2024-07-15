@@ -18,11 +18,11 @@ void CeresLeastSquares::Solve(){
 CeresLeastSquares::Parameters::Parameters(){
   scaling_pars.loop_vxx = 0.01;
   scaling_pars.loop_vyy = 0.01;
-  scaling_pars.loop_vtt = 0.001;
-  scaling_pars.odom_vxx = 0.01;
+  scaling_pars.loop_vtt = 0.1;
+  scaling_pars.odom_vxx = 0.1;
   scaling_pars.odom_vyy = 0.01;
-  scaling_pars.odom_vtt = 0.001;
-  scaling_pars.loop_scaling = 500000;
+  scaling_pars.odom_vtt = 0.01;
+  scaling_pars.loop_scaling = 400;
   scaling_pars.replace_cov_by_identity = true;
 }
 void CeresLeastSquares::BuildOptimizationProblem(){
@@ -32,7 +32,7 @@ void CeresLeastSquares::BuildOptimizationProblem(){
   //cout << "scaling_pars.replace_cov_by_identity " << pars_.scaling_pars.replace_cov_by_identity << endl;
   //cout << "scaling_pars.loop_scaling " << std::boolalpha << pars_.scaling_pars.loop_scaling  << endl;
   AddConstraintType(odometry, nullptr);
-  AddConstraintType(loop_appearance, new ceres::CauchyLoss(0.1));
+  AddConstraintType(loop_appearance, new ceres::HuberLoss(0.1));
 
   auto pose_last_iter = nodes_.begin();
   problem_.SetParameterBlockConstant(pose_last_iter->second.T.p.data());
@@ -66,7 +66,7 @@ void CeresLeastSquares::AddConstraintType(const ConstraintType& ct,
                                           ){
 
   if(pars_.scaling_pars.replace_cov_by_identity){
-    //cout << "Optimize with FIXED covariances: " << endl;
+    cout << "Optimize with FIXED covariances: " << endl;
   }else{
     //cout << "Optimize with DYNAMIC covariances: " << std::boolalpha <<pars_.scaling_pars.replace_cov_by_identity << endl;
   }

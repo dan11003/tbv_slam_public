@@ -343,7 +343,7 @@ void ScanLearningInterface::AddTrainingData(const s_scan& current){
     }
     this->prev_ = current;
     ros::Time t1 = ros::Time::now();
-    CFEAR_Radarodometry::timing.Document("Add training data",CFEAR_Radarodometry::ToMs(t1-t0));
+    cfear::timing.Document("Add training data",cfear::ToMs(t1-t0));
 }
 
 void ScanLearningInterface::PredAlignment(const scan& current, const s_scan& prev, std::map<std::string,double>& quality, Eigen::MatrixXd& X_CorAl, Eigen::MatrixXd& X_CFEAR, bool& valid){
@@ -465,14 +465,10 @@ Eigen::MatrixXd ScanLearningInterface::getCFEARQualityMeasure(const s_scan& curr
     quality_par.method = "P2L";
     // quality_par.weight_res_intensity = true
     AlignmentQuality_S quality_type = AlignmentQualityFactory::CreateQualityType(scan_curr, scan_prev, quality_par, Toffset);
-
     auto quality = quality_type->GetQualityMeasure();
+
     const Eigen::MatrixXd quality_measure = Eigen::Map<Eigen::MatrixXd>(quality.data(), 1, quality.size());
-    //cout <<"cfear: "<<  quality_measure << endl;
-    //cout << quality_measure << endl;
     valid = quality_type->valid_;
-    //cout << "CFEAR - quality: " <<valid<< endl;
-    //cout << quality_measure << endl;
     return quality_measure;
 }
 

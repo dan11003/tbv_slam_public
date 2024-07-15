@@ -25,7 +25,7 @@ struct pair_hash
 
 
 
-using CFEAR_Radarodometry::Join;
+using cfear::Join;
 
 
 class RSCManager : public SCManager

@@ -46,7 +46,7 @@
 #include "boost/shared_ptr.hpp"
 namespace tbv_slam {
 
-using namespace CFEAR_Radarodometry;
+using namespace cfear;
 
 class TBVSLAM
 {

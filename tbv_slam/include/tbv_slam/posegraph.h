@@ -48,7 +48,7 @@
 namespace tbv_slam{
 using std::cout;
 using std::endl;
-using namespace CFEAR_Radarodometry;
+using namespace cfear;
 using namespace PlaceRecognitionRadar;
 //typedef std::map<int, std::less<int>,pcl::PointCloud<pcl::PointXYZ>::Ptr >MapOfClouds;
 class PoseGraph;

@@ -331,14 +331,18 @@ CFEARQuality::CFEARQuality(std::shared_ptr<PoseScan> ref, std::shared_ptr<PoseSc
     auto CFEAR_src = std::dynamic_pointer_cast<CFEARFeatures>(src);
     auto CFEAR_ref = std::dynamic_pointer_cast<CFEARFeatures>(ref);
     assert(CFEAR_src!=NULL && CFEAR_ref!=NULL);
-    CFEAR_Radarodometry::costmetric pnt_cost = CFEAR_Radarodometry::Str2Cost(par.method);
+    cfear::costmetric pnt_cost = cfear::Str2Cost(par.method);
 
-    CFEAR_Radarodometry::n_scan_normal_reg reg(pnt_cost, CFEAR_Radarodometry::losstype::Huber, 0.3);
-    std::vector<CFEAR_Radarodometry::MapNormalPtr> feature_vek = {CFEAR_ref->CFEARFeatures_, CFEAR_src->CFEARFeatures_};
+    cfear::NScanReg reg(pnt_cost, cfear::losstype::Huber, 0.3);
+    std::vector<cfear::MapNormalPtr> feature_vek = {CFEAR_ref->CFEARFeatures_, CFEAR_src->CFEARFeatures_};
     std::vector<Eigen::Affine3d> Tvek = {CFEAR_ref->GetAffine(),CFEAR_src->GetAffine()*Toffset};
     if(par_.visualize){
-        CFEAR_Radarodometry::MapPointNormal::PublishMap("scan1", feature_vek[0], Tvek[0], "world", 1 );
-        CFEAR_Radarodometry::MapPointNormal::PublishMap("scan2", feature_vek[1], Tvek[1], "world", -1);
+        //Example Pcurrent->PublishMap("normals", Tcurrent, par.odometry_link_id, t );
+        feature_vek[0]->PublishMap("scan1", Tvek[0], "world", ros::Time::now());
+        feature_vek[1]->PublishMap("scan1", Tvek[1], "world", ros::Time::now());
+        //Deprecated
+        //cfear::MapPointNormal::PublishMap("scan1", feature_vek[0], Tvek[0], "world", 1 );
+        //cfear::MapPointNormal::PublishMap("scan2", feature_vek[1], Tvek[1], "world", -1);
     }
     double score = 0;
     if(reg.GetCost(feature_vek, Tvek, score, residuals_)){
@@ -434,7 +438,10 @@ void AlignmentQualityPlot::PublishPoseScan(const std::string& topic, std::shared
     auto cfear = std::dynamic_pointer_cast<CFEARFeatures>(scan_plot);
     if(cfear  != NULL){
         Eigen::Affine3d Tnc = T;
-        CFEAR_Radarodometry::MapPointNormal::PublishMap("CFEARFatures",cfear->CFEARFeatures_,Tnc,"world",-1);
+        cout << "Warning, publishing of normals is not tested" << endl;
+        cfear->CFEARFeatures_->PublishMap("CFEARFatures", Tnc, "world", ros::Time::now());
+        //Deprecated
+        //CFEAR_Radarodometry::MapPointNormal::PublishMap("CFEARFatures",cfear->CFEARFeatures_,Tnc,"world",-1);
     }
 }
 
@@ -485,7 +492,6 @@ std::vector<bool> AlignmentQualityInterface::TrainingDataService(PoseScan_S& sca
         for(auto && e : verr)
             sum+=fabs(e);
         bool aligned = sum < 0.0001;
-        std::cout << aligned << ", " << sum << std::endl;
 
         std::vector<double> quality_measure = quality->GetQualityMeasure();
         std_msgs::Float64MultiArray training_data;

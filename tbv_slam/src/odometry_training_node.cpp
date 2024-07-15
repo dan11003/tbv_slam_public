@@ -11,7 +11,7 @@
 #include "rosbag/bag.h"
 
 #include "cfear_radarodometry/radar_driver.h"
-#include "cfear_radarodometry/odometrykeyframefuser.h"
+#include "cfear_radarodometry/odometry.h"
 #include <mutex>
 #include <condition_variable>
 #include "ros/time.h"
@@ -25,7 +25,7 @@
 #define foreach BOOST_FOREACH
 #define MAX_SIZE 3
 using CorAlignment::ScanLearningInterface;
-using namespace CFEAR_Radarodometry;
+using namespace cfear;
 namespace po = boost::program_options;
 
 /** \brief Offline node to generate training data for CFEAR and CorAl
@@ -53,10 +53,10 @@ private:
 
   ros::NodeHandle nh_;
   ros::Publisher pub_odom;
-  EvalTrajectory eval;
+  cfear::EvalTrajectory eval;
   std::string output_dir;
   radarDriver driver;
-  OdometryKeyframeFuser fuser;
+  Odometry fuser;
   Eigen::Affine3d Toffset = Eigen::Affine3d::Identity();
 
   ScanLearningInterface scan_learner;
@@ -64,11 +64,11 @@ private:
 
 public:
 
-  radarReader(const OdometryKeyframeFuser::Parameters& odom_pars,
+  radarReader(const Odometry::Parameters& odom_pars,
               const radarDriver::Parameters& rad_pars,
               const EvalTrajectory::Parameters& eval_par,
               const eval_parameters& p,
-              const training_parameters& training_par) : nh_("~"), driver(rad_pars,true), fuser(odom_pars, true), eval(eval_par,true),output_dir(eval_par.est_output_dir), training_pars(training_par){
+              const training_parameters& training_par) : nh_("~"), driver(rad_pars,true), fuser(odom_pars), eval(eval_par,true),output_dir(eval_par.est_output_dir), training_pars(training_par){
 
     pub_odom = nh_.advertise<nav_msgs::Odometry>("/gt", 1000);
     cout<<"Loading bag from: "<<p.bag_file_path<<endl;
@@ -112,7 +112,7 @@ public:
         //if(frame==0)
         pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_filtered, cloud_filtered_peaks;
         driver.CallbackOffline(image_msg, cloud_filtered, cloud_filtered_peaks);
-        CFEAR_Radarodometry::timing.Document("Filtered points",cloud_filtered->size());
+        cfear::timing.Document("Filtered points",cloud_filtered->size());
         Eigen::Affine3d Tcurrent;
         Covariance cov_current;
         
@@ -122,7 +122,7 @@ public:
         ros::Time t1 = ros::Time::now();
         fuser.pointcloudCallback(cloud_filtered, cloud_filtered_peaks, Tcurrent, t, cov_current);
         ros::Time t2 = ros::Time::now();
-        CFEAR_Radarodometry::timing.Document("Odometry",CFEAR_Radarodometry::ToMs(t2-t1));
+        cfear::timing.Document("Odometry",cfear::ToMs(t2-t1));
         if(fuser.updated && p.save_radar_img){
           const std::string path = p.radar_dir + std::to_string(t.toNSec())+".png";
           cv::imwrite(path, driver.cv_polar_image->image);
@@ -147,10 +147,10 @@ public:
     }
     cout<<fuser.GetStatus()<<endl;
     bag.close();
-    CFEAR_Radarodometry::timing.PresentStatistics();
+    cfear::timing.PresentStatistics();
     std::ofstream statistics_file;
     statistics_file.open (output_dir + "/time_statistics.txt");
-    statistics_file << CFEAR_Radarodometry::timing.GetStatistics();
+    statistics_file << cfear::timing.GetStatistics();
     statistics_file.close();
     return;
   }
@@ -180,7 +180,7 @@ public:
 };
 
 
-void ReadOptions(const int argc, char**argv, OdometryKeyframeFuser::Parameters& par, radarDriver::Parameters& rad_par, CFEAR_Radarodometry::EvalTrajectory::Parameters& eval_par, eval_parameters& p, training_parameters& training_par){
+void ReadOptions(const int argc, char**argv, Odometry::Parameters& par, radarDriver::Parameters& rad_par, cfear::EvalTrajectory::Parameters& eval_par, eval_parameters& p, training_parameters& training_par){
 
   po::options_description desc{"Options"};
   desc.add_options()
@@ -339,7 +339,7 @@ void ReadOptions(const int argc, char**argv, OdometryKeyframeFuser::Parameters& 
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "cfear_radarodometry_node");
-  OdometryKeyframeFuser::Parameters odom_pars;
+  Odometry::Parameters odom_pars;
   radarDriver::Parameters rad_pars;
   EvalTrajectory::Parameters eval_pars;
   eval_parameters eval_p;
@@ -347,7 +347,7 @@ int main(int argc, char **argv)
   ReadOptions(argc, argv, odom_pars, rad_pars, eval_pars, eval_p, training_pars);
 
   std::ofstream ofs_before(eval_pars.est_output_dir+std::string("../pars.txt")); // Write
-  std::string par_str_before = rad_pars.ToString()+odom_pars.ToString()+eval_pars.ToString()+"nr_frames, "+std::to_string(0)+"\n"+CFEAR_Radarodometry::timing.GetStatistics();
+  std::string par_str_before = rad_pars.ToString()+odom_pars.ToString()+eval_pars.ToString()+"nr_frames, "+std::to_string(0)+"\n"+cfear::timing.GetStatistics();
   cout<<"Odometry parameters:\n" << par_str_before<<endl;
   ofs_before<<par_str_before<<endl;
   ofs_before.close();
@@ -356,7 +356,7 @@ int main(int argc, char **argv)
   reader.Save();
 
   std::ofstream ofs(eval_pars.est_output_dir+std::string("../pars.txt")); // Write
-  std::string par_str = rad_pars.ToString()+odom_pars.ToString()+eval_pars.ToString()+"\nnr_frames, "+std::to_string(reader.GetSize())+"\n"+CFEAR_Radarodometry::timing.GetStatistics();
+  std::string par_str = rad_pars.ToString()+odom_pars.ToString()+eval_pars.ToString()+"\nnr_frames, "+std::to_string(reader.GetSize())+"\n"+cfear::timing.GetStatistics();
   ofs<<par_str<<endl;
   ofs.close();
 
